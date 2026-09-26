@@ -4,7 +4,7 @@ This excerpt preserves prior project requirements for context. Other assertions 
 
 **Project Prompt (Original User Request, Preserved Verbatim for Context)**
 
-> Review the repo. 
+> Review the repo.
 > Here are the results from our groups submissions, separated by ....:
 > GEMSDOE1 https://buffedlizard55-lab.github.io/GEMSDOE/docs/index.html GEMSDOE SCORE: 0.1563
 > https://buffedlizard55-lab.github.io/6GEMSDOE/ 6GEMSDOE SCORE: 0.0286
@@ -55,4 +55,3 @@ This excerpt preserves prior project requirements for context. Other assertions 
 > Create a executive summary subpage that explains exactly how to make a submission into the contest.
 > Work on the next steps from the previous sessions first.
 > [Repeated core values and verification requirements]
-
