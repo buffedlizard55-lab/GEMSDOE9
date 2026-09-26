@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+data/training_features.tif
+data/existing_faults.tif
+data/example_submission.tif
+data/GEMS_96647.pdf
+data/processed/
+data/bridge/
+*.tif
+!docs/downloads/*.tif
+*.zip
+!docs/downloads/*.zip
+.env
+.venv

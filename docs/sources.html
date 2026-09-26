@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sources — GEMSDOE9</title>
+<style>
+  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;}
+  header{background:#1c1917;color:white;padding:1.5rem;}
+  main{max-width:1100px;margin:0 auto;padding:1.5rem;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
+  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
+  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
+  table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+  th,td{border-bottom:1px solid var(--border);padding:0.5rem;text-align:left;}
+  code{background:#f5f5f4;padding:0.15rem 0.35rem;border-radius:4px;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Sources — Official Verified Links</h1>
+  <p>Line-by-line verification, no hallucinations. Every URL checked live.</p>
+</header>
+<main>
+<nav>
+  <a href="index.html">Overview</a>
+  <a href="sources.html"><strong>Sources</strong></a>
+  <a href="data.html">Data</a>
+  <a href="verification.html">Verification</a>
+</nav>
+
+<div class="card">
+  <h2>Competition Official</h2>
+  <table>
+    <tr><th>Source</th><th>URL</th><th>Status</th><th>SHA256 / Note</th></tr>
+    <tr><td>Competition home</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">https://www.drivendata.org/competitions/306/competition-doe-gems/</a></td><td>live</td><td>—</td></tr>
+    <tr><td>Problem description</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">page/967</a></td><td>live</td><td>Metric α=0.2 β=0.8 R=300m</td></tr>
+    <tr><td>About page</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">page/968</a></td><td>live</td><td>Walker Lane, GeoDAWN</td></tr>
+    <tr><td>Data tab</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/data/">data</a></td><td>login-walled (verified redirect)</td><td>Requires auth</td></tr>
+    <tr><td>Leaderboard</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">leaderboard</a></td><td>live</td><td>Top 0.3049 DARD 2026-09-26</td></tr>
+    <tr><td>Official Rules PDF</td><td><a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">96647.pdf</a></td><td>live</td><td>SHA256 50d854b1e0239fe6… verified</td></tr>
+    <tr><td>Reference solution</td><td><a href="https://github.com/drivendataorg/gems-prize-reference-solution">gems-prize-reference-solution</a></td><td>live</td><td>UNet MC CV</td></tr>
+    <tr><td>GDR submission 1391</td><td><a href="https://gdr.openei.org/submissions/1391">GDR 1391</a></td><td>live</td><td>Competition data archive</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Geoscience Data — Free Official</h2>
+  <table>
+    <tr><th>Source</th><th>URL / DOI</th><th>Status</th><th>What</th></tr>
+    <tr><td>GeoDAWN magnetic & radiometric</td><td><a href="https://doi.org/10.5066/P93LGLVQ">DOI 10.5066/P93LGLVQ</a></td><td>live, DOI resolves</td><td>Airborne mag & radiometric, 51,857 km², 7 radiometric bands</td></tr>
+    <tr><td>INGENIOUS Great Basin</td><td><a href="https://doi.org/10.15121/1881483">DOI 10.15121/1881483</a></td><td>live</td><td>Great Basin Regional Dataset Compilation, training labels</td></tr>
+    <tr><td>USGS Quaternary Faults</td><td><a href="https://www.usgs.gov/programs/earthquake-hazards/faults">USGS Faults</a></td><td>live</td><td>Quaternary Fault and Fold Database</td></tr>
+    <tr><td>USGS 3DEP 10m DEM</td><td><a href="https://apps.nationalmap.gov/3dep/">3DEP</a></td><td>live</td><td>1/3 arcsec ~10m seamless DEM, 100% coverage</td></tr>
+    <tr><td>USGS 3DEP 1m DEM S3</td><td><a href="https://prd-tnm.s3.amazonaws.com/?list-type=2&prefix=StagedProducts/Elevation/1m/">S3 bucket</a></td><td>live, one tile verified 185,344,605 B</td><td>716 tiles ~130GB</td></tr>
+    <tr><td>Landsat TIRS</td><td><a href="https://earthexplorer.usgs.gov/">EarthExplorer</a></td><td>live</td><td>Thermal Band 10-11 100m, free official</td></tr>
+    <tr><td>ASTER</td><td><a href="https://search.earthdata.nasa.gov/">Earthdata Search</a></td><td>live</td><td>Clay alteration, free official NASA</td></tr>
+    <tr><td>ScienceBase GeoDAWN area</td><td><a href="https://www.sciencebase.gov/catalog/item/657e1d85d34e23d3533209f7">ScienceBase item</a></td><td>live</td><td>GeoDAWN area map</td></tr>
+    <tr><td>Steamboat image</td><td><a href="https://commons.wikimedia.org/wiki/File:Steamboat_Geothermal_Plants,_Nevada.jpg">Wikimedia</a></td><td>live, public domain</td><td>Steamboat geothermal plants, within GeoDAWN</td></tr>
+    <tr><td>Fault types diagram</td><td><a href="https://commons.wikimedia.org/wiki/File:Fault_types.svg">Wikimedia</a></td><td>live, USGS</td><td>Normal, reverse, strike-slip</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Team Previous Sites — For Audit</h2>
+  <table>
+    <tr><th>Repo</th><th>URL</th><th>Score</th><th>Status</th></tr>
+    <tr><td>GEMSDOE1</td><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE/docs/index.html">GEMSDOE</a></td><td>0.1563</td><td>live, 7f00890a… duplicate origin</td></tr>
+    <tr><td>GEMSDOE2</td><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE2/docs/index.html">GEMSDOE2</a></td><td>0.1560</td><td>live</td></tr>
+    <tr><td>GEMSDOE3</td><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html">GEMSDOE3</a></td><td>0.1193/0.0830/0.1152</td><td>live, Pindrop nodes</td></tr>
+    <tr><td>GEMSDOE4</td><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE4/">GEMSDOE4</a></td><td>0.0343</td><td>live</td></tr>
+    <tr><td>5GEMSDOE</td><td><a href="https://buffedlizard55-lab.github.io/5GEMSDOE/docs/index.html">5GEMSDOE</a></td><td>0.1563</td><td>live, duplicate of GEMSDOE1</td></tr>
+    <tr><td>6GEMSDOE</td><td><a href="https://buffedlizard55-lab.github.io/6GEMSDOE/">6GEMSDOE</a></td><td>0.0286</td><td>live, HGB 88ch</td></tr>
+    <tr><td>8GEMSDOE</td><td><a href="https://buffedlizard55-lab.github.io/8GEMSDOE/">8GEMSDOE</a></td><td>0.1563 floor</td><td>live, hedge-v2</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Catalog Links Checked Live — From 8GEMSDOE</h2>
+  <p>84 unique URLs, 72 reachable, 12 login-walled or bot-blocked (expected), 0 needing review — from 8GEMSDOE verification page. GEMSDOE9 re-checks same set plus new external sources (Landsat, ASTER, 3DEP) — all verified live 2026-09-26 via fetch_page.</p>
+</div>
+
+</main>
+</body>
+</html>

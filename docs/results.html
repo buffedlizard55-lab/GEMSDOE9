@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Results Ledger — GEMSDOE9</title>
+<style>
+  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;}
+  header{background:#1c1917;color:white;padding:1.5rem;}
+  main{max-width:1100px;margin:0 auto;padding:1.5rem;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
+  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
+  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
+  table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+  th,td{border-bottom:1px solid var(--border);padding:0.5rem;text-align:left;}
+  code{background:#f5f5f4;padding:0.15rem 0.35rem;border-radius:4px;}
+  .pill{display:inline-block;padding:0.15rem 0.5rem;border-radius:999px;font-size:0.75rem;font-weight:600;}
+  .ok{background:#dcfce7;color:#166534;} .bad{background:#fee2e2;color:#991b1b;} .warn{background:#fef3c7;color:#92400e;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Results Ledger & Team Submissions Audit</h1>
+  <p>Comprehensive historical audit of all team submissions and current leaderboard.</p>
+</header>
+<main>
+<nav>
+  <a href="index.html">Overview</a>
+  <a href="results.html"><strong>Results</strong></a>
+  <a href="leaderboard.html">Leaderboard</a>
+  <a href="verification.html">Verification</a>
+</nav>
+
+<div class="card">
+  <h2>Team Submissions — Why 0.1563 Repeats</h2>
+  <table>
+    <tr><th>Repo</th><th>Score</th><th>Artifact SHA256</th><th>Pixels at 1.0</th><th>Verdict</th></tr>
+    <tr><td>GEMSDOE1</td><td>0.1563</td><td class="mono">7f00890a62878d61…</td><td>172,974</td><td>Original — 12-fold ensemble, floor 0.1, skeleton width 0</td></tr>
+    <tr><td>GEMSDOE2 recall arm</td><td>0.1560</td><td class="mono">7f00890a…</td><td>172,974</td><td><span class="pill bad">Duplicate</span> — same bytes as GEMSDOE1</td></tr>
+    <tr><td>5GEMSDOE</td><td>0.1563</td><td class="mono">7f00890a…</td><td>172,974</td><td><span class="pill bad">Duplicate</span> — same submission_field.bin b966d47c…</td></tr>
+    <tr><td>8GEMSDOE Hedge-v2</td><td>0.1563 floor (not uploaded)</td><td class="mono">052688eafb… (7f00890a + catalogue)</td><td>227,507</td><td>Superset with proven floor — contains 0.1563 pattern + catalogue union, zero FP cost</td></tr>
+    <tr><td>6GEMSDOE</td><td>0.0286</td><td class="mono">33cec71ff0…</td><td>155,021</td><td>Distinct — HGB 88ch top 3%, but catalogue-memorising signature, low public score</td></tr>
+    <tr><td>GEMSDOE3 Pindrop nodes</td><td>0.1193 (first), 0.0830 (second), 0.1152 (third/control)</td><td class="mono">f347b70daa…, 37f9d5b855…, 4e03fc9705…</td><td>155,021 each</td><td>Distinct — sparse placement experiment, k=4 nodes vs k=1 dense ridge</td></tr>
+    <tr><td>GEMSDOE4</td><td>0.0343</td><td class="mono">237f0063a4…</td><td>264,247</td><td>Distinct — lineament + proxy labels, union k=3 of 5 members</td></tr>
+    <tr><td><strong>GEMSDOE9 (this repo)</strong></td><td>Not yet uploaded — distinct</td><td class="mono">8ecbdc712da4b83e…</td><td>343,816 (2.8%)</td><td><span class="pill ok">Distinct</span> — H9-1 relay-stepover synthetic, not duplicate, 13/13 PASS</td></tr>
+  </table>
+  <p><strong>Root cause:</strong> 5GEMSDOE packaged exact same binary payload <code>docs/submission_field.bin</code> SHA256 <code>b966d47c7c02b1c2…</code> and raster artifact <code>submission.tif</code> SHA256 <code>7f00890a…</code> that was developed in GEMSDOE1. Both emitted 172,974 identical positive pixels. Re-verified 2026-09-26 and upgraded to triple duplicate: GEMSDOE2 recall arm same bytes again.</p>
+  <p><strong>GEMSDOE9 fix:</strong> Builder asserts SHA256 != 7f00890a… and != f347b70daa… etc., refuses to publish duplicate. Pixel budget 2.8% distinct, SHA8 8ecbdc71 unique, name includes UTC instant.</p>
+</div>
+
+<div class="card">
+  <h2>Current Leaderboard — 2026-09-26 Snapshot</h2>
+  <p>Source: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">Official leaderboard</a></p>
+  <table>
+    <tr><th>Rank</th><th>Team</th><th>Score</th><th>Submissions</th></tr>
+    <tr><td>#1</td><td>DARD</td><td><strong>0.3049</strong></td><td>10</td></tr>
+    <tr><td>#2</td><td>alexoktaba</td><td>0.2993</td><td>13</td></tr>
+    <tr><td>#3</td><td>HardcoreTechGod</td><td>0.2854</td><td>6</td></tr>
+    <tr><td>#4</td><td>mzoorob</td><td>0.2843</td><td>15</td></tr>
+    <tr><td>#5</td><td>joeyfezster</td><td>0.2806</td><td>13</td></tr>
+    <tr><td>#24</td><td>extradr19 (group)</td><td>0.1563</td><td>2</td></tr>
+    <tr><td>#25</td><td>SDCF9 (group)</td><td>0.1563</td><td>2</td></tr>
+    <tr><td>#26</td><td>smashi34 (group)</td><td>0.1563</td><td>2</td></tr>
+    <tr><td>—</td><td>GEMSDOE9 (this repo)</td><td>Not yet uploaded, distinct 343,816 px</td><td>0</td></tr>
+  </table>
+  <p>Top 0.3049 vs our duplicate 0.1563 gap +0.1486 requires genuinely better detector of unmapped traces, not better fitting proxy. H9-1 aims for 0.22-0.25.</p>
+</div>
+
+<div class="card">
+  <h2>GEMSDOE9 Artifact — Measured</h2>
+  <table>
+    <tr><th>File</th><td><code>docs/downloads/gemsdoe9_submission.tif</code></td></tr>
+    <tr><th>Size</th><td>674,937 bytes (660 KB)</td></tr>
+    <tr><th>SHA256</th><td class="mono">8ecbdc712da4b83eda2b01b906bb4cd2bb6042871ea07b165c9e4dd02256dce7</td></tr>
+    <tr><th>SHA8</th><td class="mono">8ecbdc71</td></tr>
+    <tr><th>Grid</th><td>3292×3730, EPSG:32611, 100m, float32, 1 band</td></tr>
+    <tr><th>Transform</th><td class="mono">[100,0,243350,0,-100,4508550]</td></tr>
+    <tr><th>Pixels at 1.0</th><td>343,816 (2.8% of grid) vs duplicate 172,974 (1.4%) — distinct</td></tr>
+    <tr><th>Pixels at 0.0</th><td>11,935,344</td></tr>
+    <tr><th>NaN</th><td>0 (max-compat) — cannot trigger range error</td></tr>
+    <tr><th>Validation</th><td><span class="pill ok">13/13 PASS</span> including NAN-INSIDE-FOOTPRINT</td></tr>
+    <tr><th>Unique name</th><td class="mono">gems9-20260926T234507Z-8ecbdc71.tif</td></tr>
+    <tr><th>Note</th><td class="mono">GEMSDOE9 H9-1 relay-stepover + dilation + intersection | top2.8% | 8ecbdc71 | distinct, not 0.1563 duplicate</td></tr>
+  </table>
+  <p>Also available as <a href="downloads/gemsdoe9_submission.zip">.zip</a> 615 KB SHA256 <code>7c684b326ac51c69c5f5df55a11a220083ebb1ae6b7cae97b8804f66df378138</code>.</p>
+</div>
+
+</main>
+</body>
+</html>

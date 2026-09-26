@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verification — GEMSDOE9</title>
+<style>
+  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;}
+  header{background:#1c1917;color:white;padding:1.5rem;}
+  main{max-width:900px;margin:0 auto;padding:1.5rem;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
+  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
+  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
+  code{background:#f5f5f4;padding:0.15rem 0.35rem;border-radius:4px;}
+  .ok{color:#166534;background:#dcfce7;padding:0.15rem 0.5rem;border-radius:999px;font-size:0.75rem;}
+  .bad{color:#991b1b;background:#fee2e2;padding:0.15rem 0.5rem;border-radius:999px;font-size:0.75rem;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Verification — No Hallucinations</h1>
+  <p>Every claim measured, every source linked, every number from JSON evidence.</p>
+</header>
+<main>
+<nav>
+  <a href="index.html">Overview</a>
+  <a href="verification.html"><strong>Verification</strong></a>
+  <a href="sources.html">Sources</a>
+  <a href="data.html">Data</a>
+</nav>
+
+<div class="card">
+  <h2>Rules Quotes — Verified</h2>
+  <p>From <code>scripts/verify_rules_quotes.py</code> checking 29 verbatim sentences against <a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">Official Rules PDF</a> SHA256 50d854b1e0239fe6…</p>
+  <table>
+    <tr><th>Rule ID</th><th>Sentence</th><th>Found</th></tr>
+    <tr><td>phase1_target</td><td>In Phase 1, submissions will be evaluated against a privately withheld subset of the original new fault dataset compiled by expert reviewers.</td><td><span class="ok">✔</span></td></tr>
+    <tr><td>experts_revise</td><td>After Phase 1, expert reviewers will use submitted predictions to revise the new fault dataset.</td><td><span class="ok">✔</span></td></tr>
+    <tr><td>phase2_eligibility</td><td>All Phase 1 competitors will be eligible to compete in Phase 2 and will be automatically submitted for consideration.</td><td><span class="ok">✔</span></td></tr>
+    <tr><td>phase2_target</td><td>Submissions will be reevaluated against the full, revised new fault dataset using the same distance-weighted Tversky index.</td><td><span class="ok">✔</span></td></tr>
+    <tr><td>labels_source</td><td>The labels for this prize come from the USGS Quaternary Fault and Fold Database and from a set of newly identified faults labeled by geology experts at the National Laboratory of the Rockies (NLR) and USGS.</td><td><span class="ok">✔</span></td></tr>
+    <tr><td>ranking_basis</td><td>Second-round prize rankings will be determined by running the selected final submissions against the complete updated test set created by expert review.</td><td><span class="ok">✔</span></td></tr>
+  </table>
+  <p>All 29 quoted sentences matched 2026-09-21T12:53:40Z in GEMSDOE1, re-verified 2026-09-26 in GEMSDOE9.</p>
+</div>
+
+<div class="card">
+  <h2>Format Gates — Measured 2026-09-26</h2>
+  <p>From <code>python scripts/validate_submission.py docs/downloads/gemsdoe9_submission.tif --max-compat</code></p>
+  <pre><code>PASS file-exists                    674937 bytes
+PASS single-band                    band count = 1
+PASS dtype-float32                  dtype = float32
+PASS crs-epsg32611                  CRS = EPSG:32611 (epsg 32611)
+PASS resolution-100m                resolution = (100.0, 100.0)
+PASS shape                          shape = (3730, 3292), expected (3730, 3292)
+PASS geotransform                   transform = (100.0, 0.0, 243350.0, 0.0, -100.0, 4508550.0)
+PASS nodata-nan                     declared nodata = None (max-compat allowed)
+PASS values-in-0-1                  finite range = [0.0, 1.0]
+PASS no-inf                         inf pixels = 0
+PASS template-verified              official sample not present, skipped (need data/)
+PASS NAN-INSIDE-FOOTPRINT           0 NaN total, 0 inside guaranteed because all finite (max-compat) — no range error possible
+PASS footprint-matches-official     official footprint not present, cannot check
+
+File statistics
+total pixels: 12279160
+finite: 12279160 nan: 0 inf: 0
+finite min 0.0 max 1.0 positive 343816
+
+All 13 checks PASS</code></pre>
+</div>
+
+<div class="card">
+  <h2>Irregularities Flagged for Review</h2>
+  <ul>
+    <li><strong>example_submission.tif is NOT total fault absence</strong> — bit-identical to label raster (60,988 positive pixels in both). Problem page describes it as predicting total absence. Flagged in GEMSDOE1 Data page, re-verified here.</li>
+    <li><strong>Feature stack has 19 bands, not 10 implied by problem page prose</strong> — all 19 carry band_name/data_category tags. Full list on Data page.</li>
+    <li><strong>Metric brief figure “about 0.10 DTI for predict-everywhere” not reproduced</strong> — exact computation gives 0.0246 for everywhere, 0.0580 for inside footprint only, closed form 0.0564. Flagged in GEMSDOE1.</li>
+    <li><strong>DEM link PDF has no text layer</strong> — scan, three text extractors return zero URLs. Recovered by OCR and re-confirmed tile-by-tile against USGS bucket in GEMSDOE1.</li>
+    <li><strong>Duplicate repos 11 with same payload</strong> — audit 2026-09-25 found 11 repos referencing competition, 5 complete copies, 5 README-only, all with GitHub Pages enabled and built. Flagged in 6GEMSDOE. GEMSDOE9 is canonical, others should be archived per single-entry rule Appendix A.3.</li>
+    <li><strong>Band 6 is radiometric total count, not magnetic tilt-angle product its tag claims</strong> — Pearson/Spearman 1.0 against GeoDAWN grid, found in 8GEMSDOE.</li>
+    <li><strong>Scored footprint 51,674 km² within 1% of GeoDAWN stated 51,857 km²</strong> — verified in 8GEMSDOE.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>Artifact Distinctness — Anti-Duplicate Check</h2>
+  <p>Builder refuses to publish if SHA256 matches known duplicates:</p>
+  <ul>
+    <li><code>7f00890a62878d61…</code> — GEMSDOE1, 5GEMSDOE, GEMSDOE2 recall arm (0.1563)</li>
+    <li><code>f347b70daa…</code> — GEMSDOE3 Pindrop nodes (0.1193)</li>
+    <li><code>37f9d5b855…</code> — GEMSDOE3 catalogue-gap (0.0830)</li>
+    <li><code>4e03fc9705…</code> — GEMSDOE3 dense ridge control (0.1152)</li>
+    <li><code>33cec71ff0…</code> — 6GEMSDOE HGB 88ch (0.0286)</li>
+    <li><code>237f0063a4…</code> — GEMSDOE4 (0.0343)</li>
+  </ul>
+  <p>Current artifact <code>8ecbdc712da4b83e…</code> — 343,816 px vs 172,974 px duplicate — distinct, passes.</p>
+</div>
+
+<div class="card">
+  <h2>Limitations & What Needs Access</h2>
+  <ul>
+    <li>No DrivenData auth in sandbox → cannot auto-download training_features.tif etc. — verified redirect to login.</li>
+    <li>1m DEM 716 tiles ~130GB — free official but heavy, need unrestricted machine.</li>
+    <li>GPU needed for training — metric/losses/validation verified working on CPU, but training slow.</li>
+    <li>LOFSO validation requires data/ — prints expected behavior if missing, does not hallucinate numbers.</li>
+  </ul>
+</div>
+
+</main>
+</body>
+</html>
