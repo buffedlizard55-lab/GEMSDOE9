@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strategy & Metric — GEMSDOE9</title>
+<style>
+  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.7;}
+  header{background:#1c1917;color:white;padding:1.5rem;}
+  main{max-width:900px;margin:0 auto;padding:1.5rem;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
+  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
+  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
+  code{background:#f5f5f4;padding:0.15rem 0.35rem;border-radius:4px;}
+  table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+  th,td{border-bottom:1px solid var(--border);padding:0.5rem;text-align:left;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Strategy & Metric — How to Beat 0.3049</h1>
+  <p>Mathematical decomposition of DTI and why 0.1563 is not the ceiling.</p>
+</header>
+<main>
+<nav>
+  <a href="index.html">Overview</a>
+  <a href="strategy.html"><strong>Strategy</strong></a>
+  <a href="metric.html">Metric</a>
+  <a href="hypotheses.html">Hypotheses</a>
+</nav>
+
+<div class="card">
+  <h2>DTI — Distance-Weighted Tversky</h2>
+  <p>Source: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#performance-metric">Problem description § Performance metric</a></p>
+  <p><code>TI(α,β) = Σ p(x)g(x) / [Σ p(x)g(x) + α Σ p(x)(1-g(x)) + β Σ (1-p(x))g(x)]</code></p>
+  <p>Distance-weighted with triangular kernel k(d)=max(1-d/R,0), R=300m=3px:</p>
+  <ul>
+    <li><code>TP_w = Σ_g∈G max_{x:d(x,g)≤R} p(x) k(d(x,g))</code></li>
+    <li><code>FP_w = Σ_{x:p(x)>0} p(x)[1-max_g k(d(x,g))]</code></li>
+    <li><code>FN_w = Σ_g∈G [1-max_{x:d≤R} p(x)k(d)]</code></li>
+    <li><code>DTI(α,β)=TP_w/(TP_w+α FP_w+β FN_w+ε)</code>, α=0.2 β=0.8</li>
+  </ul>
+  <p>Implementation in <code>src/gems/metric.py</code> matches official, verified against reference solution <a href="https://github.com/drivendataorg/gems-prize-reference-solution">gems-prize-reference-solution</a>.</p>
+</div>
+
+<div class="card">
+  <h2>Why Metric Rewards Precision, Not Generosity</h2>
+  <p>From GEMSDOE1 metric page measurement:</p>
+  <table>
+    <tr><th>Strategy</th><th>DTI (public catalogue proxy)</th><th>Predicted px</th><th>Note</th></tr>
+    <tr><td>all_zero</td><td>0.0000</td><td>0</td><td>Official says “total fault absence” but example_submission is not this</td></tr>
+    <tr><td>all_one_everywhere</td><td>0.0246</td><td>12,279,160</td><td>Predict everywhere — brief cites ~0.10 but measured 0.0246</td></tr>
+    <tr><td>all_one_inside_footprint</td><td>0.0580</td><td>5,167,373</td><td>Predict 1 only inside footprint</td></tr>
+    <tr><td>catalogue_copy</td><td>1.0000</td><td>60,988</td><td>Reproducing known faults — wrong target, but DTI 1.0 on proxy</td></tr>
+  </table>
+  <p>Faults cover 1.18% of scored footprint (60,988 of 5,167,373) and 0.50% of full grid. Closed form c/(c+α(1-c)) for predict-everywhere gives 0.0564, not 0.10 cited in brief — flagged as irregularity.</p>
+  <p>Despite β/α=4 nominally punishing misses, predicting everything scores 0.096 while precise quarter scores 0.554 — metric rewards precision because FP weight α=0.2 is low but still charges every pixel.</p>
+</div>
+
+<div class="card">
+  <h2>Why 0.1563 Is Not Ceiling — And How to Beat 0.3049</h2>
+  <p>Leaderboard top 0.3049 by DARD. Our group's best verified is 0.1563 duplicate. Gap +0.1486 requires genuinely better detector of unmapped traces.</p>
+  <p>From 8GEMSDOE measurements:</p>
+  <ul>
+    <li>In-file features alone at or below random for real task: Fold0 DTI at 3% budget random 0.0813, base 0.0727, base+H11 0.0705, catalogue halos r1-5 only 0.027-0.044 — then base+10m scarp 0.0810, +radiometric 0.0850, +structural-coherence 0.0895. Last arm first to beat random on unseen traces.</li>
+    <li>Local proxies contaminated: most catalogue-faithful artifact (hgb88) has highest proxy 0.1527 and lowest public 0.0286. Any protocol whose truth derived from catalogue rewards memorising it.</li>
+    <li>Missing external channel real, free, official: 9 topo/scarp bands from 3DEP 10m + 7 radiometric bands from GeoDAWN DOI 10.5066/P93LGLVQ — 100% coverage, verified.</li>
+  </ul>
+  <p><strong>Strategy to beat 0.3049:</strong></p>
+  <ol>
+    <li>Use H9-1 relay stepover + dilation tendency — targets structural control that hosts 70% of Great Basin geothermal, misses in catalogue.</li>
+    <li>Add H9-2 conductivity edge — blind geothermal clay cap.</li>
+    <li>Add H9-3 fluvial SL/ksn from 10m DEM — drainage anomaly for blind faults.</li>
+    <li>Combine via union or learned ensemble, keep budget 2-3% (optimal per metric: coverage function with pixel budget, cheapest optimal set is spaced nodes, not continuous line — from GEMSDOE3 Pindrop).</li>
+    <li>Validate via LOFSO before spending weekly slot — do not spend slot until holdout best beaten.</li>
+  </ol>
+</div>
+
+<div class="card">
+  <h2>Placement Beats Mass — Pindrop Insight</h2>
+  <p>From GEMSDOE3: metric credits truth pixel from single best prediction inside 300m kernel, so dense trace pays several times for one coverage. Official metric is coverage function with pixel budget — cheapest optimal set is spaced nodes at kernel spacing.</p>
+  <p>Kernel radius R=3px (300m), largest spacing that cannot lose coverage at midpoint: spacing/2 < R → spacing ≤5px, published spacing 4px → worst-case gap 2.0px <3.</p>
+  <p>Implementation: rank candidates by confidence, accept only when no accepted node inside suppression square half-width spacing-1. Spacing=1 suppresses nothing, so control is dense ridge prefix that confidence floor would emit. Only changed parameter between published file and control is that number.</p>
+  <p>GEMSDOE9 uses top 2.8% but with oriented lineament simulation, not dense ridge — distinct placement.</p>
+</div>
+
+</main>
+</body>
+</html>

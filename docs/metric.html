@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metric — GEMSDOE9</title>
+<style>
+  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.7;}
+  header{background:#1c1917;color:white;padding:1.5rem;}
+  main{max-width:900px;margin:0 auto;padding:1.5rem;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
+  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
+  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
+  code{background:#f5f5f4;padding:0.15rem 0.35rem;border-radius:4px;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Metric — Distance-Weighted Tversky Index</h1>
+  <p>Full derivation, degenerate baselines, and why 0.10 figure not reproduced.</p>
+</header>
+<main>
+<nav>
+  <a href="index.html">Overview</a>
+  <a href="strategy.html">Strategy</a>
+  <a href="metric.html"><strong>Metric</strong></a>
+  <a href="verification.html">Verification</a>
+</nav>
+
+<div class="card">
+  <h2>Mathematical Representation — Verified</h2>
+  <p>Source: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#performance-metric">Problem description</a></p>
+  <p>Let p(x)∈[0,1] predicted probability at pixel x, g(x) ground truth label.</p>
+  <p>Tversky index TI(α,β)= Σ p(x)g(x) / [Σ p(x)g(x)+α Σ p(x)(1-g(x))+β Σ (1-p(x))g(x)]</p>
+  <p>Triangular kernel k(d)=max(1-d/R,0), R=300m=3px at 100m resolution.</p>
+  <p>Distance-weighted:</p>
+  <ul>
+    <li>TP_w = Σ_g∈G max_{x:d(x,g)≤R} p(x) k(d(x,g))</li>
+    <li>FP_w = Σ_{x:p(x)>0} p(x)[1-max_g k(d(x,g))]</li>
+    <li>FN_w = Σ_g∈G [1-max_{x:d≤R} p(x) k(d(x,g))]</li>
+    <li>DTI = TP_w/(TP_w+α FP_w+β FN_w+ε), α=0.2 β=0.8</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>Degenerate Baselines — Measured</h2>
+  <p>Computed with <code>src/gems/metric.py</code> against public catalogue labels (proxy, not leaderboard):</p>
+  <table>
+    <tr><th>Strategy</th><th>DTI</th><th>Predicted px</th><th>Note</th></tr>
+    <tr><td>all_zero</td><td>0.0000</td><td>0</td><td>Official description calls this “total fault absence”</td></tr>
+    <tr><td>all_one_everywhere</td><td>0.0246</td><td>12,279,160</td><td>Predict everywhere — brief cites ~0.10 DTI but measured 0.0246</td></tr>
+    <tr><td>all_one_inside_footprint</td><td>0.0580</td><td>5,167,373</td><td>Predict 1 only inside official footprint</td></tr>
+    <tr><td>catalogue_copy_sample_submission</td><td>1.0000</td><td>60,988</td><td>Reproducing published faults — wrong target trap</td></tr>
+  </table>
+  <p>Coverage: faults 1.18% of scored footprint (60,988 of 5,167,373) and 0.50% of full grid. Closed form c/(c+α(1-c)) for predict-everywhere gives 0.0564. Brief figure “about 0.10 DTI for predict-everywhere” not reproduced by exact computation or closed form at this coverage — flagged as irregularity in GEMSDOE1 verification.</p>
+</div>
+
+<div class="card">
+  <h2>Width Measurement — From GEMSDOE1</h2>
+  <p>Instead of sweeping floors on probability map, <code>scripts/measure_miss_distance.py</code> takes shipped submission, grows emitted pixels by k and scores with official metric against USGS faults training labels do not contain. Median unseen-fault pixel sits 22px=2.2km from anything model emitted, only 4.9% of truth inside metric's own 300m tolerance, widening band to 16px lifts score from 0.0247 to 0.0713 — first measured policy to beat constant-ones baseline (0.0585). 74% of truth has nothing emitted within 1.2km, so detection, not band width, is binding constraint.</p>
+</div>
+
+</main>
+</body>
+</html>

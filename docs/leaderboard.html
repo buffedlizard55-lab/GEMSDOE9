@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leaderboard — GEMSDOE9</title>
+<style>
+  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;}
+  header{background:#1c1917;color:white;padding:1.5rem;}
+  main{max-width:900px;margin:0 auto;padding:1.5rem;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
+  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
+  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
+  table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+  th,td{border-bottom:1px solid var(--border);padding:0.5rem;text-align:left;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Leaderboard Analysis</h1>
+  <p>Snapshot 2026-09-26, why 0.1563 repeats, how to beat 0.3049.</p>
+</header>
+<main>
+<nav>
+  <a href="index.html">Overview</a>
+  <a href="leaderboard.html"><strong>Leaderboard</strong></a>
+  <a href="results.html">Results</a>
+  <a href="strategy.html">Strategy</a>
+</nav>
+
+<div class="card">
+  <h2>Official Leaderboard — 2026-09-26</h2>
+  <p>Source: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/</a></p>
+  <table>
+    <tr><th>Rank</th><th>Team</th><th>Best Public DW-Tversky</th><th>Submissions</th><th>Note</th></tr>
+    <tr><td>#1</td><td>DARD</td><td><strong>0.3049</strong></td><td>10</td><td>Top — 4d ago</td></tr>
+    <tr><td>#2</td><td>alexoktaba</td><td>0.2993</td><td>13</td><td>1d 23h ago</td></tr>
+    <tr><td>#3</td><td>HardcoreTechGod</td><td>0.2854</td><td>6</td><td>1w 1d ago</td></tr>
+    <tr><td>#4</td><td>mzoorob</td><td>0.2843</td><td>15</td><td>—</td></tr>
+    <tr><td>#5</td><td>joeyfezster</td><td>0.2806</td><td>13</td><td>9min ago</td></tr>
+    <tr><td>#6</td><td>GrigorSargsyan</td><td>0.2504</td><td>5</td><td>—</td></tr>
+    <tr><td>#24</td><td>extradr19 (group)</td><td>0.1563</td><td>2</td><td>Group duplicate</td></tr>
+    <tr><td>#25</td><td>SDCF9 (group)</td><td>0.1563</td><td>2</td><td>Duplicate of GEMSDOE1</td></tr>
+    <tr><td>#26</td><td>smashi34 (group)</td><td>0.1563</td><td>2</td><td>Duplicate</td></tr>
+    <tr><td>—</td><td>GEMSDOE9</td><td>Not yet uploaded</td><td>0</td><td>Distinct 343,816 px, H9-1</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Why 0.1563 Repeats — Triple Duplicate</h2>
+  <p>Audit 2026-09-26:</p>
+  <ul>
+    <li>GEMSDOE1 and 5GEMSDOE ship identical <code>docs/submission_field.bin</code> SHA256 <code>b966d47c7c02b1c2…</code> (532,072 B, 259,495 runs) → <code>submission.tif</code> SHA256 <code>7f00890a62878d61…</code> 172,974 px at 1.0.</li>
+    <li>GEMSDOE2 recall arm same bytes again — triple duplicate.</li>
+    <li>Platform returns same DTI because pixel field identical.</li>
+    <li>8GEMSDOE Hedge-v2 is superset with proven floor: 0.1563 pattern + 54,533 catalogue pixels (zero FP cost per forum <a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516">11516</a>).</li>
+  </ul>
+  <p>Fix: GEMSDOE9 builder generates unique UTC + SHA8, pixel count 343,816 vs 172,974, SHA256 8ecbdc71… distinct, refuses to publish duplicate.</p>
+</div>
+
+<div class="card">
+  <h2>How to Beat 0.3049 — Distinct Strategy</h2>
+  <p>Gap +0.1486 requires genuinely better detector of unmapped traces, not better fitting proxy.</p>
+  <ul>
+    <li>Previous best 0.1563 used 12-fold ensemble, floor 0.1, skeleton width 0 — thinned skeleton at floor 0.1, width curve peaks at 0 px on every ensemble, wider band would lower score (from GEMSDOE1 width measurement).</li>
+    <li>6GEMSDOE 0.0286 used HGB 88ch top 3% — catalogue-memorising signature, lowest public score, highest proxy 0.1527 — proxy contaminated.</li>
+    <li>8GEMSDOE measurement: in-file features alone at or below random for real task, but adding external channels beats random — base+structural-coherence 0.0895 vs random 0.0813 on Fold0 at 3% budget — first to beat random on unseen traces.</li>
+    <li>H9-1 relay stepover + dilation tendency targets 70% of Great Basin geothermal at stepovers (Faulds et al. 2010) — misses in catalogue, strong strain signal.</li>
+    <li>Expected lift +0.06-0.09 → 0.22-0.25, plus H9-2 conductivity edge +0.04-0.07 → combined 0.26-0.30, plus H9-3/4 external → 0.30+ to beat 0.3049.</li>
+  </ul>
+</div>
+
+</main>
+</body>
+</html>
