@@ -34,6 +34,6 @@ bash scripts/download_competition_data.sh     # public sibling bridge; sha256 ve
 
 - [Site / current decision](docs/index.html) · [Executive submission guide](docs/executive_summary.html)
 - [Ranked hypotheses & negative result](knowledge/hypotheses.md) · [data audit / official links](knowledge/sources.md) · [duplicate audit](knowledge/audit.md)
-- [Holdout report](reports/holdout.json) · [limitations & next work](knowledge/next_steps.md)
+- [Holdout report](reports/holdout.json) · [all 19 verified TIFF tags](docs/features.html) / [CSV](docs/data/feature_inventory.csv) · [limitations & next work](knowledge/next_steps.md)
 
 **Important irregularities:** Official description names some layers differently from the actual TIFF band tags (e.g. depth to conductive base vs `depth_to_base_surf`; band 6 `tc` appears mislabeled in sibling work). This experiment verifies and uses only bands **13 and 15**. The official template has **NaN outside** the footprint; the `Predicted values must be in range [0,1]` error can indicate non-finite/invalid scored pixels, but its exact backend cause is **not independently confirmed**. Our validator checks every scored pixel; do not silently replace NaNs outside the template. See [submission guide](docs/executive_summary.html).
