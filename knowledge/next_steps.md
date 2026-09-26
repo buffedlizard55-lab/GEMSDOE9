@@ -1,0 +1,22 @@
+# Next session priorities and limitations
+
+## Result of three review passes (2026-09-26)
+
+1. **Implementation:** sourced 19-band mirror, template and known labels via public sibling GitHub bridge; SHA verified every split part and full raster; built four-candidate hypothesis table before testing; wrote an exact-k 3% basin-edge experiment and GeoTIFF generator/validator; built site and submission guide. No DrivenData login or slot used.
+2. **Bug/assumption review:** fixed a bad metric unit-test expectation (a prediction *adjacent* to truth has nonzero TP under the official 300 m kernel). Confirmed in-footprint finite and `[0,1]`, outside-template NaN, deterministic file SHA. Fail-closed feed: a failed refresh must not silently overwrite a last-success score. Geography proxy cannot be called a private-fault holdout; the sibling LOFSO score is not on the same truth split. Checked HTML for stray Markdown formatting.
+3. **Original-request recheck:** No false claim of leaderboard improvement or upload. Clarified that committed file hashes explain reuse but do not prove actual uploaded bytes. Rechecked official format and team sites. Distinct scientifically grounded proposals exist; only #1 tested, failed, and blocked from recommendation. Site has direct downloadable experiment **with explicit unapproved warning**, not an approved competition candidate. Source access caveats and differences from sibling implementations are explicit.
+
+## What should happen next (ordered by expected value)
+
+1. **Do not upload basin-v1.** Add a comparable, reproducible LOFSO protocol (whole systems and near-trace correction stratum, all models retrained inside folds), run both current sibling best and G9 on **identical folds, budgets and labels**. This is necessary before any G9 release. Prefer independent new-fault reference data if officially released; withheld DrivenData ground truth cannot be assumed available.
+2. Try #3 magnetic two-sided texture **as a new candidate** or #2 regional gravity residual, preregistered before looking at folds. Inspect errors by lithology/basin and survey blocks; check whether random's catalogue advantage arises from sparse new-fault targeting vs widespread catalogue traces.
+3. For 1 m drainage-offset proposal, verify **specific** 3DEP tile URLs, DEM resolution/coverage, licence and processing cost before labelling it viable. Run transfer to 100 m competition grid with proper resampling and nodata handling; control for anthropogenic roads and channels.
+4. Expand source feed to official new data releases with freshness timestamps and change detection; the current automation only snapshots the leaderboard. Do not infer scientific findings from a leaderboard scrape. Github Actions schedules run on default branch only; until branch changes are merged the scheduled refresh is not active. A workflow_dispatch/push can deploy the branch but GitHub Pages repo settings may need workflow source selected.
+5. Obtain organizer-confirmed explanation of earlier `[0,1]` error if it recurs with a template-verified raster. Record the exact rejected artifact SHA, uploaded filename and error. Do not posit a backend NaN rule as established fact.
+
+## Access limitations
+
+- DrivenData competition data tab requires login; user-provided Dropbox mirrors are accessible via public sibling GitHub bridge. We checked mirror consistency, not authenticated official checksum provenance.
+- No private expert-new-fault labels; our holdout proxies known USGS/INGENIOUS faults, so holdout gains may invert publicly (the 6GEMSDOE case illustrates this). No model is guaranteed to beat 0.3049.
+- No autonomous submission account credentials are available or requested. Never upload via a third-party credential or spend a slot merely to test file validity.
+- Repo initially contained only a 10-byte README; earlier work exists in **different repositories**, not this local history. A PR can be opened from this fixed session branch; merging it is a protected main-branch action outside this session's branch scope.
