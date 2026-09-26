@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hypotheses H9-1..H9-5 — GEMSDOE9</title>
+<style>
+  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;--accent:#dc2626;}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.7;}
+  header{background:#1c1917;color:white;padding:1.5rem;}
+  main{max-width:1000px;margin:0 auto;padding:1.5rem;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
+  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
+  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
+  code{background:#f5f5f4;padding:0.15rem 0.35rem;border-radius:4px;}
+  table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+  th,td{border-bottom:1px solid var(--border);padding:0.5rem;text-align:left;vertical-align:top;}
+  .rank1{border-left:4px solid var(--accent);}
+</style>
+</head>
+<body>
+<div role="alert" style="position:relative;z-index:9999;background:#5b1c16;color:white;padding:18px;font:600 16px system-ui">ARCHIVED prior-branch page — its submission claims are NOT holdout-approved. Do not spend a contest slot. <a style="color:white;text-decoration:underline" href="index.html">Read the current measured decision →</a></div>
+
+<header>
+  <h1>Hypotheses H9-1..H9-5 — 5 New, Ranked, Distinct From Siblings</h1>
+  <p>Each names specific layer(s), physical signature, why it catches missing faults, how differs from anything already implemented in this repo. Ranked by expected DTI improvement and cost. Top candidate validated via spatially-blocked holdout before spending weekly slot.</p>
+</header>
+<main>
+<nav>
+  <a href="index.html">Overview</a>
+  <a href="executive_summary.html">Executive Summary</a>
+  <a href="hypotheses.html"><strong>Hypotheses</strong></a>
+  <a href="research.html">Research</a>
+  <a href="strategy.html">Strategy</a>
+  <a href="data.html">Data</a>
+</nav>
+
+<div class="card">
+  <h2>Validation Protocol — Clean, Before Submission Slot</h2>
+  <p>From prompt: “Validate the top candidate on our spatially-blocked holdout set before touching a weekly submission slot — do not spend a submission slot on an idea that hasn't beaten the current holdout best.”</p>
+  <ul>
+    <li>Spatially-blocked, buffered folds: 4×4 blocks = 16 blocks, buffer 3 px = 300 m (metric kernel radius) to avoid leakage</li>
+    <li>Leave-One-Fault-System-Out (LOFSO): whole fault systems held out, not random pixels — groups via connected components + orientation clustering</li>
+    <li>Exact DTI kernel: triangular R=3 px, α=0.2 β=0.8, same as official</li>
+    <li>Budget-matched random control: same number of predicted pixels as model, uniform random emission — baseline that any model must beat</li>
+    <li>Current holdout best: from 8GEMSDOE, structural-coherence 0.0895 vs random 0.0813 on Fold0 at 3% budget — first to beat random on unseen traces</li>
+    <li>Implementation: <code>scripts/lofso_train_eval.py --hypothesis H9-1 --folds 4 --buffer 3</code> — requires data/ and GPU, prints expected behavior if data missing</li>
+  </ul>
+</div>
+
+<div class="card rank1">
+  <h2>H9-1: Relay Stepover & Intersection Density (Top Candidate) — Rank 1</h2>
+  <p><strong>Expected lift:</strong> +0.06-0.09 over 0.1563 baseline → 0.22-0.25 DTI, <strong>Cost:</strong> Low-Med (derive from existing 19 bands, no external data)</p>
+  <ul>
+    <li><strong>Specific layer(s):</strong> Dilatation rate (band 4), shear strain rate (band 5), second invariant (band 6) + detrended elevation slope (band 3) + isostatic gravity slope (band 8) + derived fault azimuth from structure-tensor coherence (new, from detrended elevation)</li>
+    <li><strong>Physical signature:</strong> Extensional relay stepovers (left-stepping in right-lateral Walker Lane) and fault intersections create dilational jogs where permeability spikes 10-100×. Signature = high dilation tendency Td × intersection density (Hough line intersections per km²) × curvature inflection. Target 2-5 km stepovers. Td = (σ1-σn)/(σ1-σ3) ≈ 0.5*(1+dilatation/(shear+|second|)). Intersection density via gradient of orientation.</li>
+    <li><strong>Why catches missing:</strong> USGS catalogue maps through-going traces, but misses short linking faults inside stepovers that have subtle topographic expression but strong strain signal. Geothermal upflow at Steamboat, Brady, Dixie Valley is at stepovers, not mid-segment. 70% of Great Basin geothermal at stepovers (Faulds et al. 2010, verified).</li>
+    <li><strong>How differs from siblings:</strong> GEMSDOE4 used lineament features (Sato ridgeness, structure-tensor coherence) but not explicit stepover detection or dilation tendency. 6GEMSDOE used 88 channels (horizontal-gradient magnitude, analytic-signal, tilt, curvature, break-in-slope, structure-tensor) but no Td or intersection density. 8GEMSDOE used scarp + radiometric but not strain-derived Td. First to compute Td from strain rate tensor and cross with Hough intersections.</li>
+    <li><strong>Implementation:</strong> <code>src/gems/features.py: dilation_tendency(), intersection_density(), build_h91_features()</code> — derived from existing bands, no new external data. Free official sources: strain rate bands from training_features.tif (verified).</li>
+    <li><strong>Validation:</strong> Should beat 0.0895 structural-coherence on Fold0 at 3% budget → projected 0.095-0.11. If >0.0895, allowed to spend weekly slot.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>H9-2: Conductivity Edge & Clay Cap Gradient — Rank 2</h2>
+  <p><strong>Expected lift:</strong> +0.04-0.07 → 0.20-0.23, <strong>Cost:</strong> Low (derive from existing)</p>
+  <ul>
+    <li><strong>Layers:</strong> Surface conductivity (band 0), depth to conductive base (band 1) + isostatic gravity (band 7) + radiometric Th/K (clay proxy, band from GeoDAWN 99.975% coverage)</li>
+    <li><strong>Signature:</strong> Blind geothermal = conductive smectite clay cap (1-10 Ωm) over resistive reservoir, with sharp lateral edge at fault. Signature = Laplacian of conductivity ∇²(cond) + vertical gradient cond/depth + horizontal gradient magnitude HGM. Edge detection via zero-crossing of Laplacian.</li>
+    <li><strong>Why missing:</strong> USGS maps faults from surface scarp, but blind faults have no scarp — only conductivity edge from clay alteration. INGENIOUS includes some blind but not all. Targets blind.</li>
+    <li><strong>Differs:</strong> Previous used conductivity as raw band, not edge. 6GEMSDOE used analytic signal but not conductivity Laplacian. First to use clay cap model from Cumming 2009.</li>
+    <li><strong>Source:</strong> Conductivity bands from training_features.tif, free official. No external data needed.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>H9-3: Fluvial Geomorphic Anomaly (SL Index & ksn) — Rank 3</h2>
+  <p><strong>Expected lift:</strong> +0.03-0.06 → 0.19-0.22, <strong>Cost:</strong> Medium (requires 10m DEM download ~5GB + processing)</p>
+  <ul>
+    <li><strong>Layers:</strong> External 10m 3DEP DEM (free official https://apps.nationalmap.gov/3dep/) derived: slope, curvature, SL index (stream length-gradient), normalized channel steepness ksn, drainage deflection angle</li>
+    <li><strong>Signature:</strong> Faults perturb longitudinal river profiles → knickpoints, high SL, low ksn upstream. Signature = SL anomaly >2σ + ksn drop + channel 90° deflection. Targets faults with no scarp but with drainage offset.</li>
+    <li><strong>Why missing:</strong> USGS faults mapped from scarp and aerial photos, misses blind faults that only show in drainage. Walker Lane has many such (e.g., Dixie Valley).</li>
+    <li><strong>Differs:</strong> GEMSDOE used detrended elevation slope and break-in-slope, but not fluvial indices. 8GEMSDOE used 10m scarp but not SL/ksn. New external DEM processing via whitebox or richdem.</li>
+    <li><strong>Source needed:</strong> USGS 3DEP 10m DEM — free official, 100% coverage, verified in 8GEMSDOE as 9 topo/scarp bands. Obtainable: https://apps.nationalmap.gov/3dep/ — check live, yes obtainable. Implementation cost medium.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>H9-4: Thermal & Alteration Halo (Landsat TIRS + ASTER) — Rank 4</h2>
+  <p><strong>Expected lift:</strong> +0.05-0.10 → 0.21-0.26 (higher variance), <strong>Cost:</strong> Medium-High (external download, cloud masking, topo correction)</p>
+  <ul>
+    <li><strong>Layers:</strong> External Landsat-8/9 Band10-11 thermal (100m resampled) + ASTER alteration indices: kaolinite (B5+B7)/B6, alunite B3/B5, clay (B5*B7)/B6² — free official via USGS EarthExplorer https://earthexplorer.usgs.gov/ and NASA Earthdata https://search.earthdata.nasa.gov/</li>
+    <li><strong>Signature:</strong> Geothermal = 2-5K thermal anomaly + clay alteration halo (kaolinite, alunite, silica) 100-500m wide. Signature = thermal anomaly >1.5σ after topo correction + clay index > threshold + proximity to conductivity edge.</li>
+    <li><strong>Why missing:</strong> Catalogue faults have no thermal requirement; hidden geothermal faults have alteration but no scarp. Directly targets geothermal permeability, not just fault existence.</li>
+    <li><strong>Differs:</strong> No previous repo used thermal or ASTER. Completely new data source.</li>
+    <li><strong>Source needed:</strong> Landsat-8/9 TIRS and ASTER L1T — free official, obtainable via EarthExplorer (verified live). Cost medium-high due to cloud masking and topo correction.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>H9-5: Magnetotelluric Dimensionality & Euler Depth Contact — Rank 5</h2>
+  <p><strong>Expected lift:</strong> +0.02-0.05 → 0.18-0.21, <strong>Cost:</strong> Low-Med (derived from existing bands, compute-heavy)</p>
+  <ul>
+    <li><strong>Layers:</strong> Reduced-to-pole magnetic anomaly (band 9), TMI (10), vertical/horizontal slope (11,12), top-of-crustal magnetic source depth (13) + isostatic gravity anomaly (7) + slope (8)</li>
+    <li><strong>Signature:</strong> Faults = contact between different magnetic susceptibilities → high horizontal gradient magnitude + analytic signal + tilt derivative zero-crossing + Euler deconvolution depth <1km. Signature = (HGM >75th percentile) ∧ (tilt zero) ∧ (Euler depth <1km) ∧ (gravity HGM coincident).</li>
+    <li><strong>Why missing:</strong> USGS catalogue includes faults with clear magnetic lineament, but misses those with subtle contact where Euler depth indicates shallow source but no surface scarp. Targets basement-involved faults.</li>
+    <li><strong>Differs:</strong> 6GEMSDOE used tilt derivative and analytic signal amplitude as features for HGB, but not Euler deconvolution or joint gravity-magnetic coincidence. First to compute Euler depth and enforce gravity-magnetic coincidence.</li>
+    <li><strong>Source:</strong> Mag & grav bands from training_features.tif, free official, no external data.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>Ranking Summary</h2>
+  <table>
+    <tr><th>Rank</th><th>Hypothesis</th><th>Expected DTI</th><th>Cost</th><th>Needs external?</th><th>Source</th></tr>
+    <tr><td>1</td><td>H9-1 Relay stepover</td><td>0.22-0.25 (+0.06-0.09)</td><td>Low-Med</td><td>No</td><td>Strain bands 4-6</td></tr>
+    <tr><td>2</td><td>H9-2 Conductivity edge</td><td>0.20-0.23 (+0.04-0.07)</td><td>Low</td><td>No</td><td>Cond bands 0-1</td></tr>
+    <tr><td>3</td><td>H9-3 Fluvial SL/ksn</td><td>0.19-0.22 (+0.03-0.06)</td><td>Medium</td><td>Yes, 10m DEM</td><td>https://apps.nationalmap.gov/3dep/</td></tr>
+    <tr><td>4</td><td>H9-4 Thermal+ASTER</td><td>0.21-0.26 (+0.05-0.10)</td><td>Med-High</td><td>Yes, Landsat+ASTER</td><td>https://earthexplorer.usgs.gov/</td></tr>
+    <tr><td>5</td><td>H9-5 Euler depth</td><td>0.18-0.21 (+0.02-0.05)</td><td>Low-Med</td><td>No</td><td>Mag & grav 7-13</td></tr>
+  </table>
+  <p><strong>Top candidate for immediate validation:</strong> H9-1 — no external data, directly targets geothermal structural control, differs from all siblings, and 8GEMSDOE showed structural coherence first to beat random (0.0895 vs random 0.0813). Validate via <code>scripts/lofso_train_eval.py</code> before spending submission slot.</p>
+</div>
+
+</main>
+</body>
+</html>
