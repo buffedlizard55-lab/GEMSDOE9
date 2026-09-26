@@ -1,11 +1,11 @@
 /**
  * GEMSDOE9 geotiff_writer.js — minimal browser GeoTIFF writer, no dependencies
- * 
+ *
  * Writes a single-band float32 GeoTIFF, EPSG:32611, 100m, 3292x3730
  * - Supports max-compat mode (all finite, no nodata) to avoid "Predicted values must be in range [0,1]"
  * - Supports spec mode (NaN outside footprint, nodata=nan)
  * - Self-checks by re-reading own bytes
- * 
+ *
  * This is a simplified rewrite, not a copy of previous repos, to ensure uniqueness.
  * Previous repos used RLE payload; we generate from Float32Array directly.
  */

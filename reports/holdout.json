@@ -1,0 +1,163 @@
+{
+  "protocol": "2x2 quadrants, 3px interior collar, exact R=3 DTI; catalogue-only proxy",
+  "budget_fraction": 0.03,
+  "folds": [
+    {
+      "quadrant": [
+        0,
+        0
+      ],
+      "valid_pixels": 2437728,
+      "truth_pixels": 29188,
+      "target_budget": 73132,
+      "arms": {
+        "basin_anti_gradient": {
+          "dti": 0.022354908544769434,
+          "emitted": 73132
+        },
+        "depth_edge_only": {
+          "dti": 0.015523030421127888,
+          "emitted": 73132
+        },
+        "gravity_edge_only": {
+          "dti": 0.03188990456872471,
+          "emitted": 73132
+        },
+        "random_17": {
+          "dti": 0.1693564533185285,
+          "emitted": 73132
+        },
+        "random_23": {
+          "dti": 0.1697064642854079,
+          "emitted": 73132
+        },
+        "random_41": {
+          "dti": 0.17340130865008738,
+          "emitted": 73132
+        }
+      }
+    },
+    {
+      "quadrant": [
+        0,
+        1
+      ],
+      "valid_pixels": 1354248,
+      "truth_pixels": 12426,
+      "target_budget": 40627,
+      "arms": {
+        "basin_anti_gradient": {
+          "dti": 0.029432657457437738,
+          "emitted": 40627
+        },
+        "depth_edge_only": {
+          "dti": 0.015614496139549258,
+          "emitted": 40627
+        },
+        "gravity_edge_only": {
+          "dti": 0.05763577868892001,
+          "emitted": 40627
+        },
+        "random_17": {
+          "dti": 0.14453516193789825,
+          "emitted": 40627
+        },
+        "random_23": {
+          "dti": 0.1530263436831671,
+          "emitted": 40627
+        },
+        "random_41": {
+          "dti": 0.14789817090329752,
+          "emitted": 40627
+        }
+      }
+    },
+    {
+      "quadrant": [
+        1,
+        0
+      ],
+      "valid_pixels": 557440,
+      "truth_pixels": 9350,
+      "target_budget": 16723,
+      "arms": {
+        "basin_anti_gradient": {
+          "dti": 0.03242947574255655,
+          "emitted": 16723
+        },
+        "depth_edge_only": {
+          "dti": 0.032012001285204796,
+          "emitted": 16723
+        },
+        "gravity_edge_only": {
+          "dti": 0.048575166255436404,
+          "emitted": 16723
+        },
+        "random_17": {
+          "dti": 0.18227455980605092,
+          "emitted": 16723
+        },
+        "random_23": {
+          "dti": 0.18203167633384987,
+          "emitted": 16723
+        },
+        "random_41": {
+          "dti": 0.18960782541858204,
+          "emitted": 16723
+        }
+      }
+    },
+    {
+      "quadrant": [
+        1,
+        1
+      ],
+      "valid_pixels": 782991,
+      "truth_pixels": 9508,
+      "target_budget": 23490,
+      "arms": {
+        "basin_anti_gradient": {
+          "dti": 0.03368117588147756,
+          "emitted": 23490
+        },
+        "depth_edge_only": {
+          "dti": 0.03275225255319905,
+          "emitted": 23490
+        },
+        "gravity_edge_only": {
+          "dti": 0.030648680323967555,
+          "emitted": 23490
+        },
+        "random_17": {
+          "dti": 0.17095670529540188,
+          "emitted": 23490
+        },
+        "random_23": {
+          "dti": 0.1665318409472756,
+          "emitted": 23490
+        },
+        "random_41": {
+          "dti": 0.17457869079089958,
+          "emitted": 23490
+        }
+      }
+    }
+  ],
+  "mean_dti": {
+    "basin_anti_gradient": 0.02947455440656032,
+    "depth_edge_only": 0.02397544509977025,
+    "gravity_edge_only": 0.04218738245926217,
+    "random_17": 0.16678072008946987,
+    "random_23": 0.1678240813124251,
+    "random_41": 0.17137149894071663
+  },
+  "local_best_control": 0.17137149894071663,
+  "beats_local_controls": false,
+  "approved_for_submission": false,
+  "approval_reason": "Catalogue-only geography holdout does not test hidden expert-new-fault truth or reproduce prior LOFSO controls; no matched current-best proof.",
+  "sha256_inputs": {
+    "training_features.tif": "4371c82e3b8339b807bdffcf4ef59a225520fe2988d521be208ae33743123bc5",
+    "labels.tif": "7ba308ccdc4418b31a178f4f1ef21aaa6e152e4028f2f6f64b01f7eb25ae4093",
+    "sample_submission.tif": "2176d08e485aa2cd2860ce8df539db4faf4d76163b38a4dd8c30a40454d35cbc"
+  }
+}
