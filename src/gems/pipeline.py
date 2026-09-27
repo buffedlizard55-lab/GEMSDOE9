@@ -87,22 +87,61 @@ class CompetitionData:
         )
 
 
+# The organiser's own reference solution masks the nodata sentinel with
+# `X_orig[X_orig < -1e38] = np.nan` before doing anything else
+# (https://github.com/drivendataorg/gems-prize-reference-solution,
+#  unet-mc-cv-reference-solution.ipynb, "Load datasets").  We use the same test.
+NODATA_SENTINEL_THRESHOLD = -1e38
+
+# Filenames, in preference order.  Three different names are in circulation for
+# the same two rasters and the pipeline must not fail on the organiser's choice:
+#   * the problem description says "a GeoTIFF file called training_features.tif"
+#     https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/
+#   * the official reference solution opens data/numeric_features.tif and
+#     data/labels.tif
+#     https://github.com/drivendataorg/gems-prize-reference-solution
+#   * the links circulated with the project brief use existing_faults.tif and
+#     gems-geodawn-numerical-features.tif
+FEATURE_FILENAMES = ("training_features.tif", "numeric_features.tif",
+                     "gems-geodawn-numerical-features.tif")
+LABEL_FILENAMES = ("existing_faults.tif", "labels.tif", "faults.tif")
+
+
+def _resolve(data_dir: Path, candidates: tuple[str, ...]) -> Path:
+    """First existing candidate, else the canonical name for the error message."""
+    for name in candidates:
+        p = data_dir / name
+        if p.exists():
+            return p
+    return data_dir / candidates[0]
+
+
 def load_competition(data_dir: str | Path = "data") -> CompetitionData:
     import rasterio
 
     data_dir = Path(data_dir)
-    feat = data_dir / "training_features.tif"
-    lab = data_dir / "existing_faults.tif"
+    feat = _resolve(data_dir, FEATURE_FILENAMES)
+    lab = _resolve(data_dir, LABEL_FILENAMES)
     if not feat.exists() or not lab.exists():
         raise FileNotFoundError(
             f"missing {feat} or {lab}. The competition data tab needs a DrivenData "
             f"login: https://www.drivendata.org/competitions/306/competition-doe-gems/data/ "
-            f"Place the files in {data_dir}/ and re-run."
+            f"Place the files in {data_dir}/ (any of {FEATURE_FILENAMES} / "
+            f"{LABEL_FILENAMES}) and re-run."
         )
 
     with rasterio.open(feat) as src:
         stack = src.read().astype(np.float32)
         tags = {i: src.tags(i) for i in range(1, src.count + 1)}
+        feat_nodata = src.nodata
+    # nodata -> NaN.  Without this, a -3.4e38 sentinel at the footprint edge
+    # propagates into np.gradient and returns inf, which silently destroys every
+    # gradient/coherence feature (G-3, G-4, G-5).  tests/test_validation.py::K1
+    # pins this.  Sentinel values are caught by the threshold test even when the
+    # file carries no nodata tag at all, which is why both are applied.
+    stack[stack < NODATA_SENTINEL_THRESHOLD] = np.nan
+    if feat_nodata is not None and np.isfinite(feat_nodata):
+        stack[stack == np.float32(feat_nodata)] = np.nan
     with rasterio.open(lab) as src:
         catalogue = src.read(1) >= 1
 
@@ -141,8 +180,30 @@ def _robust_scale(a: np.ndarray) -> np.ndarray:
                    -8, 8).astype(np.float32)
 
 
+def _nan_nearest_fill(a: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Replace NaN with the value of the nearest finite pixel.
+
+    Returns (filled, finite_mask).  Used before differentiating: np.gradient
+    turns a single NaN into NaN in its whole stencil, and a hard sentinel turns
+    into inf.  Filling with the *nearest finite neighbour* keeps the footprint
+    boundary from producing a spurious edge, which a zero-fill would.
+    """
+    from scipy.ndimage import distance_transform_edt
+
+    a = np.asarray(a, dtype=np.float64)
+    finite = np.isfinite(a)
+    if finite.all():
+        return a, finite
+    if not finite.any():
+        return np.zeros_like(a), finite
+    idx = distance_transform_edt(~finite, return_distances=False,
+                                 return_indices=True)
+    return a[tuple(idx)], finite
+
+
 def _grad_mag(a: np.ndarray) -> np.ndarray:
-    gy, gx = np.gradient(a)
+    filled, _ = _nan_nearest_fill(a)
+    gy, gx = np.gradient(filled)
     return np.sqrt(gx * gx + gy * gy)
 
 
@@ -152,7 +213,8 @@ def _structure_coherence(a: np.ndarray, sigma: float = 2.0) -> np.ndarray:
     1 = perfectly linear (fault-like), 0 = isotropic.
     """
     from scipy.ndimage import gaussian_filter
-    gy, gx = np.gradient(a)
+    filled, _ = _nan_nearest_fill(a)
+    gy, gx = np.gradient(filled)
     jxx = gaussian_filter(gx * gx, sigma)
     jyy = gaussian_filter(gy * gy, sigma)
     jxy = gaussian_filter(gx * gy, sigma)

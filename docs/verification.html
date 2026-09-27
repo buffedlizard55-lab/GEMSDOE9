@@ -76,7 +76,7 @@ footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.8rem 1.4rem;co
   <h1>GEMSDOE9 — Geothermal Fault Discovery Beyond the Catalogue</h1>
   <p>DOE GEMS Prize entry. Faults in the GeoDAWN region (northwestern Nevada, UTM 11N
      EPSG:32611, 100 m) that are <em>not</em> in the USGS/INGENIOUS catalogue.</p>
-  <div class="badges"><span class='badge '>Checks run</span><span class='badge ok'>82/82 checks pass</span><span class='badge warn'>7 problems found</span></div>
+  <div class="badges"><span class='badge '>Checks run</span><span class='badge ok'>99/99 checks pass</span><span class='badge warn'>7 problems found</span></div>
 </header>
 <nav class="tabs"><a href='index.html'>Overview</a><a href='executive_summary.html'>How to submit</a><a href='strategy.html'>Strategy &amp; metric</a><a href='hypotheses.html'>Hypotheses G-1..G-5</a><a href='intel.html'>Official intel</a><a href='data.html'>Data &amp; access</a><a href='verification.html' class='on'>Verification &amp; flags</a><a href='leaderboard.html'>Leaderboard</a><a href='research.html'>Research notes</a><a href='sources.html'>Sources</a></nav>
 <main>
@@ -92,7 +92,7 @@ footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.8rem 1.4rem;co
 <section class="card">
   <h2>Reproduce every number on this site</h2>
   <pre><code>bash scripts/run_all_checks.sh</code></pre>
-  <p>Runs, in order: the 82/82 passing test suite, the strategy experiment, the submission
+  <p>Runs, in order: the 99/99 passing test suite, the strategy experiment, the submission
      validator, and the site build. Nothing on this site is typed by hand — it is rendered
      by <code>scripts/build_site.py</code> from <code>scripts/site_data.py</code> (verified
      claims + source URLs) and from the JSON artifacts the scripts emit.</p>
@@ -159,7 +159,7 @@ footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.8rem 1.4rem;co
   <h2>Known gaps</h2>
   <ul>
     <li><strong>No model has been trained.</strong> The data is behind a login and this
-        environment has no outbound network. Every detector is written and, where a closed
+        competition data tab requires a DrivenData login. Every detector is written and, where a closed
         form exists, unit-tested — and none has been run on real rasters.</li>
     <li><strong>The band inventory is unverified.</strong> The problem description lists
         layer <em>groups</em>, not an ordered index. All band access is by name from the

@@ -82,19 +82,97 @@ footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.8rem 1.4rem;co
 <main>
 <section>
   <div class="card hero">
-    <h2 style="border:0;padding:0;margin-bottom:.5rem">Five candidate detectors</h2>
-    <p>Ranked by expected value against the metric algebra on the
-       <a href="strategy.html">Strategy</a> page, not by how novel they sound. Each names
-       its layers, the physical signature it targets, why it should catch something the
-       USGS/INGENIOUS catalogue does not contain, and how it differs from every sibling
-       submission and from the previous hypotheses in this repo.</p>
-    <div class="note warn"><b class="lbl">Status of all five</b>
-      Implemented, unit-tested where a closed form exists, and
-      <strong>not validated against real rasters</strong>. The competition data needs a
-      DrivenData login and this environment has no outbound network from the shell. Ranking
-      them is a statement about expected value under the metric algebra plus the published
-      geology, not a measurement. Nothing here is a result.</div>
+    <h2 style="border:0;padding:0;margin-bottom:.5rem">Candidate detectors</h2>
+    <p>G-1..G-5 were the previous set. H-1..H-5 are new this session, and they came
+       out of an audit rather than out of thin air: <strong>5 of the 15 layers the
+       organisers list were read by no detector at all</strong>, and 2 more were
+       recomputed locally instead of using the product that ships with them.
+       <code>python scripts/audit_layer_usage.py</code> reproduces the count from the
+       real <code>.band(...)</code> calls, so it cannot drift from the code.</p>
+    <div class="note warn"><b class="lbl">Status</b>
+      Implemented and unit-tested. <strong>Not validated against real rasters</strong> —
+      the competition data needs a DrivenData login (verified 2026-09-27: the data tab
+      redirects to <code>/accounts/login/</code>). The synthetic validation below is
+      included so the ranking is not taken on faith, and its verdict is
+      <strong>do not spend a slot yet</strong>.</div>
   </div>
+</section>
+
+<section>
+  <h2>The layer audit — where the untried signal actually was</h2>
+  <div class="card">
+    <dl class='kv'><dt>Layer list read from</dt><dd><a href='https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#provided-features'>the official problem description</a></dd><dt>Reproduce</dt><dd><code>python scripts/audit_layer_usage.py</code></dd><dt>Unread by G-1..G-5</dt><dd>slope of detrended elevation, shear strain rate, isostatic gravity anomaly, slope of the isostatic gravity anomaly, density of earthquakes</dd><dt>Unread after H-1..H-5</dt><dd>none — 0 of 15</dd><dt>Reading</dt><dd>G-1..G-5 left 5 of the 15 officially listed layers unread by any detector, and read 2 more (the vertical and horizontal slope of TMI) by recomputing them locally instead of using the product the organiser ships. Before this session&amp;#x27;s G-4 fix the count was 7 of 15. H-1..H-3 and the G-4 fix take it to 0 of 15.</dd></dl>
+  </div>
+</section>
+
+<section>
+  <h2>New candidates H-1 … H-5</h2>
+  <div class="note"><b class="lbl">Ranked by expected value per unit of cost</b>
+    H-2 first on a-priori reasoning (no external data, one layer, targets the dominant
+    fault type). <strong>That ranking was then tested and H-2 came last but one.</strong>
+    The table below is the test, not the guess.</div>
+
+    <div class="card">
+      <h3>H-1 · Seismogenic organisation <span class="pill bad">unvalidated on real data</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>density of earthquakes; shear strain rate (both listed in the official feature list, both previously unread by any detector in this repo)</dd><dt>Physical signature</dt><dd>earthquake-density structure-tensor coherence x shear strain rate, catalogue suppressed</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>The catalogue is a geomorphic map: it maps scarps. A fault that is slipping now but has no preserved scarp is invisible to it. Seismicity is the one shipped layer that measures present activity rather than past surface expression.</dd><dt>How it differs from anything already in this repo</dt><dd>No detector in this repo, G-1..G-5, reads earthquake density or shear strain rate. Verified by scripts/audit_layer_usage.py.</dd><dt>Implementation cost</dt><dd>Low - both layers already in training_features.tif</dd><dt>Expected value</dt><dd>Medium. Seismicity products are spatially smoothed, so localisation at 100 m may be weak. NEITHER IS VALIDATED ON REAL DATA. Ranked by expected value per unit of implementation cost, on the reasoning in the docstring, not on measurement.</dd><dt>External data</dt><dd>none</dd><dt>Source / licence</dt><dd>competition layers only</dd><dt>Implemented in</dt><dd><code>src/gems/hypotheses.py::h1_seismogenic_organization</code></dd></dl>
+    </div>
+    <div class="card">
+      <h3>H-2 · Strike-integrated scarp step (cross-profile asymmetry) <span class="pill bad">unvalidated on real data</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>detrended elevation</dd><dt>Physical signature</dt><dd>max over 8 azimuths of |&amp;lt;|Dn f|&amp;gt;_(+2px) - &amp;lt;|Dn f|&amp;gt;_(-2px)| after anisotropic along-strike smoothing (400 m along, 100 m across)</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>A scarp is the direct surface expression of a young normal fault. The catalogue-gap class the organisers define -- a continuation past a mapped tip, a splay, a parallel strand -- is precisely a scarp nobody has traced yet.</dd><dt>How it differs from anything already in this repo</dt><dd>G-5 is an ALONG-strike knickpoint detector. This is a CROSS-strike step/asymmetry detector. Different operator, different failure mode. Along-strike integration is what neither G-5 nor a plain gradient does.</dd><dt>Implementation cost</dt><dd>Low - one layer already in training_features.tif</dd><dt>Expected value</dt><dd>Highest per unit cost: no external data, one layer, and it targets the dominant fault type in the region. NEITHER IS VALIDATED ON REAL DATA. Ranked by expected value per unit of implementation cost, on the reasoning in the docstring, not on measurement.</dd><dt>External data</dt><dd>none</dd><dt>Source / licence</dt><dd>competition layers only</dd><dt>Implemented in</dt><dd><code>src/gems/hypotheses.py::h2_scarp_step_matched_filter</code></dd></dl>
+    </div>
+    <div class="card">
+      <h3>H-3 · Gravity-gradient lineament <span class="pill bad">unvalidated on real data</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>isostatic gravity anomaly; slope of the isostatic gravity anomaly (both listed in the official feature list, both previously unread)</dd><dt>Physical signature</dt><dd>horizontal-gradient magnitude of the isostatic anomaly, gated by the shipped gravity-slope layer and by along-strike gradient-azimuth coherence</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>Gravity sees through basin fill. Blind faults under the valleys have no scarp and no aerial expression, so a geomorphic catalogue cannot contain them; their density offset survives.</dd><dt>How it differs from anything already in this repo</dt><dd>G-4 is magnetics. Density and magnetisation decorrelate in the Great Basin (much of the basement is non-magnetic granite), so the two are not redundant.</dd><dt>Implementation cost</dt><dd>Low - both layers already in training_features.tif</dd><dt>Expected value</dt><dd>Medium. Isostatic anomalies are long-wavelength, so the achievable spatial precision at 100 m is the open question. NEITHER IS VALIDATED ON REAL DATA. Ranked by expected value per unit of implementation cost, on the reasoning in the docstring, not on measurement.</dd><dt>External data</dt><dd>none</dd><dt>Source / licence</dt><dd>competition layers only</dd><dt>Implemented in</dt><dd><code>src/gems/hypotheses.py::h3_gravity_lineament</code></dd></dl>
+    </div>
+    <div class="card">
+      <h3>H-4 · Multi-depth conductance persistence <span class="pill bad">blocked — needs external data</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>INGENIOUS electrical conductance, five depth ranges 2-200 km (NOT in training_features.tif)</dd><dt>Physical signature</dt><dd>resultant length of the doubled conductance-gradient azimuth averaged over depth slices, x mean gradient magnitude</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>Blind faults under basin fill. Depth persistence is what suppresses G-3&amp;#x27;s admitted dominant false positive -- any lithologic contact makes a conductivity edge.</dd><dt>How it differs from anything already in this repo</dt><dd>G-3 uses one surface layer and a log-ratio. This uses a depth stack and a cross-depth azimuth statistic. It is the fix for G-3&amp;#x27;s failure mode, not a variant of it.</dd><dt>Implementation cost</dt><dd>Medium + a one-time external download</dd><dt>Expected value</dt><dd>Medium-High if the depth slices resolve, but blocked on data. NEITHER IS VALIDATED ON REAL DATA. Ranked by expected value per unit of implementation cost, on the reasoning in the docstring, not on measurement.</dd><dt>External data</dt><dd>INGENIOUS electrical conductance maps, 5 depth ranges 2-200 km</dd><dt>Source / licence</dt><dd>DOI 10.5066/P9TWT2LU (free, USGS/DOE), listed at https://gdr.openei.org/submissions/1391</dd><dt>Implemented in</dt><dd><code>src/gems/hypotheses.py::h4_conductance_depth_persistence</code></dd></dl>
+    </div>
+    <div class="card">
+      <h3>H-5 · Hydrothermal expression alignment <span class="pill bad">blocked — needs external data</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>INGENIOUS paleo-geothermal features (sinter, tufa) and Quaternary volcanic vents (NOT in training_features.tif)</dd><dt>Physical signature</dt><dd>point-lineament detector: best of 12 azimuths of the count of expression points aligned through a pixel within 1.5 px, normalised by local point density</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>A thermal spring or sinter deposit is direct evidence of fault-controlled fluid upflow and can exist where the controlling fault has no surface trace at all.</dd><dt>How it differs from anything already in this repo</dt><dd>Nothing in this repo uses hydrothermal surface-expression data. It is also the only candidate whose evidence is the geothermal system itself rather than a proxy for structure.</dd><dt>Implementation cost</dt><dd>Medium + a one-time external download (the files are small: 82 kB and 9.4 MB)</dd><dt>Expected value</dt><dd>Medium-High and the most sponsor-aligned, but blocked on data. NEITHER IS VALIDATED ON REAL DATA. Ranked by expected value per unit of implementation cost, on the reasoning in the docstring, not on measurement.</dd><dt>External data</dt><dd>paleo_geothermal_regional.zip (82 kB) and great_basin_q_volcanics.zip (9.4 MB)</dd><dt>Source / licence</dt><dd>DOI 10.15121/1881483, CC-BY 4.0, https://gdr.openei.org/submissions/1391</dd><dt>Implemented in</dt><dd><code>src/gems/hypotheses.py::h5_hydrothermal_alignment</code></dd></dl>
+    </div>
+</section>
+
+<section>
+  <h2>Spatially-blocked validation of H-1…H-3</h2>
+  <div class="card">
+    <dl class='kv'><dt>Reproduce</dt><dd><code>python scripts/validate_hypotheses.py --n 512 --folds 4 --select</code></dd><dt>Stored result</dt><dd><code>docs/hypotheses_validation.json</code></dd><dt>Baseline every candidate must beat</dt><dd>distance to the nearest catalogue pixel, exp(-d/2)</dd><dt>Selection phantom</dt><dd>seed 11</dd><dt>Evaluation phantoms (never used for selection)</dt><dd>seeds 23, 37, 41, 53, 67</dd><dt>Protocol</dt><dd>A configuration grid is declared in code, the best configuration per detector is chosen on ONE phantom (seed 11), and the chosen configuration is then scored on five phantoms that were never used for selection. Reporting a chosen configuration&amp;#x27;s score on the phantom it was chosen on is the exact selection bias that produced the withdrawn +0.1379 corridor lift.</dd></dl>
+  </div>
+  <table><thead><tr><th></th><th>Candidate</th><th>mean ΔAUC over proximity&lt;br&gt;(unseen phantoms)</th><th>beat baseline</th></tr></thead><tbody><tr><td><strong>H-3</strong></td><td>Gravity-gradient lineament [no catalogue suppression]</td><td><span class='pos'>+0.0525</span></td><td>4/5</td></tr><tr><td><strong>H-1</strong></td><td>Seismogenic organisation [suppression tau=2]</td><td><span class='pos'>+0.0291</span></td><td>4/5</td></tr><tr><td><strong>G-5</strong></td><td>Fluvial knickpoint and drainage deflection</td><td><span class='pos'>+0.0101</span></td><td>3/5</td></tr><tr><td><strong>H-2</strong></td><td>Strike-integrated scarp step filter [no suppression]</td><td><span class='neg'>-0.0773</span></td><td>1/5</td></tr><tr><td><strong>G-3</strong></td><td>Clay-cap conductivity edge</td><td><span class='neg'>-0.1140</span></td><td>0/5</td></tr><tr><td><strong>G-1</strong></td><td>Catalogue geometry completion</td><td><span class='neg'>-0.1618</span></td><td>0/5</td></tr><tr><td><strong>G-4</strong></td><td>Magnetic contact edge</td><td><span class='neg'>-0.2078</span></td><td>0/5</td></tr><tr><td><strong>G-2</strong></td><td>Geodetic dilation-tendency ridge</td><td><span class='neg'>-0.2183</span></td><td>0/5</td></tr></tbody></table>
+  <div class="note bad"><b class="lbl">Verdict</b>NO CANDIDATE CLEARS THE BAR. The best result is +0.053 AUC over proximity on 4 of 5 phantoms, and the second best is +0.029. Both are small relative to the spread the phantoms themselves produce -- one seed on H-1 is -0.092 -- and the number moved by 0.014 when a numerical defect in the harness was fixed, which is a direct measure of how little separates these candidates. No submission slot should be spent on any of them on the strength of this experiment.</div>
+  <div class="note warn"><b class="lbl">The headline finding</b>H-1 looked like the clear winner on the selection phantom (+0.102 AUC) and collapsed to +0.029 on unseen ones, while H-2 -- the top candidate by a-priori reasoning -- is negative on both. The ranking does not survive contact with a second phantom. That is the protocol working, not failing.</div>
+  <div class="note"><b class="lbl">What this cannot show</b>The phantom&#x27;s physics are OUR forward model. H-1 wins partly because seismicity was generated as a fault-parallel ribbon, and H-3 partly because every fault was given a gravity step. Both are the most favourable possible construction for those detectors. Decoys were included so a win means something, but a win here is necessary and never sufficient. Nothing in this output is evidence about the GeoDAWN region.</div>
+</section>
+
+<section>
+  <h2>The previous five — G-1 … G-5</h2>
+
+    <div class="card">
+      <h3>G-1 · Catalogue geometry completion
+        <span class="pill bad">unvalidated — needs data/</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>existing_faults.tif (as geometry); optional detrended-elevation slope + magnetic HGM modulation</dd><dt>Physical signature</dt><dd>endpoint proximity x local skeleton curvature x azimuthal deviation, gated to &amp;lt;=3 px (300 m = the metric kernel support) outside the catalogue</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>Staff have stated that &amp;#x27;new fault&amp;#x27; means any fault pixel not already captured by USGS/INGENIOUS and CAN include newly mapped geometry of an existing fault system. Continuations past mapped tips, splays and parallel strands are therefore both (a) common in the scored set and (b) located exactly where the catalogue says to look. Every sibling submission treated the catalogue as a target to copy instead of as a pointer.</dd><dt>Cost</dt><dd>Low - no new data, pure raster geometry</dd><dt>External data needed</dt><dd>none</dd><dt>Implemented in</dt><dd><code>src/gems/features.py::g1_catalogue_geometry</code></dd></dl>
+    </div>
+    <div class="card">
+      <h3>G-2 · Geodetic dilation-tendency ridge
+        <span class="pill bad">unvalidated — needs data/</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>dilatation rate; second invariant of the strain rate tensor</dd><dt>Physical signature</dt><dd>Td = 0.5 + T/(4*sqrt(I2 - T^2/4)) (Simpson &amp;amp; Reiling 2008), x structure-tensor coherence of the same layers</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>Strain rate is a smoothed regional quantity: it responds to incipient and short structures inside basins where there is no scarp and no aerial coverage. The catalogue is a surface map; this is a subsurface one.</dd><dt>Cost</dt><dd>Low - both layers are already in training_features.tif</dd><dt>External data needed</dt><dd>none</dd><dt>Implemented in</dt><dd><code>src/gems/features.py::g2_dilation_tendency_ridge</code></dd></dl>
+    </div>
+    <div class="card">
+      <h3>G-3 · Clay-cap conductivity edge
+        <span class="pill bad">unvalidated — needs data/</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>surface conductivity; depth to conductive base</dd><dt>Physical signature</dt><dd>|grad log(sigma)| x log(sigma / depth_to_base): a scale-free lateral discontinuity of a conductive alteration cap over a resistive reservoir</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>Blind faults under basin fill have no scarp, no aerial expression and no offset drainages. Their only surface signature is the clay/serpentinite halo, which the electro-magnetic layers resolve and the surface catalogue does not.</dd><dt>Cost</dt><dd>Low - both layers are already in training_features.tif</dd><dt>External data needed</dt><dd>none</dd><dt>Implemented in</dt><dd><code>src/gems/features.py::g3_clay_cap_edge</code></dd></dl>
+    </div>
+    <div class="card">
+      <h3>G-4 · Magnetic contact edge
+        <span class="pill bad">unvalidated — needs data/</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>reduced-to-pole magnetic anomaly; total magnetic intensity; horizontal and vertical slope of TMI; top-of-crustal source depth</dd><dt>Physical signature</dt><dd>horizontal-gradient maximum at a tilt-derivative zero crossing, weighted by a shallow (&amp;lt;1 km) Euler-style source depth</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>Basement-involved faults offset the magnetic basement beneath a cover that hides the surface trace. The catalogue maps the surface; magnetics see the offset. The coincidence constraint is what keeps this from firing on every lithologic contact.</dd><dt>Cost</dt><dd>Low-Med - all four layers are in training_features.tif; the tilt derivative and Euler-style depth are the compute</dd><dt>External data needed</dt><dd>none</dd><dt>Implemented in</dt><dd><code>src/gems/features.py::g4_magnetic_contact</code></dd></dl>
+    </div>
+    <div class="card">
+      <h3>G-5 · Fluvial knickpoint and drainage deflection
+        <span class="pill bad">unvalidated — needs data/</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>detrended elevation; slope of detrended elevation; optional 10 m USGS 3DEP DEM (free, official)</dd><dt>Physical signature</dt><dd>second-derivative ridges in the along-strike slope (knickpoints) plus local circular variance of the downslope azimuth (deflection)</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>An offset drainage survives even when the scarp is buried in colluvium, which is the usual preservation state for young Walker Lane scarps. Detrending removes the regional range-front tilt so the residual is local structure.</dd><dt>Cost</dt><dd>Low with the competition&amp;#x27;s own detrended-elevation layers; Medium with a 10 m 3DEP DEM (https://apps.nationalmap.gov/3dep/)</dd><dt>External data needed</dt><dd>none</dd><dt>Implemented in</dt><dd><code>src/gems/features.py::g5_fluvial_knickpoint</code></dd></dl>
+    </div>
 </section>
 
 <section>

@@ -182,14 +182,30 @@ def g4_magnetic_contact(data: CompetitionData) -> np.ndarray:
 
     hgm_rtp = _grad_mag(rtp)
     hgm_tmi = _grad_mag(tmi)
-    # Tilt derivative of a 2-D potential field: atan(V / HGM).  Its zero
+
+    # Prefer the slope products the competition ships over locally recomputed
+    # gradients: they are the organiser's own filtered derivatives.  Verified
+    # unused by every prior revision of this repo -- 7 of the 15 layers listed
+    # in the problem description were read by no detector at all
+    # (scripts/audit_layer_usage.py).  Fall back to a local gradient when a band
+    # is absent, so the detector still runs.  The lookups are written out
+    # literally rather than passed through a helper so the audit script, which
+    # scans for `.band(...)`, can see them.
+    try:
+        vertical = _robust_scale(np.nan_to_num(
+            data.band("vertical_slope", "vertical slope"), nan=0.0))
+    except KeyError:
+        vertical = _robust_scale(_grad_mag(rtp))
+    try:
+        hgm = _robust_scale(np.nan_to_num(
+            data.band("horizontal_slope", "horizontal slope"), nan=0.0))
+    except KeyError:
+        hgm = _robust_scale(_grad_mag(tmi))
+
+    # Tilt derivative of a 2-D potential field: atan(V / H).  Its zero
     # crossings mark source edges regardless of amplitude, which is why it is
     # used to *gate* the horizontal-gradient magnitude rather than added to it.
-    gy, gx = np.gradient(_robust_scale(rtp))
-    vertical = np.hypot(gy, gx) + 1e-8
-    gy2, gx2 = np.gradient(_robust_scale(tmi))
-    hgm = np.hypot(gy2, gx2) + 1e-8
-    tilt = np.degrees(np.arctan2(vertical, hgm))
+    tilt = np.degrees(np.arctan2(np.abs(vertical), np.abs(hgm) + 1e-8))
     tilt_edge = 1.0 - np.abs(tilt) / 90.0
 
     score = 0.6 * _robust_scale(hgm_rtp) + 0.4 * _robust_scale(hgm_tmi)

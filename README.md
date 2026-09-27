@@ -20,10 +20,169 @@
 | | |
 |---|---|
 | **Can I submit today?** | **Yes.** `docs/downloads/` holds one valid GeoTIFF that passes all 14 format gates. The download button is the first thing on the site. |
-| **Is it a prediction?** | **No.** It is a format-check placeholder. The competition rasters are behind a DrivenData login and this environment has no outbound network, so **no model has been trained**. |
-| **How close is a real model?** | The pipeline is written end to end and gated: `python scripts/build_submission.py --holdout-gate` refuses to write a model submission unless it beats a budget-matched random control **and** a catalogue-only baseline on a spatially-blocked holdout. |
-| **What *is* proven?** | The metric algebra, the submission shape, and the fact that the previous version of this site was shipping unreadable files. All three are reproduced by `bash scripts/run_all_checks.sh`. |
+| **Is it a prediction?** | **No.** It is a format-check placeholder. The competition rasters are behind a DrivenData login, so **no model has been trained**. |
+| **Should you spend a submission slot on the new ideas?** | **No.** Five new candidates were written and put through a spatially-blocked holdout. The best cleared the proximity baseline by **+0.053 AUC on 4 of 5 phantoms**, the second best by +0.029. Both are inside the noise. See [New candidates](#new-candidates-h-1--h-5-and-what-the-holdout-said). |
+| **What *is* proven?** | The metric algebra, the submission shape, and 99 automated checks. `bash scripts/run_all_checks.sh` reproduces all of it. |
 | **Single biggest lever** | 0.1563 is a catalogue copy. 0.3049 needs **2.01×** the recall. See [Why 0.1563](#why-01563-keeps-repeating). |
+| **What was actually blocking us** | Not the network. Five of the fifteen layers the organisers ship were read by **no detector at all**. See [The layer audit](#the-layer-audit). |
+
+---
+
+## This session: what was verified, what was wrong, what changed
+
+Every claim below was produced by running something in this checkout on 2026-09-27.
+Where a previous revision of this README asserted something that turned out to be
+false, the false claim is named.
+
+### 1. The "no outbound network" claim was false, and it was hiding a fix
+
+The previous README and `docs/data.html` both said the environment *"denies outbound
+HTTPS from the shell entirely (`curl` exit 35), so no URL resolves — official or
+mirrored."* Measured, host by host:
+
+| Host | Result |
+|---|---|
+| `github.com`, `codeload.github.com` | **HTTP 200** — the official reference-solution tarball (1,319,246 bytes) downloaded |
+| `pypi.org`, `files.pythonhosted.org` | **HTTP 200** — `pip install -r requirements.txt` works |
+| `drivendata.org`, `gdr.openei.org`, `usgs.gov`, `dropbox.com`, `s3.amazonaws.com` | `curl` exit 35 (`SSL_ERROR_SYSCALL`) |
+
+It is a **host allowlist, not a blackout**. The distinction mattered: downloading the
+official reference solution is what exposed bugs 2 and 3 below. And the DrivenData
+pages *are* readable through the research fetch tool, which is how every quote on the
+site was verified — so "no URL resolves" was wrong in two separate ways.
+
+**The real blocker is unchanged and is not the network:** the data tab redirects to
+`/accounts/login/` (verified 2026-09-27). No credentials, no workaround.
+
+### 2. `load_competition` never masked the nodata sentinel — it would have destroyed every gradient detector
+
+The official reference solution does `X_orig[X_orig < -1e38] = np.nan` before anything
+else. We did not. Reproduced directly through our own functions:
+
+```
+_grad_mag on a patch containing a -3.4e38 footprint edge  ->  max = inf
+_structure_coherence on the same patch                    ->  overflow to NaN
+```
+
+`inf` propagates into every gradient- and coherence-based feature: G-3, G-4, G-5 and
+the pipeline's feature stack. **No submission built from this code on real data would
+have been interpretable, and nothing would have raised.** Fixed in
+`pipeline.load_competition`, and `_grad_mag` / `_structure_coherence` now nearest-fill
+NaN before differentiating so a footprint boundary does not become a fake edge.
+Pinned by tests K1–K3.
+
+### 3. The pipeline would not have found the files
+
+Three names are in circulation for the same two rasters, verified against three
+official sources:
+
+| Source | Feature raster | Label raster |
+|---|---|---|
+| [Problem description](https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/) | `training_features.tif` | "vector and raster formats" |
+| [Official reference solution](https://github.com/drivendataorg/gems-prize-reference-solution) | `data/numeric_features.tif` | `data/labels.tif` |
+| Links circulated with the brief | `gems-geodawn-numerical-features.tif` | `existing_faults.tif` |
+
+`load_competition` hard-coded one pair and raised `FileNotFoundError` on the others.
+It now resolves any of them. Pinned by tests K4–K5.
+
+### 4. `ndarray.ptp()` was removed in NumPy 2.0
+
+`requirements.txt` permits `numpy>=1.26`; the installed interpreter has 2.4.6. Five
+calls in the new detector code raised `AttributeError` on first run and were being
+swallowed by a broad `except`. Replaced with a `_minmax()` helper. Pinned by test K6,
+which parses with `ast` so a docstring mentioning `a.ptp()` cannot mask a real call.
+
+### 5. G-4 was recomputing two products the organisers already ship
+
+`g4_magnetic_contact` computed the vertical and horizontal slope of TMI locally and
+never read the bands provided. Worse, a local variable named `vertical` held the
+gradient magnitude of the *RTP* field, not a vertical derivative. It now prefers the
+shipped bands and falls back to a local gradient only if they are absent. Pinned by
+test K10, which swaps the bands and asserts the output moves.
+
+---
+
+## The layer audit
+
+The cheapest untried signal was not a new dataset. It was data we already had.
+`python scripts/audit_layer_usage.py` scans the real `.band(...)` calls in `src/gems/`
+and reports which of the [15 layers the organisers list](https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#provided-features)
+no detector reads. Run on the code as it stood at the start of this session:
+
+**5 of 15 layers were read by no detector at all** — `shear strain rate`, `isostatic
+gravity anomaly`, `slope of the isostatic gravity anomaly`, `density of earthquakes`,
+`slope of detrended elevation` — and 2 more (`vertical`/`horizontal slope of TMI`) were
+recomputed locally instead of read. That is 7 of 15.
+
+After the G-4 fix and H-1…H-3: **0 of 15**. The count is computed, not asserted, so it
+cannot drift from the code.
+
+---
+
+## New candidates H-1 … H-5, and what the holdout said
+
+Full detail on [`docs/hypotheses.html`](docs/hypotheses.html); implemented in
+[`src/gems/hypotheses.py`](src/gems/hypotheses.py).
+
+| # | Candidate | Layers | Signature | Cost |
+|---|---|---|---|---|
+| **H-1** | Seismogenic organisation | earthquake density + shear strain rate *(both previously unread)* | seismicity structure-tensor coherence × shear strain rate, catalogue suppressed | Low |
+| **H-2** | Strike-integrated scarp step | detrended elevation + its shipped slope layer | max over 8 azimuths of the *asymmetry* of the cross-strike slope, after 400 m along-strike integration | Low |
+| **H-3** | Gravity-gradient lineament | isostatic gravity anomaly + its shipped slope *(both previously unread)* | HGM gated by along-strike gradient-azimuth coherence | Low |
+| **H-4** | Multi-depth conductance persistence | INGENIOUS conductance, 5 depths 2–200 km — **external** | cross-depth azimuth persistence of the conductance gradient | Med + data |
+| **H-5** | Hydrothermal expression alignment | INGENIOUS sinter/tufa + Quaternary vents — **external** | point-lineament detector over discharge points, normalised by local density | Med + data |
+
+H-4 and H-5 are the fix for a failure mode G-3's own docstring admits — *any* lithologic
+contact makes a conductivity edge — and the only candidates whose evidence is the
+geothermal system itself rather than a proxy for structure. Both raise a `ValueError`
+naming their DOI if the data is absent rather than silently degrading into a different
+detector (test K9).
+
+### Validated before a slot was spent — and the answer was no
+
+```bash
+python scripts/validate_hypotheses.py --n 512 --folds 4 --select
+```
+
+A configuration grid is declared in code, the best configuration per detector is chosen
+on **one** phantom (seed 11), and the chosen configuration is then scored on **five
+phantoms never used for selection**. The phantom contains deliberate decoys — symmetric
+ridgelines, a regional monocline, a diffuse seismic swarm, and lithologic contacts with
+a density step but no fault — so a win means the operator separates a fault from things
+that look like one, not that it inverts its own generator.
+
+| Candidate | mean ΔAUC over proximity (unseen phantoms) | beat baseline |
+|---|---|---|
+| **H-3** Gravity-gradient lineament | **+0.0525** | 4/5 |
+| **H-1** Seismogenic organisation | **+0.0291** | 4/5 |
+| G-5 Fluvial knickpoint | +0.0101 | 3/5 |
+| **H-2** Scarp step filter | **−0.0773** | 1/5 |
+| G-3 Clay-cap conductivity edge | −0.1140 | 0/5 |
+| G-1 Catalogue geometry completion | −0.1618 | 0/5 |
+| G-4 Magnetic contact edge | −0.2078 | 0/5 |
+| G-2 Dilation-tendency ridge | −0.2183 | 0/5 |
+
+**Three things worth more than the table.**
+
+1. **The a-priori ranking was wrong.** H-2 was ranked first on reasoning — no external
+   data, one layer, targets the dominant fault type in the region. It came last but one.
+   Ranking hypotheses is not validating them.
+2. **The ranking does not survive a second phantom.** On the selection phantom H-1
+   looked like a clear winner at **+0.102**. On unseen phantoms it collapsed to
+   **+0.030** and H-3 overtook it. That is precisely the selection bias that produced
+   the withdrawn `+0.1379` corridor lift in the previous revision — now caught by the
+   protocol rather than by a reviewer.
+3. **Verdict: do not spend a submission slot on any of these.** +0.053 AUC on 4 of 5
+   phantoms is small next to the spread the phantoms themselves produce — one seed on
+   H-1 is −0.092 — and the headline number moved by **0.014** when a numerical defect in
+   the harness was fixed. A candidate whose measured advantage is smaller than the
+   effect of fixing a bug in the measuring instrument is not a result.
+
+**And the caveat that limits all of it:** the phantom's physics are *our* forward model.
+H-1 wins partly because seismicity was generated as a fault-parallel ribbon, and H-3
+partly because every fault was given a gravity step — the most favourable possible
+construction for each. A win here is necessary and never sufficient. Nothing in this
+experiment is evidence about the GeoDAWN region.
 
 ---
 
@@ -284,8 +443,11 @@ python scripts/build_submission.py --holdout-gate
 ```
 
 **We are not going to ask for credentials, and there is no workaround.** The data tab needs
-an account, and this environment denies outbound HTTPS from the shell entirely (`curl` exit
-35), so no URL resolves — official or mirrored. The Dropbox links in the project brief are
+an account. That is the blocker, not the network: measured host by host on 2026-09-27,
+`github.com`, `codeload.github.com` and `pypi.org` all return HTTP 200, while
+`drivendata.org`, `gdr.openei.org`, `usgs.gov` and `dropbox.com` fail with `curl` exit 35.
+It is a host allowlist, not a blackout — and the allowlist is what let us download the
+official reference solution and find the nodata bug. The Dropbox links in the brief are
 unreachable *and* their provenance is unestablished: they are not linked from any DrivenData
 or DOE page. They are not treated as a data source.
 
@@ -313,19 +475,22 @@ GEMSDOE9/
 │   ├── metric.py                 exact DTI, fast + naive, with the official fp_ignore_mask
 │   ├── strategy.py               EQ-1/2/3, the attractor, binarise, build_corridor, sweeps
 │   ├── pipeline.py               data loading, band-by-name, folds, model, holdout, final field
-│   ├── features.py               one detector per hypothesis
+│   ├── features.py               one detector per hypothesis (G-1..G-5)
+│   ├── hypotheses.py             the new candidates (H-1..H-5)
 │   └── io.py                     rasterio helpers
 ├── scripts/
 │   ├── build_submission.py       the artifact, the unique name, the note, the gates
 │   ├── validate_submission.py    14 hard gates; exit 1 means do not upload
 │   ├── validate_holdout.py       blocked holdout gate  +  --strategy metric-shape experiment
+│   ├── validate_hypotheses.py    spatially-blocked holdout for H-1..H-5; --select is the gate
+│   ├── audit_layer_usage.py      which official layers no detector reads
 │   ├── prepare_data.py           band inventory + grid cross-checks
 │   ├── build_site.py             renders docs/ from site_data.py + live artifacts
 │   ├── site_data.py              every claim the site may make, with its source URL
 │   ├── verify_rules_quotes.py    source reachability + the quotes actually used
 │   ├── download_competition_data.sh
 │   └── run_all_checks.sh         one command, the whole audit
-├── tests/test_validation.py      82 checks
+├── tests/test_validation.py      99 checks
 ├── requirements.txt
 └── data/README.md
 ```
@@ -341,7 +506,9 @@ bash scripts/run_all_checks.sh      # everything: deps, tests, experiment, artif
 Individually:
 
 ```bash
-python tests/test_validation.py                              # 82 checks
+python tests/test_validation.py                              # 99 checks
+python scripts/audit_layer_usage.py                          # which layers no detector reads
+python scripts/validate_hypotheses.py --select               # the H-1..H-5 gate
 python scripts/validate_holdout.py --strategy                # metric-shape experiment
 python scripts/build_submission.py                           # rebuild the artifact
 python scripts/validate_submission.py docs/downloads/*.tif  # 14 gates
@@ -349,7 +516,41 @@ python scripts/build_site.py                                 # re-render docs/
 python scripts/build_site.py --check                         # fail if docs/ is stale
 ```
 
-Nothing needs a GPU or the network.
+Nothing needs a GPU. `pip install -r requirements.txt` is enough — verified on a clean
+checkout this session (numpy 2.4.6, scipy 1.17.1, scikit-learn 1.9.1, rasterio 1.4.4).
+
+---
+
+## Verified intel, with the links to check it yourself
+
+Read live on 2026-09-27. Each row is quoted verbatim on
+[`docs/intel.html`](docs/intel.html) next to its URL.
+
+| What | Who | Source |
+|---|---|---|
+| Catalogue pixels are masked out of the penalty terms | chrisk-dd, DrivenData Staff, 2026-09-16 | [thread 11516](https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516) |
+| "new fault" = any fault pixel not already captured by USGS/INGENIOUS, **including newly mapped geometry of an existing system** | chrisk-dd, Staff, 2026-09-23 | [thread 11536](https://community.drivendata.org/t/where-do-you-draw-the-line/11536) |
+| **The label sources, fault types and coverage will not be disclosed** | chrisk-dd, Staff, 2026-09-23 | [thread 11527](https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527) |
+| Phase 2 — the $250K pool — is scored on a label set built from **expert review of all Phase 1 submissions** | chrisk-dd, Staff, 2026-09-23 | [thread 11527](https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527) |
+| Submission allowance resets on a rolling window | chrisk-dd, Staff, 2026-09-17 | [thread 11524](https://community.drivendata.org/t/weekly-submissions/11524) |
+| The label raster has **one** band; the "Band 19" print in the reference notebook is a bug | chrisk-dd, Staff, 2026-09-23 | [thread 11529](https://community.drivendata.org/t/why-does-the-training-fault-labels-file-in-the-data-tab-have-a-single-band-while-the-labels-in-the-reference-solution-repo-have-19-bands/11529) |
+
+**Two of these change strategy and neither was in the previous README.**
+
+- **The label sources are closed.** Any plan that depends on reverse-engineering how the
+  experts mapped the test faults is dead. What *is* open is the layer inventory, which is
+  exactly where the layer audit found the untried signal.
+- **Phase 2 is built from our own submissions.** Recall converts into Phase 2 label
+  additions independently of Phase 1 rank. A submission that is a defensible superset of
+  plausible new structure is worth more than one tuned to the public board — which is an
+  argument for the corridor shape and against over-fitting.
+
+**On the band count.** The reference notebook's feature loop is
+`for i in range(1, src.count + 1)`, and its label cell then prints `f"Band {i}"` using the
+leaked loop variable. Staff confirm that value is **19**. So `training_features.tif` has
+19 bands and the label raster has 1. That is an *inference from a corroborated chain*, not
+an official statement, and it is labelled as such: `prepare_data.py` still reads the real
+per-band tags and never trusts it.
 
 ---
 
@@ -390,11 +591,12 @@ are and what the closed form predicts they mean.
 
 **Limitations, stated plainly**
 
-1. **No model has been trained.** The data needs a login and this environment has no
-   outbound network. Every detector is written and, where a closed form exists, unit-tested —
-   and none has seen a real raster.
+1. **No model has been trained.** The data tab needs a DrivenData login. Every detector is
+   written and unit-tested — and none has seen a real raster.
 2. **The band inventory is unverified.** The problem description lists layer *groups*, not an
-   ordered index. All band access is by name from the GeoTIFF tags and a miss raises.
+   ordered index. All band access is by name from the GeoTIFF tags and a miss raises. The
+   19-band figure is an inference (see above), not an official statement, and the code does
+   not depend on it.
 3. **The 0.1563 explanation is a derivation, not a measurement.** It is consistent with every
    observation available and it is falsifiable, but the submitted files are not public.
 4. **The mask-alignment risk is unquantified.** The scorer masks the organiser's rasterised
@@ -405,30 +607,45 @@ are and what the closed form predicts they mean.
    competition scores faults that are *not* in the catalogue. No public holdout can measure
    that, because those labels do not exist publicly. The protocol can prove a detector
    carries information beyond "where the catalogue already is" — nothing more.
-6. **The Rules PDF is not quoted.** `docs.nlr.gov` is unreachable from the shell, so the
-   previous revision's claimed SHA256 and four quoted sentences could not be checked. They
-   have been removed; the PDF is linked for review and nothing is attributed to it.
+6. **The H-1…H-5 validation is on synthetic physics we invented.** It killed H-2 and showed
+   the ranking is unstable, which is worth knowing. It is not evidence that H-1 or H-3 works
+   in Nevada, and the phantom was constructed in each detector's favour.
+7. **The Rules PDF is not quoted.** `docs.nlr.gov` is not on the sandbox allowlist
+   (`curl` exit 35), so the previous revision's claimed SHA256 and four quoted sentences
+   could not be checked. They have been removed; the PDF is linked for review and nothing is
+   attributed to it.
+8. **H-4 and H-5 have never been run.** They need two small INGENIOUS files
+   ([DOI 10.15121/1881483](https://gdr.openei.org/submissions/1391), CC-BY 4.0, 82 kB and
+   9.4 MB). The sources are verified to exist and to be free; the shell cannot download
+   them. Both raise rather than silently degrade.
 
 **Next session, in priority order**
 
-1. **Place the data.** One command unlocks everything: download into `data/`, run
+1. **Place the data.** Still the single unlock: download into `data/`, run
    `prepare_data.py`, confirm the band inventory, then `validate_holdout.py`. Everything
-   downstream is already written.
-2. **Run the real holdout for G-1 first.** It costs nothing but CPU and is the detector the
-   official intel points at. Report the four arms; if `corridor` does not beat
-   `catalogue-only`, the hypothesis is dead and no slot is spent.
-3. **Calibrate the corridor on training folds only.** Sweep halo ∈ {0…6} px and paid budget
+   downstream is already written. Any of the three filename conventions will resolve.
+2. **Re-run the layer audit against the real band tags.**
+   `python scripts/audit_layer_usage.py` currently reports against the layer *names* in the
+   problem description. On real data, confirm each name actually matches a band tag — a name
+   that does not match raises, which is the intended behaviour, but it means the detector is
+   silently absent until it is fixed.
+3. **Run the real holdout for H-3 and H-1 first**, not G-1. On synthetic physics H-3
+   (+0.039) and H-1 (+0.030) were the only candidates that beat proximity; G-1 was
+   −0.16. **If a detector does not beat distance-to-catalogue on real data, it is dead and
+   no slot is spent.** Use `validate_hypotheses.py --select`, not a single phantom.
+4. **Fetch the two INGENIOUS files** and run H-4 and H-5 for real. They are the only
+   candidates that fix G-3's admitted false-positive problem, they are small, and they are
+   the only ones whose evidence is the geothermal system itself.
+5. **Calibrate the corridor on training folds only.** Sweep halo ∈ {0…6} px and paid budget
    ∈ {0.2 %…16 %}. The synthetic sweep has an interior optimum near 1 %; confirm or refute
    it on real data.
-4. **Set `mask_safety_px`.** Compare the organiser's template against `existing_faults.tif`
+6. **Set `mask_safety_px`.** Compare the organiser's template against `existing_faults.tif`
    to bound the alignment error, then pick the safety dilation from that bound.
-5. **Then G-2 and G-3**, which need no external data and target blind faults — a class the
-   catalogue provably under-samples.
-6. **Only then** consider G-4, and G-5 with a 10 m 3DEP DEM.
 7. **Phase 2 is a different objective.** Experts build the expanded label set from the Phase 1
-   submissions. A high-recall submission that is a superset of the Phase 1 truth converts
-   into Phase 2 label additions. Do not over-tune to the public board, and do not submit the
-   same file twice under different names.
+   submissions ([thread 11527](https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527),
+   staff, verified). A high-recall submission that is a defensible superset of plausible new
+   structure converts into Phase 2 label additions. Do not over-tune to the public board,
+   and do not submit the same file twice under different names.
 
 ---
 

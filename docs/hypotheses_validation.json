@@ -1,0 +1,144 @@
+{
+  "select_seed": 11,
+  "eval_seeds": [
+    23,
+    37,
+    41,
+    53,
+    67
+  ],
+  "baseline_select_auc": 0.7116663210656885,
+  "results": [
+    {
+      "key": "G-1",
+      "name": "G-1 Catalogue geometry completion",
+      "mean_delta_auc": -0.161751788274773,
+      "per_seed": [
+        -0.1968,
+        -0.1971,
+        -0.0924,
+        -0.1587,
+        -0.1637
+      ],
+      "mean_auc": 0.5348038732511039,
+      "n_wins": 0,
+      "n_seeds": 5
+    },
+    {
+      "key": "G-2",
+      "name": "G-2 Geodetic dilation-tendency ridge",
+      "mean_delta_auc": -0.21832895591146118,
+      "per_seed": [
+        -0.2531,
+        -0.2406,
+        -0.1618,
+        -0.2657,
+        -0.1706
+      ],
+      "mean_auc": 0.4782267056144157,
+      "n_wins": 0,
+      "n_seeds": 5
+    },
+    {
+      "key": "G-3",
+      "name": "G-3 Clay-cap conductivity edge",
+      "mean_delta_auc": -0.11397828511557409,
+      "per_seed": [
+        -0.1406,
+        -0.0874,
+        -0.0773,
+        -0.1642,
+        -0.1004
+      ],
+      "mean_auc": 0.5825773764103028,
+      "n_wins": 0,
+      "n_seeds": 5
+    },
+    {
+      "key": "G-4",
+      "name": "G-4 Magnetic contact edge",
+      "mean_delta_auc": -0.2077727261679489,
+      "per_seed": [
+        -0.2182,
+        -0.2822,
+        -0.1192,
+        -0.2058,
+        -0.2133
+      ],
+      "mean_auc": 0.48878293535792794,
+      "n_wins": 0,
+      "n_seeds": 5
+    },
+    {
+      "key": "G-5",
+      "name": "G-5 Fluvial knickpoint and drainage deflection",
+      "mean_delta_auc": 0.010082849218854962,
+      "per_seed": [
+        -0.0013,
+        -0.0853,
+        0.0959,
+        0.04,
+        0.0012
+      ],
+      "mean_auc": 0.7066385107447319,
+      "n_wins": 3,
+      "n_seeds": 5
+    },
+    {
+      "key": "H-1",
+      "name": "H-1 Seismogenic organisation [suppression tau=2]",
+      "mean_delta_auc": 0.029125391825091752,
+      "per_seed": [
+        0.0255,
+        0.0259,
+        0.0588,
+        -0.0918,
+        0.1273
+      ],
+      "mean_auc": 0.7256810533509686,
+      "n_wins": 4,
+      "n_seeds": 5
+    },
+    {
+      "key": "H-2",
+      "name": "H-2 Strike-integrated scarp step (cross-profile asymmetry) [no catalogue suppression]",
+      "mean_delta_auc": -0.07728259051130895,
+      "per_seed": [
+        -0.1139,
+        -0.137,
+        0.0363,
+        -0.103,
+        -0.0688
+      ],
+      "mean_auc": 0.619273071014568,
+      "n_wins": 1,
+      "n_seeds": 5
+    },
+    {
+      "key": "H-3",
+      "name": "H-3 Gravity-gradient lineament [no catalogue suppression]",
+      "mean_delta_auc": 0.05253123400373176,
+      "per_seed": [
+        0.0298,
+        -0.0238,
+        0.1472,
+        0.0111,
+        0.0985
+      ],
+      "mean_auc": 0.7490868955296087,
+      "n_wins": 4,
+      "n_seeds": 5
+    }
+  ],
+  "chosen": {
+    "baseline": "BASELINE dist-to-catalogue",
+    "G-1": "G-1 Catalogue geometry completion",
+    "G-2": "G-2 Geodetic dilation-tendency ridge",
+    "G-3": "G-3 Clay-cap conductivity edge",
+    "G-4": "G-4 Magnetic contact edge",
+    "G-5": "G-5 Fluvial knickpoint and drainage deflection",
+    "H-1": "H-1 Seismogenic organisation [suppression tau=2]",
+    "H-2": "H-2 Strike-integrated scarp step (cross-profile asymmetry) [no catalogue suppression]",
+    "H-3": "H-3 Gravity-gradient lineament [no catalogue suppression]"
+  }
+}
