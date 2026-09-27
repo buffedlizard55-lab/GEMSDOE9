@@ -80,7 +80,8 @@ def main() -> int:
     else:
         print(f"   UNREACHABLE  {RULES_PDF}")
         print(f"   reason: {detail}")
-        print("   The shell has no outbound network in this environment, so the PDF cannot")
+        print("   The shell cannot reach docs.nlr.gov (curl exit 35, host not on the")
+        print("   sandbox allowlist), so the PDF cannot")
         print("   be fetched, hashed, or quoted from here. The site links it for review and")
         print("   attributes NOTHING to it. The previous revision claimed a SHA256 for it")
         print("   ('50d854b1e0239fe6...') and quoted four sentences from it; neither claim")

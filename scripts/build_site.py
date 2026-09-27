@@ -403,6 +403,13 @@ def _detectors():
     return all_detectors()
 
 
+def _hypotheses():
+    """The H-1..H-5 candidates, read from the module that implements them so the
+    site can never describe a detector the code does not contain."""
+    from src.gems.hypotheses import all_hypotheses
+    return all_hypotheses()
+
+
 # --------------------------------------------------------------------------- #
 def page_exec(ctx):
     man = ctx["manifest"]
@@ -732,22 +739,90 @@ def page_hypo(ctx):
            ("External data needed", esc(det.needs_external or "none")),
            ("Implemented in", Raw(f"<code>src/gems/features.py::{det.fn.__name__}</code>"))])}
     </div>""")
+    hyp_cards = []
+    for hyp in _hypotheses():
+        blocked = bool(getattr(hyp, "external", None))
+        pill = ('<span class="pill bad">blocked — needs external data</span>' if blocked
+                else '<span class="pill bad">unvalidated on real data</span>')
+        hyp_cards.append(f"""
+    <div class="card">
+      <h3>{esc(hyp.key)} · {esc(hyp.title)} {pill}</h3>
+      {kv([("Layers", esc(hyp.layers)),
+           ("Physical signature", esc(hyp.signature)),
+           ("Why it should catch a fault the catalogue misses", esc(hyp.why_missing)),
+           ("How it differs from anything already in this repo", esc(hyp.differs)),
+           ("Implementation cost", esc(hyp.cost)),
+           ("Expected value", esc(hyp.expected)),
+           ("External data", esc(hyp.external or "none")),
+           ("Source / licence", esc(hyp.external_source or "competition layers only")),
+           ("Implemented in", Raw(f"<code>src/gems/hypotheses.py::{hyp.fn.__name__}</code>"))])}
+    </div>""")
+
+    V = S.HYPOTHESIS_VALIDATION
+    vrows = [[f"<strong>{esc(k)}</strong>", esc(nm),
+              (f"<span class='pos'>{d:+.4f}</span>" if d > 0
+               else f"<span class='neg'>{d:+.4f}</span>"), esc(w)]
+             for k, nm, d, w in V["results"]]
+
     return f"""
 <section>
   <div class="card hero">
-    <h2 style="border:0;padding:0;margin-bottom:.5rem">Five candidate detectors</h2>
-    <p>Ranked by expected value against the metric algebra on the
-       <a href="strategy.html">Strategy</a> page, not by how novel they sound. Each names
-       its layers, the physical signature it targets, why it should catch something the
-       USGS/INGENIOUS catalogue does not contain, and how it differs from every sibling
-       submission and from the previous hypotheses in this repo.</p>
-    <div class="note warn"><b class="lbl">Status of all five</b>
-      Implemented, unit-tested where a closed form exists, and
-      <strong>not validated against real rasters</strong>. The competition data needs a
-      DrivenData login and this environment has no outbound network from the shell. Ranking
-      them is a statement about expected value under the metric algebra plus the published
-      geology, not a measurement. Nothing here is a result.</div>
+    <h2 style="border:0;padding:0;margin-bottom:.5rem">Candidate detectors</h2>
+    <p>G-1..G-5 were the previous set. H-1..H-5 are new this session, and they came
+       out of an audit rather than out of thin air: <strong>5 of the 15 layers the
+       organisers list were read by no detector at all</strong>, and 2 more were
+       recomputed locally instead of using the product that ships with them.
+       <code>python scripts/audit_layer_usage.py</code> reproduces the count from the
+       real <code>.band(...)</code> calls, so it cannot drift from the code.</p>
+    <div class="note warn"><b class="lbl">Status</b>
+      Implemented and unit-tested. <strong>Not validated against real rasters</strong> —
+      the competition data needs a DrivenData login (verified 2026-09-27: the data tab
+      redirects to <code>/accounts/login/</code>). The synthetic validation below is
+      included so the ranking is not taken on faith, and its verdict is
+      <strong>do not spend a slot yet</strong>.</div>
   </div>
+</section>
+
+<section>
+  <h2>The layer audit — where the untried signal actually was</h2>
+  <div class="card">
+    {kv([("Layer list read from", Raw(f"<a href='{S.LAYER_AUDIT['source']}'>the official problem description</a>")),
+         ("Reproduce", Raw(f"<code>{esc(S.LAYER_AUDIT['reproduce'])}</code>")),
+         ("Unread by G-1..G-5", esc(", ".join(S.LAYER_AUDIT["unused_by_original"]))),
+         ("Unread after H-1..H-5", esc(", ".join(S.LAYER_AUDIT["unused_after_h"]) or "none — 0 of 15")),
+         ("Reading", esc(S.LAYER_AUDIT["note"]))])}
+  </div>
+</section>
+
+<section>
+  <h2>New candidates H-1 … H-5</h2>
+  <div class="note"><b class="lbl">Ranked by expected value per unit of cost</b>
+    H-2 first on a-priori reasoning (no external data, one layer, targets the dominant
+    fault type). <strong>That ranking was then tested and H-2 came last but one.</strong>
+    The table below is the test, not the guess.</div>
+{''.join(hyp_cards)}
+</section>
+
+<section>
+  <h2>Spatially-blocked validation of H-1…H-3</h2>
+  <div class="card">
+    {kv([("Reproduce", Raw(f"<code>{esc(V['reproduce'])}</code>")),
+         ("Stored result", Raw(f"<code>{esc(V['artifact'])}</code>")),
+         ("Baseline every candidate must beat", esc(V["baseline"])),
+         ("Selection phantom", f"seed {V['select_seed']}"),
+         ("Evaluation phantoms (never used for selection)",
+          "seeds " + ", ".join(str(s) for s in V["eval_seeds"])),
+         ("Protocol", esc(V["protocol"]))])}
+  </div>
+  {table(["", "Candidate", "mean ΔAUC over proximity<br>(unseen phantoms)", "beat baseline"], vrows)}
+  <div class="note bad"><b class="lbl">Verdict</b>{esc(V["verdict"])}</div>
+  <div class="note warn"><b class="lbl">The headline finding</b>{esc(V["headline_finding"])}</div>
+  <div class="note"><b class="lbl">What this cannot show</b>{esc(V["caveat"])}</div>
+</section>
+
+<section>
+  <h2>The previous five — G-1 … G-5</h2>
+{''.join(rows)}
 </section>
 
 <section>
@@ -1066,7 +1141,7 @@ def page_verify(ctx):
   <h2>Known gaps</h2>
   <ul>
     <li><strong>No model has been trained.</strong> The data is behind a login and this
-        environment has no outbound network. Every detector is written and, where a closed
+        competition data tab requires a DrivenData login. Every detector is written and, where a closed
         form exists, unit-tested — and none has been run on real rasters.</li>
     <li><strong>The band inventory is unverified.</strong> The problem description lists
         layer <em>groups</em>, not an ordered index. All band access is by name from the

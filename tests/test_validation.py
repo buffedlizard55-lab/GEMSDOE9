@@ -24,6 +24,14 @@ Covers
   I. Metric masking: the free core is exactly free, and a region-scoped sweep
      equals a direct region evaluation. Both sides of the scope leak.
   J. Feature memory: G-5 is O(N), not the 324 bytes-per-pixel sliding window.
+  K. The data contract and hypotheses H-1..H-5: the nodata sentinel is
+     masked (K1-K3), the reference solution's filenames resolve (K4-K5),
+     nothing calls ndarray.ptp() (K6, removed in NumPy 2.0), the shipped
+     hypotheses run (K8), the external ones refuse rather than silently
+     becoming a different detector (K9), G-4 reads the slope bands it is
+     handed (K10), no official layer is left unread (K11), the anisotropic
+     smoother is genuinely anisotropic (K12), and tau=inf disables catalogue
+     suppression rather than zeroing the field (K13).
 """
 
 from __future__ import annotations
@@ -553,7 +561,7 @@ def main() -> int:
     for fn in (test_metric, test_algebra, test_corridor, test_dilation_tendency,
                test_browser_writer, test_folds, test_validator,
                test_corridor_budget_exactness, test_masking_and_selection_invariants,
-               test_feature_memory):
+               test_feature_memory, test_data_contract_and_hypotheses):
         try:
             fn()
         except Exception as e:  # noqa: BLE001
@@ -584,6 +592,236 @@ def main() -> int:
         pass
     return 1 if failed else 0
 
+
+
+# --------------------------------------------------------------------------- #
+# K. The data contract and the new hypotheses H-1..H-5
+#
+#    Everything in this section was found by actually running the code against
+#    a real raster, not by reading it.  K1 and K3 in particular are bugs that
+#    were live in the shipped tree.
+# --------------------------------------------------------------------------- #
+def _write_tiny_stack(path, bands, names, nodata=None):
+    import rasterio
+    from rasterio.transform import from_origin
+
+    h, w = bands[0].shape
+    tr = from_origin(243350.0, 4508550.0, 100.0, 100.0)
+    with rasterio.open(path, "w", driver="GTiff", height=h, width=w,
+                       count=len(bands), dtype="float32", crs="EPSG:32611",
+                       transform=tr, nodata=nodata) as dst:
+        for i, (b, nm) in enumerate(zip(bands, names), start=1):
+            dst.write(np.asarray(b, dtype=np.float32), i)
+            dst.set_band_description(i, nm)
+
+
+_K_NAMES = ["surface_conductivity", "depth_to_conductive_base",
+            "detrended_elevation", "slope_of_detrended_elevation",
+            "dilatation_rate", "shear_strain_rate",
+            "second_invariant_strain_rate", "isostatic_gravity_anomaly",
+            "isostatic_gravity_slope", "reduced_to_pole_magnetic_anomaly",
+            "total_magnetic_intensity", "vertical_slope_tmi",
+            "horizontal_slope_tmi", "top_of_crustal_source_depth",
+            "earthquake_density"]
+
+
+def _tiny_data(n=64, nodata_frac=0.35, seed=3):
+    """A CompetitionData built from a real GeoTIFF round-trip."""
+    from src.gems.pipeline import load_competition
+
+    rng = np.random.default_rng(seed)
+    sh = (n, n)
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float32)
+    SENT = np.float32(-3.4e38)
+
+    def smooth(scale):
+        from scipy.ndimage import gaussian_filter
+        return gaussian_filter(rng.normal(0, 1, sh).astype(np.float32), scale)
+
+    bands = [100 + 20 * smooth(6),                      # surface conductivity
+             800 + 200 * smooth(8),                     # depth to base
+             50 + 10 * smooth(5) + 0.02 * xx,           # detrended elevation
+             np.hypot(*np.gradient(smooth(5))),          # slope of elevation
+             smooth(7),                                  # dilatation rate
+             np.abs(smooth(6)),                          # shear strain rate
+             np.abs(smooth(6)) + 0.5,                    # second invariant
+             10 * smooth(9),                             # isostatic gravity
+             np.hypot(*np.gradient(smooth(9))),          # gravity slope
+             30 * smooth(8),                             # RTP
+             500 + 100 * smooth(8),                      # TMI
+             np.hypot(*np.gradient(smooth(8))),          # vertical slope TMI
+             np.hypot(*np.gradient(smooth(8))),          # horizontal slope TMI
+             1500 + 500 * smooth(10),                    # source depth
+             np.abs(smooth(4))]                          # earthquake density
+
+    # a nodata region: the footprint edge every real raster has
+    edge = xx > (1 - nodata_frac) * n
+    for b in bands:
+        b[edge] = SENT
+
+    cat = np.zeros(sh, dtype=np.uint8)
+    cat[n // 3:n // 3 + 2, 8:n - 20] = 1
+    cat[10:n - 14, n // 2:n // 2 + 2] = 1
+
+    tmp = Path(tempfile.mkdtemp(prefix="gemsK_"))
+    f = tmp / "training_features.tif"
+    l = tmp / "existing_faults.tif"
+    _write_tiny_stack(f, bands, _K_NAMES)
+    _write_tiny_stack(l, [cat], ["faults"])
+    return load_competition(tmp), tmp, edge
+
+
+def test_data_contract_and_hypotheses():
+    # ---- K1  nodata sentinel must not survive into the feature stack -------
+    # The official reference solution does `X_orig[X_orig < -1e38] = np.nan`
+    # before anything else. Without it, np.gradient over a -3.4e38 footprint
+    # edge returns inf and silently destroys G-3, G-4 and G-5.
+    data, tmp, edge = _tiny_data()
+    try:
+        finite = np.isfinite(data.stack).all()
+        check("K1 load_competition masks the -3.4e38 sentinel to NaN",
+              not finite and not np.isfinite(data.stack[:, edge]).any(),
+              f"all-finite={finite}; nodata region still finite="
+              f"{np.isfinite(data.stack[:, edge]).any()}")
+
+        from src.gems.pipeline import _grad_mag
+        g = _grad_mag(data.stack[2])
+        check("K2 no inf/NaN leaks out of _grad_mag across the footprint edge",
+              bool(np.isfinite(g).all()),
+              f"non-finite gradients: {int((~np.isfinite(g)).sum())}")
+
+        from src.gems.pipeline import _nan_nearest_fill
+        filled, fin = _nan_nearest_fill(data.stack[2])
+        boundary = np.zeros_like(fin)
+        boundary[:, :-1] |= fin[:, :-1] & ~fin[:, 1:]
+        filled_diff = np.abs(np.diff(filled, axis=1))[boundary[:, 1:]]
+        check("K3 nearest-fill does not invent a step at the footprint edge",
+              float(filled_diff.max()) < 200.0,
+              f"max jump across the boundary = {float(filled_diff.max()):.3g}")
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # ---- K4  the reference solution's own filenames must resolve ----------
+    from src.gems.pipeline import load_competition, FEATURE_FILENAMES, LABEL_FILENAMES
+    check("K4 the reference solution's filenames are accepted",
+          "numeric_features.tif" in FEATURE_FILENAMES
+          and "labels.tif" in LABEL_FILENAMES,
+          f"features={FEATURE_FILENAMES} labels={LABEL_FILENAMES}")
+
+    data, tmp, _e = _tiny_data()
+    try:
+        # rename the canonical files to the names the official reference
+        # solution opens, and confirm the pipeline still finds them
+        (tmp / "training_features.tif").rename(tmp / "numeric_features.tif")
+        (tmp / "existing_faults.tif").rename(tmp / "labels.tif")
+        d2 = load_competition(tmp)
+        check("K5 load_competition resolves numeric_features.tif/labels.tif",
+              d2.n_bands == 15 and int(d2.catalogue.sum()) > 0,
+              f"bands={d2.n_bands} catalogue_px={int(d2.catalogue.sum())}")
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # ---- K6  no ndarray.ptp() anywhere (removed in NumPy 2.0) -------------
+    # Parsed with ast, not grepped: the _minmax docstring mentions `a.ptp()`
+    # on purpose, and a text search cannot tell prose from code.
+    import ast
+    offenders = []
+    for rel in ("src/gems/features.py", "src/gems/hypotheses.py",
+                "src/gems/pipeline.py", "src/gems/strategy.py",
+                "src/gems/metric.py"):
+        tree = ast.parse((REPO / rel).read_text())
+        for node in ast.walk(tree):
+            if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                    and node.func.attr == "ptp"):
+                offenders.append(f"{rel}:{node.lineno}")
+    check("K6 no ndarray.ptp() call survives (removed in NumPy 2.0)",
+          not offenders, f"offenders: {offenders}")
+    from src.gems.hypotheses import _minmax
+    v = _minmax(np.array([1.0, 5.0, np.nan, 3.0]))
+    check("K7 _minmax maps to [0,1] and tolerates NaN",
+          float(v.min()) == 0.0 and float(v.max()) == 1.0
+          and bool(np.isfinite(v).all()), f"got {v}")
+
+    # ---- K8  the shipped hypotheses run and return finite fields ----------
+    from src.gems import hypotheses as H
+    data, tmp, _e = _tiny_data()
+    try:
+        for hyp in H.shipped_hypotheses():
+            try:
+                s = hyp(data)
+                ok = (s.shape == data.catalogue.shape
+                      and bool(np.isfinite(s).all())
+                      and float(s.std()) > 0)
+                check(f"K8 {hyp.key} returns a finite, non-constant field", ok,
+                      f"shape={s.shape} finite={bool(np.isfinite(s).all())} "
+                      f"std={float(s.std()):.4g}")
+            except Exception as e:                                  # noqa: BLE001
+                check(f"K8 {hyp.key} returns a finite, non-constant field",
+                      False, f"{type(e).__name__}: {e}")
+
+        # ---- K9  external hypotheses must refuse, not silently degrade ----
+        for hyp in H.external_hypotheses():
+            try:
+                hyp(data)
+                check(f"K9 {hyp.key} refuses to run without its external data",
+                      False, "it ran -- it must raise, or it silently becomes a "
+                             "different detector")
+            except ValueError as e:
+                named = "10.5066" in str(e) or "10.15121" in str(e)
+                check(f"K9 {hyp.key} refuses to run without its external data",
+                      named, f"raised ValueError but named no source: {e}")
+
+        # ---- K10  G-4 must actually read the shipped slope bands ----------
+        from src.gems.features import g4_magnetic_contact
+        base = g4_magnetic_contact(data)
+        data.stack[11] = data.stack[11] * 0.0 + 1.0     # vertical_slope_tmi
+        data.stack[12] = data.stack[12] * 0.0 + 1.0     # horizontal_slope_tmi
+        changed = g4_magnetic_contact(data)
+        check("K10 G-4 reads the shipped vertical/horizontal slope of TMI",
+              not np.allclose(base, changed),
+              "output unchanged when the shipped slope bands were replaced -- "
+              "G-4 is still recomputing them locally")
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # ---- K13  tau=inf must disable suppression, not zero the field -------
+    from src.gems.hypotheses import _suppress_catalogue
+    base = np.ones((16, 16), dtype=np.float64)
+    cat = np.zeros((16, 16), dtype=bool)
+    cat[8, 8] = True
+    unsup = _suppress_catalogue(base, cat, tau=float("inf"))
+    sup = _suppress_catalogue(base, cat, tau=2.0)
+    check("K13 tau=inf disables catalogue suppression instead of zeroing it",
+          np.allclose(unsup, 1.0) and not np.allclose(sup, 1.0),
+          f"tau=inf -> mean {float(unsup.mean()):.4f} (want 1.0); "
+          f"tau=2 -> mean {float(sup.mean()):.4f} (want < 1.0)")
+
+    # ---- K11  every officially listed layer is now read by something ------
+    out = subprocess.run([sys.executable, str(REPO / "scripts" / "audit_layer_usage.py")],
+                         capture_output=True, text=True, cwd=str(REPO))
+    tail = out.stdout
+    line = [l for l in tail.splitlines() if l.startswith("UNUSED after adding")]
+    check("K11 H-1..H-5 leave at most 1 of the 15 listed layers unread",
+          bool(line) and "UNUSED after adding H-1..H-5: 0 of 15" in line[0],
+          line[0] if line else out.stdout[-300:])
+
+    # ---- K12  the anisotropic smoother really is anisotropic --------------
+    from src.gems.hypotheses import anisotropic_gaussian
+    imp = np.zeros((64, 64))
+    imp[32, 32] = 1.0
+    for theta in (0.0, 90.0):
+        k = anisotropic_gaussian(imp, theta, 6.0, 1.0)
+        # second moment along vs across the declared strike
+        yy, xx = np.mgrid[0:64, 0:64]
+        t = np.deg2rad(theta)
+        along = (xx - 32) * np.cos(t) + (yy - 32) * np.sin(t)
+        across = -(xx - 32) * np.sin(t) + (yy - 32) * np.cos(t)
+        w = np.clip(k, 0, None)
+        m_along = float((w * along ** 2).sum() / max(w.sum(), 1e-12))
+        m_across = float((w * across ** 2).sum() / max(w.sum(), 1e-12))
+        check(f"K12 anisotropic_gaussian(theta={theta:g}) smooths along strike",
+              m_along > 3 * m_across,
+              f"second moment along={m_along:.2f} across={m_across:.2f}")
 
 if __name__ == "__main__":
     sys.exit(main())

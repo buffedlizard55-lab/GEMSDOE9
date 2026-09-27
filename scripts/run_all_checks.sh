@@ -27,24 +27,32 @@ if missing:
              "\n  (add --break-system-packages on a PEP-668 system)")
 PY
 
-step "1/6  test suite (metric, algebra, corridor+budget, masking, G-5 memory, writer, folds, validator)"
+step "1/8  test suite (metric, algebra, corridor+budget, masking, G-5 memory, writer, folds, validator, data contract)"
 python3 tests/test_validation.py
 
-step "2/6  metric-shape experiment (what the submission SHAPE is worth)"
+step "2/8  layer usage audit (which official layers no detector reads)"
+python3 scripts/audit_layer_usage.py
+
+step "3/8  hypothesis validation (H-1..H-3, selected on one phantom, scored on five unseen)"
+python3 scripts/validate_hypotheses.py --n 512 --folds 4 --select \
+        --out docs/hypotheses_validation.json
+
+step "4/8  metric-shape experiment (what the submission SHAPE is worth)"
 python3 scripts/validate_holdout.py --strategy   # 5 phantoms, ~2 min; this is the artifact the site renders
 
-step "3/6  submission artifact"
+step "5/8  submission artifact"
 python3 scripts/build_submission.py
 
-step "4/6  independent validation of the shipped artifact"
+step "6/8  independent validation of the shipped artifact"
 python3 scripts/validate_submission.py docs/downloads/*.tif
 
-step "5/6  site build (renders docs/ from scripts/site_data.py + live artifacts)"
+step "7/8  site build (renders docs/ from scripts/site_data.py + live artifacts)"
 python3 scripts/build_site.py
 
-step "6/6  site freshness"
+step "8/8  site freshness"
 python3 scripts/build_site.py --check
 
 printf '\n\033[1;32mALL CHECKS PASS\033[0m\n'
-printf 'Reminder: 0 of 5 detectors are validated and no model has been trained.\n'
-printf 'The data tab needs a DrivenData login. See docs/data.html.\n'
+printf 'Reminder: no candidate clears the holdout gate and no model has been trained.\n'
+printf 'Best candidate is H-3 at +0.0525 AUC over proximity on 4 of 5 unseen phantoms.\n'
+printf 'That is inside the noise. Do not spend a submission slot on it. See README.\n'

@@ -197,27 +197,56 @@ ACCESS = [
     {
         "item": "DrivenData competition data tab",
         "url": COMPETITION["data"],
-        "status": "BLOCKED",
-        "detail": ("Requires a DrivenData account. No credentials are available in this "
-                   "environment and none will be requested. The sandbox also has no "
-                   "outbound network from the shell (TLS handshake fails, curl exit 35), "
-                   "so no file can be fetched here at all -- including the Dropbox "
-                   "mirrors below."),
+        "status": "BLOCKED (login)",
+        "detail": ("Requires a DrivenData account. Verified 2026-09-27: requesting the "
+                   "data tab returns the /accounts/login/ page, so the rasters cannot be "
+                   "fetched without credentials. No credentials are available here and "
+                   "none will be requested or worked around. THIS, and not the network, "
+                   "is the blocker."),
     },
     {
-        "item": "Dropbox mirrors listed in the project brief",
-        "url": "https://www.dropbox.com/scl/fi/3vz9o0wwavi26xaeoxlwr/gems-geodawn-numerical-features.tif?rlkey=je8d8fepqfbst9lnwsq9rkplu&st=zj1lag1r&dl=0",
-        "status": "BLOCKED",
-        "detail": ("Unreachable from the shell: outbound HTTPS is denied. Provenance of "
-                   "these mirrors is also unestablished -- they are not linked from any "
-                   "official DrivenData or DOE page. Treat as unverified third-party "
-                   "copies; the data tab is the authoritative source."),
+        "item": "Shell egress to drivendata.org / usgs.gov / openei.org / dropbox.com",
+        "url": "https://gdr.openei.org/submissions/1391",
+        "status": "BLOCKED (sandbox allowlist)",
+        "detail": ("curl fails with SSL_ERROR_SYSCALL, exit 35. Measured 2026-09-27 on "
+                   "14 hosts. This is a host allowlist, NOT a total network blackout -- "
+                   "see the next row. The practical effect is the same: no raster can be "
+                   "downloaded from this sandbox."),
+    },
+    {
+        "item": "Shell egress to github.com / codeload.github.com / pypi.org",
+        "url": "https://github.com/drivendataorg/gems-prize-reference-solution",
+        "status": "OK",
+        "detail": ("Measured 2026-09-27: HTTP 200. The official reference-solution "
+                   "tarball (1,319,246 bytes) was downloaded from codeload.github.com and "
+                   "is what exposed the nodata and filename defects fixed this session. "
+                   "A previous revision of this site claimed the environment had no "
+                   "outbound HTTPS at all; that was wrong and is corrected here."),
     },
     {
         "item": "DrivenData competition pages, forum, leaderboard",
         "url": COMPETITION["overview"],
         "status": "OK",
-        "detail": "Read live through the research fetch tool. Every quote on this site was read from these pages on 2026-09-27.",
+        "detail": "Reachable through the research fetch tool even though the shell cannot reach them. Every quote on this site was read from these pages on 2026-09-27.",
+    },
+    {
+        "item": "Dropbox mirrors listed in the project brief",
+        "url": "https://www.dropbox.com/scl/fi/3vz9o0wwavi26xaeoxlwr/gems-geodawn-numerical-features.tif?rlkey=je8d8fepqfbst9lnwsq9rkplu&st=zj1lag1r&dl=0",
+        "status": "BLOCKED + UNVERIFIED PROVENANCE",
+        "detail": ("Unreachable from the shell, and not linked from any official "
+                   "DrivenData or DOE page. Treat as unverified third-party copies; the "
+                   "data tab is the authoritative source."),
+    },
+    {
+        "item": "INGENIOUS regional dataset compilation (DOE Geothermal Data Repository)",
+        "url": "https://gdr.openei.org/submissions/1391",
+        "status": "FREE / OFFICIAL / NOT YET FETCHED",
+        "detail": ("DOI 10.15121/1881483, licence CC-BY 4.0, 116.98 MB across 9 files. "
+                   "Read live 2026-09-27. This is the source for hypotheses H-4 "
+                   "(multi-depth electrical conductance, DOI 10.5066/P9TWT2LU) and H-5 "
+                   "(paleo-geothermal sinter/tufa 82 kB and Quaternary vents 9.4 MB). "
+                   "Confirmed reachable through the fetch tool; the shell cannot download "
+                   "it. Nothing in the pipeline depends on it."),
     },
     {
         "item": "USGS 3DEP 10 m DEM",
@@ -233,6 +262,76 @@ ACCESS = [
         "detail": "The competition already ships derived GeoDAWN products. Use the data tab, not this.",
     },
 ]
+
+# --------------------------------------------------------------------------- #
+# Layer usage audit.  Reproduced by scripts/audit_layer_usage.py, which scans
+# the real .band(...) calls in src/gems/ so this table cannot drift from code.
+# Layer names are transcribed from the official problem description.
+# --------------------------------------------------------------------------- #
+LAYER_AUDIT = {
+    "source": "https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#provided-features",
+    "read_on": "2026-09-27",
+    "reproduce": "python scripts/audit_layer_usage.py",
+    "unused_by_original": ["slope of detrended elevation", "shear strain rate",
+                           "isostatic gravity anomaly",
+                           "slope of the isostatic gravity anomaly",
+                           "density of earthquakes"],
+    "unused_after_h": [],
+    "n_layers": 15,
+    "note": ("G-1..G-5 left 5 of the 15 officially listed layers unread by any "
+             "detector, and read 2 more (the vertical and horizontal slope of TMI) "
+             "by recomputing them locally instead of using the product the "
+             "organiser ships. Before this session's G-4 fix the count was 7 of 15. "
+             "H-1..H-3 and the G-4 fix take it to 0 of 15."),
+}
+
+# --------------------------------------------------------------------------- #
+# New candidate hypotheses, and what the spatially-blocked holdout said about
+# them.  Reproduced by scripts/validate_hypotheses.py --select.
+# --------------------------------------------------------------------------- #
+HYPOTHESIS_VALIDATION = {
+    "reproduce": "python scripts/validate_hypotheses.py --n 512 --folds 4 --select",
+    "artifact": "docs/hypotheses_validation.json",
+    "select_seed": 11,
+    "eval_seeds": [23, 37, 41, 53, 67],
+    "protocol": ("A configuration grid is declared in code, the best configuration per "
+                 "detector is chosen on ONE phantom (seed 11), and the chosen "
+                 "configuration is then scored on five phantoms that were never used "
+                 "for selection. Reporting a chosen configuration's score on the "
+                 "phantom it was chosen on is the exact selection bias that produced "
+                 "the withdrawn +0.1379 corridor lift."),
+    "baseline": "distance to the nearest catalogue pixel, exp(-d/2)",
+    "results": [
+        # key, name, mean dAUC on unseen phantoms, n wins / n seeds
+        ("H-3", "Gravity-gradient lineament [no catalogue suppression]", +0.0525, "4/5"),
+        ("H-1", "Seismogenic organisation [suppression tau=2]", +0.0291, "4/5"),
+        ("G-5", "Fluvial knickpoint and drainage deflection", +0.0101, "3/5"),
+        ("H-2", "Strike-integrated scarp step filter [no suppression]", -0.0773, "1/5"),
+        ("G-3", "Clay-cap conductivity edge", -0.1140, "0/5"),
+        ("G-1", "Catalogue geometry completion", -0.1618, "0/5"),
+        ("G-4", "Magnetic contact edge", -0.2078, "0/5"),
+        ("G-2", "Geodetic dilation-tendency ridge", -0.2183, "0/5"),
+    ],
+    "verdict": ("NO CANDIDATE CLEARS THE BAR. The best result is +0.053 AUC over "
+                "proximity on 4 of 5 phantoms, and the second best is +0.029. Both are "
+                "small relative to the spread the phantoms themselves produce -- one "
+                "seed on H-1 is -0.092 -- and the number moved by 0.014 when a "
+                "numerical defect in the harness was fixed, which is a direct measure "
+                "of how little separates these candidates. No submission slot should be "
+                "spent on any of them on the strength of this experiment."),
+    "headline_finding": ("H-1 looked like the clear winner on the selection phantom "
+                         "(+0.102 AUC) and collapsed to +0.029 on unseen ones, while "
+                         "H-2 -- the top candidate by a-priori reasoning -- is negative "
+                         "on both. The ranking does not survive contact with a second "
+                         "phantom. That is the protocol working, not failing."),
+    "caveat": ("The phantom's physics are OUR forward model. H-1 wins partly because "
+               "seismicity was generated as a fault-parallel ribbon, and H-3 partly "
+               "because every fault was given a gravity step. Both are the most "
+               "favourable possible construction for those detectors. Decoys were "
+               "included so a win means something, but a win here is necessary and "
+               "never sufficient. Nothing in this output is evidence about the "
+               "GeoDAWN region."),
+}
 
 # --------------------------------------------------------------------------- #
 # Irregularities. Stated plainly rather than smoothed over.

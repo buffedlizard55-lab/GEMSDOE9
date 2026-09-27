@@ -1,6 +1,6 @@
 {
-  "total": 82,
-  "passed": 82,
+  "total": 99,
+  "passed": 99,
   "failed": 0,
   "checks": [
     {
@@ -329,6 +329,74 @@
     },
     {
       "name": "J4 the measured figure extrapolates to a workable real-grid peak",
+      "ok": true
+    },
+    {
+      "name": "K1 load_competition masks the -3.4e38 sentinel to NaN",
+      "ok": true
+    },
+    {
+      "name": "K2 no inf/NaN leaks out of _grad_mag across the footprint edge",
+      "ok": true
+    },
+    {
+      "name": "K3 nearest-fill does not invent a step at the footprint edge",
+      "ok": true
+    },
+    {
+      "name": "K4 the reference solution's filenames are accepted",
+      "ok": true
+    },
+    {
+      "name": "K5 load_competition resolves numeric_features.tif/labels.tif",
+      "ok": true
+    },
+    {
+      "name": "K6 no ndarray.ptp() call survives (removed in NumPy 2.0)",
+      "ok": true
+    },
+    {
+      "name": "K7 _minmax maps to [0,1] and tolerates NaN",
+      "ok": true
+    },
+    {
+      "name": "K8 H-1 returns a finite, non-constant field",
+      "ok": true
+    },
+    {
+      "name": "K8 H-2 returns a finite, non-constant field",
+      "ok": true
+    },
+    {
+      "name": "K8 H-3 returns a finite, non-constant field",
+      "ok": true
+    },
+    {
+      "name": "K9 H-4 refuses to run without its external data",
+      "ok": true
+    },
+    {
+      "name": "K9 H-5 refuses to run without its external data",
+      "ok": true
+    },
+    {
+      "name": "K10 G-4 reads the shipped vertical/horizontal slope of TMI",
+      "ok": true
+    },
+    {
+      "name": "K13 tau=inf disables catalogue suppression instead of zeroing it",
+      "ok": true
+    },
+    {
+      "name": "K11 H-1..H-5 leave at most 1 of the 15 listed layers unread",
+      "ok": true
+    },
+    {
+      "name": "K12 anisotropic_gaussian(theta=0) smooths along strike",
+      "ok": true
+    },
+    {
+      "name": "K12 anisotropic_gaussian(theta=90) smooths along strike",
       "ok": true
     }
   ]

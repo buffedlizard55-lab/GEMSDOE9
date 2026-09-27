@@ -1,9 +1,15 @@
 # data/ — how to obtain the competition rasters
 
 **Status: blocked, and we are not going around it.** The DrivenData data tab requires an
-account, and this environment additionally denies outbound HTTPS from the shell
-(`curl` exit 35), so no URL resolves — official or mirrored. No credentials will be
-requested, stored, or worked around.
+account. Verified 2026-09-27: requesting it returns the `/accounts/login/` page.
+
+The blocker is the login, **not** the network. Measured host by host the same day:
+`github.com`, `codeload.github.com`, `pypi.org` and `files.pythonhosted.org` return
+HTTP 200 and download normally; `drivendata.org`, `gdr.openei.org`, `usgs.gov`,
+`sciencebase.gov`, `dropbox.com` and `s3.amazonaws.com` fail with `curl` exit 35
+(`SSL_ERROR_SYSCALL`). It is a host allowlist. An earlier revision of this file said no
+URL resolved at all; that was wrong. No credentials will be requested, stored, or worked
+around.
 
 ## What is needed
 
