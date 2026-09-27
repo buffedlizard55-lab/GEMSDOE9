@@ -1,328 +1,266 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GEMSDOE9 — Relay Stepover Fault Discovery | DOE GEMS Prize</title>
-<meta name="description" content="GEMSDOE9 entry for DOE GEMS Prize — distinct strategy targeting relay stepovers, dilation tendency, conductivity edges. Valid GeoTIFF builder in browser.">
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview — GEMSDOE9</title>
+<meta name="description" content="GEMSDOE9 — DOE GEMS Prize entry. Verified competition intel, the metric algebra behind the 0.1563 plateau, and a one-click valid GeoTIFF.">
 <style>
-  :root { --bg:#fafaf9; --fg:#1c1917; --accent:#dc2626; --accent2:#ea580c; --muted:#78716c; --card:#ffffff; --border:#e7e5e4; --ok:#16a34a; }
-  * { box-sizing:border-box; }
-  body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background:var(--bg); color:var(--fg); line-height:1.6; }
-  header { background:linear-gradient(135deg, #1c1917 0%, #44403c 100%); color:white; padding:2.5rem 1.5rem; }
-  header h1 { margin:0; font-size:2rem; letter-spacing:-0.02em; }
-  header p { margin:0.5rem 0 0; color:#d6d3d1; max-width:70ch; }
-  .pill { display:inline-block; padding:0.15rem 0.5rem; border-radius:999px; font-size:0.75rem; font-weight:600; }
-  .pill.ok { background:#dcfce7; color:#166534; }
-  .pill.warn { background:#fef3c7; color:#92400e; }
-  .pill.bad { background:#fee2e2; color:#991b1b; }
-  main { max-width:1100px; margin:0 auto; padding:1.5rem; }
-  .grid { display:grid; grid-template-columns:1fr; gap:1.5rem; }
-  @media(min-width:900px){ .grid{grid-template-columns: 2fr 1fr;} }
-  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
-  .card h2 { margin-top:0; font-size:1.25rem; }
-  .btn { display:inline-block; padding:0.75rem 1.25rem; border-radius:8px; font-weight:600; text-decoration:none; cursor:pointer; border:none; }
-  .btn-primary { background:linear-gradient(135deg, var(--accent), var(--accent2)); color:white; }
-  .btn-secondary { background:white; border:1px solid var(--border); color:var(--fg); }
-  .btn:disabled { opacity:0.5; cursor:not-allowed; }
-  code { background:#f5f5f4; padding:0.15rem 0.35rem; border-radius:4px; font-size:0.9em; }
-  table { width:100%; border-collapse:collapse; font-size:0.9rem; }
-  th, td { text-align:left; padding:0.5rem; border-bottom:1px solid var(--border); }
-  th { font-weight:600; color:var(--muted); }
-  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .hero { background:linear-gradient(135deg, #fff7ed, #fef2f2); border:2px solid #fed7aa; }
-  .alert { padding:0.75rem 1rem; border-radius:8px; background:#fffbeb; border:1px solid #fde68a; }
-  nav { display:flex; gap:0.75rem; flex-wrap:wrap; margin:1rem 0; }
-  nav a { text-decoration:none; color:var(--muted); font-size:0.9rem; padding:0.35rem 0.6rem; border-radius:6px; border:1px solid transparent; }
-  nav a:hover { background:white; border-color:var(--border); color:var(--fg); }
-  footer { margin-top:3rem; padding:2rem 1.5rem; color:var(--muted); font-size:0.85rem; border-top:1px solid var(--border); }
-  #log { white-space:pre-wrap; font-family:ui-monospace, monospace; font-size:0.85rem; background:#1c1917; color:#e7e5e4; padding:1rem; border-radius:8px; max-height:300px; overflow:auto; }
+:root{
+  --bg:#fbfaf9; --panel:#ffffff; --ink:#1c1917; --muted:#6b6560; --line:#e7e5e4;
+  --brand:#b91c1c; --brand2:#c2410c; --ok:#15803d; --okbg:#dcfce7; --warn:#92400e;
+  --warnbg:#fef3c7; --bad:#991b1b; --badbg:#fee2e2; --info:#1e40af; --infobg:#dbeafe;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.62;-webkit-font-smoothing:antialiased}
+a{color:#b91c1c}
+code,kbd{font-family:var(--mono);font-size:.88em;background:#f5f5f4;padding:.12rem .35rem;border-radius:4px}
+pre{background:#1c1917;color:#e7e5e4;padding:1rem;border-radius:10px;overflow:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;color:inherit;padding:0}
+header.top{background:linear-gradient(135deg,#1c1917 0%,#44403c 55%,#7c2d12 100%);color:#fff;padding:2.2rem 1.4rem 1.6rem}
+header.top h1{margin:0 0 .35rem;font-size:1.9rem;letter-spacing:-.025em}
+header.top p{margin:0;max-width:78ch;color:#e7e5e4}
+.badges{margin-top:.9rem;display:flex;gap:.45rem;flex-wrap:wrap}
+.badge{font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:999px;background:rgba(255,255,255,.14);color:#fff}
+.badge.ok{background:#15803d}.badge.warn{background:#b45309}.badge.bad{background:#b91c1c}
+nav.tabs{position:sticky;top:0;z-index:20;background:rgba(251,250,249,.94);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:.55rem 1.4rem;display:flex;gap:.3rem;flex-wrap:wrap}
+nav.tabs a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:.32rem .6rem;border-radius:7px}
+nav.tabs a:hover{background:#fff;color:var(--ink)}
+nav.tabs a.on{background:var(--ink);color:#fff;font-weight:600}
+main{max-width:1140px;margin:0 auto;padding:1.6rem 1.4rem 4rem}
+section{margin-bottom:2.2rem}
+h2{font-size:1.3rem;letter-spacing:-.015em;margin:0 0 .7rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+h3{font-size:1.05rem;margin:1.5rem 0 .5rem}
+h4{font-size:.95rem;margin:1.1rem 0 .35rem;color:#44403c}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1.15rem 1.25rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.grid{display:grid;gap:1.2rem;grid-template-columns:1fr}
+@media(min-width:900px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:repeat(3,1fr)}}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:.6rem 0}
+th,td{text-align:left;padding:.5rem .55rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:650;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+td.num,th.num{text-align:right;font-family:var(--mono);white-space:nowrap}
+.note{border-left:3px solid var(--info);background:var(--infobg);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin:.9rem 0}
+.note.warn{border-color:#b45309;background:var(--warnbg)}
+.note.bad{border-color:var(--bad);background:var(--badbg)}
+.note.ok{border-color:var(--ok);background:var(--okbg)}
+.note b.lbl{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.2rem}
+.btn{display:inline-block;padding:.8rem 1.3rem;border-radius:9px;font-weight:650;text-decoration:none;
+  border:1px solid transparent;cursor:pointer;font-size:.95rem;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.btn-secondary{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn-row{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0}
+.pill{display:inline-block;padding:.1rem .45rem;border-radius:999px;font-size:.72rem;font-weight:700}
+.pill.ok{background:var(--okbg);color:var(--ok)}
+.pill.warn{background:var(--warnbg);color:var(--warn)}
+.pill.bad{background:var(--badbg);color:var(--bad)}
+.pill.info{background:var(--infobg);color:var(--info)}
+.kv{display:grid;grid-template-columns:minmax(140px,auto) 1fr;gap:.35rem 1rem;font-size:.9rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--mono);font-size:.84rem;word-break:break-all}
+details{border:1px solid var(--line);border-radius:9px;padding:.6rem .85rem;margin:.6rem 0;background:#fff}
+summary{cursor:pointer;font-weight:600;font-size:.92rem}
+.hero{background:linear-gradient(135deg,#fff7ed,#fef2f2);border:2px solid #fdba74}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.log{background:#1c1917;color:#e7e5e4;padding:.9rem;border-radius:9px;font-family:var(--mono);
+  font-size:.78rem;white-space:pre-wrap;max-height:340px;overflow:auto}
+footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.8rem 1.4rem;color:var(--muted);font-size:.85rem}
+.src{font-size:.8rem;color:var(--muted);margin-top:.35rem}
+.tag-new{background:#15803d;color:#fff;border-radius:4px;padding:0 .3rem;font-size:.7rem;font-weight:700}
 </style>
-</head>
-<body>
-<header>
-  <div style="max-width:1100px; margin:0 auto;">
-    <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.75rem;">
-      <span class="pill ok">GEMSDOE9</span>
-      <span class="pill warn">Distinct Strategy</span>
-      <span class="pill ok">13/13 Format Gates</span>
-    </div>
-    <h1>GEMSDOE9 — Relay Stepover Fault Discovery</h1>
-    <p>DOE GEMS Prize entry that breaks the 0.1563 duplicate pattern. Targets extensional relay stepovers, fault terminations and intersections — the interaction settings that dominate Great Basin geothermal: stepovers ~32% (the single most favorable setting), terminations ~25%, intersections ~22% of the 250+ catalogued fields (some fields are hybrids of several settings) — Faulds, Hinz &amp; Kreemer, <a href="https://gdr.openei.org/submissions/383" style="color:#fca5a5;">GDR 383</a>. Valid GeoTIFF built in your browser, one click.</p>
-  </div>
+</head><body>
+<header class="top">
+  <h1>GEMSDOE9 — Geothermal Fault Discovery Beyond the Catalogue</h1>
+  <p>DOE GEMS Prize entry. Faults in the GeoDAWN region (northwestern Nevada, UTM 11N
+     EPSG:32611, 100 m) that are <em>not</em> in the USGS/INGENIOUS catalogue.</p>
+  <div class="badges"><span class='badge '>GEMSDOE9</span><span class='badge warn'>No model trained yet</span><span class='badge ok'>Submission file passes all 14 gates</span></div>
 </header>
-
+<nav class="tabs"><a href='index.html' class='on'>Overview</a><a href='executive_summary.html'>How to submit</a><a href='strategy.html'>Strategy &amp; metric</a><a href='hypotheses.html'>Hypotheses G-1..G-5</a><a href='intel.html'>Official intel</a><a href='data.html'>Data &amp; access</a><a href='verification.html'>Verification &amp; flags</a><a href='leaderboard.html'>Leaderboard</a><a href='research.html'>Research notes</a><a href='sources.html'>Sources</a></nav>
 <main>
-<nav>
-  <a href="index.html"><strong>Overview</strong></a>
-  <a href="intel.html">Official Intel</a>
-  <a href="executive_summary.html">Executive Summary</a>
-  <a href="how_to_submit.html">How to Submit</a>
-  <a href="research.html">Research</a>
-  <a href="hypotheses.html">Hypotheses H9-1..H9-5</a>
-  <a href="strategy.html">Strategy & Metric</a>
-  <a href="data.html">Data Sources</a>
-  <a href="results.html">Results Ledger</a>
-  <a href="sources.html">Sources</a>
-  <a href="leaderboard.html">Leaderboard</a>
-  <a href="verification.html">Verification</a>
-</nav>
+<section>
+  <div class="card hero">
+    <h2 style="border:0;padding:0;margin-bottom:.6rem">⬇ The file to submit</h2>
+    <p>DrivenData wants <strong>a single-band GeoTIFF (.tif)</strong>, or a .zip holding
+       one, matching the submission format: <strong>3,292 × 3,730 px · EPSG:32611 ·
+       100 m · float32 · every value finite and in [0, 1]</strong>.</p>
+    <div class="btn-row">
+      <a class="btn btn-primary" href="downloads/gemsdoe9-PLACEHOLDER-2314b599.tif" download>⬇ Download gemsdoe9-PLACEHOLDER-2314b599.tif</a>
+      <button class="btn btn-secondary" id="buildBtn">Build in this browser (uniquely named)</button>
+    </div>
+    <div class="note" id="status" style="display:none"></div>
+    <dl class='kv'><dt>File</dt><dd><a href='downloads/gemsdoe9-PLACEHOLDER-2314b599.tif' download>gemsdoe9-PLACEHOLDER-2314b599.tif</a></dd><dt>SHA256</dt><dd>2314b59920bfeeaf6a592d4868b25eca62212825620f9945723c2f6d0a2e5b22</dd><dt>Size</dt><dd>439,456 bytes</dd><dt>Positive pixels</dt><dd>343,816 (2.80%) — the rest are 0.0, i.e. &#x27;no fault&#x27;</dd><dt>Note to paste</dt><dd><code>GEMSDOE9 FORMAT-CHECK placeholder (no model, no GeoDAWN data) | band-pattern 2.8% | 2314b599</code></dd><dt>What it is</dt><dd><span class='pill bad'>PLACEHOLDER — not a prediction</span></dd><dt>Upload page</dt><dd><a href='https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/'>drivendata.org → Submissions → New submission</a></dd></dl>
+    <details>
+      <summary>Why this file cannot trigger “Predicted values must be in range [0, 1]”</summary>
+      <p>The error you hit on 2026-09-27 was <strong>not</strong> a NaN problem. The
+      previous version of this site's browser writer produced GeoTIFFs that GDAL could not
+      open at all — <code>TIFFReadEncodedStrip() failed</code> — and the platform surfaced
+      that unreadable file as a value-range error. Two changes fix it:</p>
+      <ol>
+        <li>The writer is rewritten and round-trip tested: write → parse the IFD back →
+            decode every strip → compare to the input, all element-for-element, before the
+            download is offered. <a href="verification.html#irregularity-tiff">Evidence →</a></li>
+        <li>Every value is finite and inside [0, 1]; no NaN, no Inf, no nodata tag.
+            The spec says “data outside the bounds is null or nan”, but NaN is not in [0, 1],
+            so a 0.0 outside the footprint satisfies “null” in the scorer's sense and can
+            never trip a range check. <strong>We publish only the all-finite variant.</strong></li>
+      </ol>
+      <p>Re-verify any file yourself:
+         <code>python scripts/validate_submission.py docs/downloads/gemsdoe9-PLACEHOLDER-2314b599.tif</code></p>
+    </details>
+    <details>
+      <summary>Full click-by-click instructions</summary>
+      <p>They are on their own page, with the unique-name rule, the Note text, the .zip
+         option, and what to do when a submission is rejected.</p>
+      <p><a class="btn btn-secondary" href="executive_summary.html">How to submit →</a></p>
+    </details>
+  </div>
+</section>
 
-<div class="grid">
-<div>
+<section class="grid two">
+  <div class="card">
+    <h2>What the current file is, honestly</h2>
+    <p>The competition rasters live behind a DrivenData login and this environment has no
+       outbound network from the shell, so <strong>no model has been trained yet</strong>.
+       Rather than dress up a procedural pattern as a geological result — which is exactly
+       what the previous version of this site did — the downloadable file is a
+       <strong>format-check placeholder</strong>: a fixed-seed band pattern whose only job
+       is to prove the GeoTIFF, the validator and the upload form work end to end.</p>
+    <p>Its file name, its Note and this paragraph all say so. Upload it if you want to
+       validate the submission path; <strong>do not read a score into it.</strong></p>
+    <p>The real predictor is one command away, and it refuses to build a submission until
+       it beats a budget-matched random control and a catalogue-only baseline on a
+       spatially-blocked holdout:</p>
+    <pre><code># 1. get the data (needs a DrivenData account, on an unrestricted machine)
+bash scripts/download_competition_data.sh     # → data/
 
-<div class="card hero">
-  <h2>⬇ The file to submit — build and download here, in your browser</h2>
-  <p>The DrivenData <em>File to submit</em> dialog asks for a single-band GeoTIFF (.tif) — or a .zip containing one — that matches the submission format's CRS, shape and geotransform: <strong>3,292 × 3,730 px · EPSG:32611 · float32 in [0,1], NaN outside footprint OR 0 outside for max-compatibility</strong>.</p>
-  <p>This page generates the pixel field of the <strong>distinct H9-1 relay-stepover</strong> artifact (not the 0.1563 duplicate). Click <strong>Build submission.tif</strong> below: your browser writes the GeoTIFF locally with <code>geotiff_writer.js</code>, <strong>re-reads its own bytes</strong>, and offers the download only when every self-check passes. No install, no GPU, nothing uploaded.</p>
+# 2. blocked holdout + submission gate
+python scripts/validate_holdout.py --holdout-gate
+python scripts/build_submission.py --holdout-gate
 
-  <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin:1rem 0;">
-    <button id="buildTif" class="btn btn-primary">Build submission.tif</button>
-    <button id="buildZip" class="btn btn-secondary">Build submission.zip</button>
-    <button id="buildCompat" class="btn btn-secondary">Build max-compat .tif (0 outside, no NaN)</button>
+# or just re-run the checks
+bash scripts/run_all_checks.sh</code></pre>
   </div>
 
-  <div id="status" class="alert" style="display:none;"></div>
+  <div class="card">
+    <h2>Why 0.1563 keeps repeating</h2>
+    <p>Because it is an <em>attractor of the metric</em>, not a coincidence of tuning.
+       The published metric collapses to a closed form:</p>
+    <pre><code>FN_w = N − TP_w   (both are maxima of the same product)
+DTI  = T / (0.2·T + 0.2·F + 0.8·N)</code></pre>
+    <p>Solve it for zero false positives — which is exactly what a submission that paints
+       the known catalogue is, because those pixels are masked out of scoring:</p>
+    <pre><code>0.1563 = ρ / (0.2·ρ + 0.8)   →   ρ = 0.1291</code></pre>
+    <p>So <strong>0.1563 is the fingerprint of a catalogue copy</strong>: 12.9% weighted
+       recall and not one unit of false-positive mass. Copy the catalogue and you get
+       0.1563; copy it slightly differently and you still get 0.1563. Three unrelated
+       accounts sitting on exactly that number is what that looks like from outside.</p>
+    <p>Inverting the same equation for the current leaderboard top:</p>
+    <pre><code>0.3049 → ρ ≥ 0.2598   (2.01× the 0.1563 recall)</code></pre>
+    <p>The top score is out of reach for catalogue copying. It needs a detector.
+       <a href="strategy.html">Full derivation, the exchange rate, and the corridor
+       experiment →</a></p>
+  </div>
+</section>
 
-  <table id="provenance" style="margin-top:1rem;">
-    <tr><th>Grid</th><td>3292×3730 px · EPSG:32611 · 100 m · float32 · 1 band</td></tr>
-    <tr><th>Transform</th><td class="mono">[100,0,243350,0,-100,4508550]</td></tr>
-    <tr><th>Strategy</th><td>H9-1 relay-stepover + dilation tendency + intersection density | top 2.8% | distinct from 0.1563 duplicate</td></tr>
-    <tr><th>Unique name</th><td id="uniqueName" class="mono">gems9-&lt;UTC&gt;-&lt;sha8&gt;.tif (generated at build time)</td></tr>
-    <tr><th>Suggested Note</th><td id="note" class="mono">GEMSDOE9 H9-1 relay-stepover + dilation + intersection | top2.8% | &lt;sha8&gt; | distinct, not 0.1563 duplicate</td></tr>
-    <tr><th>Validation</th><td><span class="pill ok">13/13 gates</span> including NAN-INSIDE-FOOTPRINT (the exact check that causes “Predicted values must be in range [0,1]”)</td></tr>
-  </table>
+<section class="card">
+  <h2>Measurement: what the submission <em>shape</em> is worth</h2>
+  <p>Independent of any geology: run the published DTI and the published masking rule over
+     phantoms whose ground truth follows the staff definition of “new fault”, and vary
+     only how the answer is drawn.</p>
+  <table><thead><tr><th>Submission shape</th><th class='num'>DTI</th><th class='num'>vs free core</th></tr></thead><tbody><tr><td>Known catalogue, nothing else <span class='muted'>(φ = 0 exactly)</span></td><td class='num'>0.2544</td><td class='num'>—</td></tr><tr><td>+ a blind 3 px halo, no detector</td><td class='num'>0.2935</td><td class='num'>+0.0391</td></tr><tr><td>+ a detector-gated halo, chance detector</td><td class='num'>0.3519</td><td class='num'>+0.0975</td></tr><tr><td>+ a detector-gated halo, useful detector</td><td class='num'>0.4312</td><td class='num'>+0.1769</td></tr></tbody></table><p class='small muted'>5 independent synthetic phantoms at 512×512 px, 2×2 spatial blocks, (halo, budget) chosen on the training blocks and scored on the held-out block. Median over phantoms. <strong>Going from a chance detector to a useful one, inside the same corridor, is worth +0.0793.</strong> That increment is the only part of this table attributable to detection. <strong>This prices the submission SHAPE, not the geology.</strong> <a href='strategy.html'>Method and caveats →</a></p>
+</section>
 
-  <details style="margin-top:1rem;">
-    <summary>How this fixes “Predicted values must be in range [0,1]”</summary>
-    <p><strong>Root cause:</strong> Platform validator inspects all 5,167,373 scored footprint pixels. If any pixel inside this footprint contains NaN, it raises <em>“Predicted values must be in range [0,1]”</em> because NaN is not in [0,1].</p>
-    <p><strong>GEMSDOE9 fix:</strong> We ship two variants:</p>
-    <ul>
-      <li><strong>Primary (spec):</strong> finite inside footprint, NaN outside, nodata=nan — enforced by <code>scripts/validate_submission.py</code>.</li>
-      <li><strong>Max-compat (fallback):</strong> all 12,279,160 pixels finite in [0,1], no nodata tag, 0 outside. Under official scorer, NaN is read as 0.0, so both score identically, but no range check can complain about NaN because there is none. Use this if dialog previously rejected file.</li>
-    </ul>
-    <p>Builder asserts 0 NaN inside footprint before offering download. Re-run validation yourself: <code>python scripts/validate_submission.py docs/downloads/gemsdoe9_submission.tif --max-compat</code></p>
-  </details>
+<section class="grid two">
+  <div class="card">
+    <h2>The one new piece of official intel</h2>
+    <p class="src">DrivenData staff, 2026-09-22 ·
+      <a href="https://community.drivendata.org/t/where-do-you-draw-the-line/11536">forum thread 11536</a></p>
+    <blockquote style="margin:.6rem 0;padding:.7rem 1rem;border-left:3px solid var(--brand);background:#faf5f4;font-style:italic">
+      “For the purposes of this competition, “new fault” means “any fault pixel not already captured by USGS/INGENIOUS” and can include newly mapped geometry of an existing fault system.”
+    </blockquote>
+    <p>Read it carefully. “New fault” includes <strong>newly mapped geometry of an existing
+       fault system</strong> — splays, parallel strands, continuations past mapped tips. Those
+       pixels are, by construction, next to and collinear with faults the catalogue already
+       has. And known-catalogue pixels are masked out of the false-positive term while still
+       counting toward true positives.</p>
+    <p>So the catalogue is a <strong>pointer</strong>, not just a distractor. That inverts
+       the strategy the group has been running for three rounds.
+       <a href="hypotheses.html">Detector G-1 is built on it →</a></p>
+  </div>
+  <div class="card">
+    <h2>Where the group stands</h2>
+    <table><thead><tr><th>Submission</th><th class='num'>Score</th><th>What it was</th></tr></thead><tbody><tr><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE/docs/index.html" target="_blank" rel="noopener">GEMSDOE1</a></td><td class='num'>0.1563</td><td>original artifact</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE2/docs/index.html" target="_blank" rel="noopener">GEMSDOE2</a></td><td class='num'>0.1560</td><td>recall arm of the same artifact</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/5GEMSDOE/docs/index.html" target="_blank" rel="noopener">5GEMSDOE</a></td><td class='num'>0.1563</td><td>same artifact, different repo</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/8GEMSDOE/" target="_blank" rel="noopener">8GEMSDOE</a></td><td class='num'>0.1563</td><td>same artifact plus a catalogue union</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html" target="_blank" rel="noopener">GEMSDOE3 a</a></td><td class='num'>0.1193</td><td>Pindrop nodes</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html" target="_blank" rel="noopener">GEMSDOE3 b</a></td><td class='num'>0.0830</td><td>Pindrop catalogue-gap target</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html" target="_blank" rel="noopener">GEMSDOE3 c</a></td><td class='num'>0.1152</td><td>Pindrop dense ridge control</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE4/" target="_blank" rel="noopener">GEMSDOE4</a></td><td class='num'>0.0343</td><td>lineament + proxy labels</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/6GEMSDOE/" target="_blank" rel="noopener">6GEMSDOE</a></td><td class='num'>0.0286</td><td>gradient boosting over 88 channels, top 3%</td></tr></tbody></table>
+    <p class="small muted">Scores as reported by the team. Artifact hashes for the
+       sibling repos could not be checked from this environment, so no claim is made
+       here about which files were byte-identical — only about what the scores are and
+       what the closed form predicts they mean.</p>
+  </div>
+</section>
 
-  <div id="log" style="display:none; margin-top:1rem;"></div>
-</div>
-
-<div class="card">
-  <h2>Why 0.1563 Keeps Repeating — Audit</h2>
-  <p>An audit of previous group submissions revealed <strong>byte-identical duplicates</strong>:</p>
-  <table>
-    <tr><th>Repo</th><th>Score</th><th>SHA256</th><th>Verdict</th></tr>
-    <tr><td>GEMSDOE1</td><td>0.1563</td><td class="mono">7f00890a62878d61…</td><td>Original</td></tr>
-    <tr><td>5GEMSDOE</td><td>0.1563</td><td class="mono">7f00890a…</td><td><span class="pill bad">Duplicate</span> — same <code>submission_field.bin</code> <code>b966d47c…</code>, 172,974 px</td></tr>
-    <tr><td>GEMSDOE2 recall arm</td><td>0.1560</td><td class="mono">7f00890a…</td><td><span class="pill bad">Duplicate</span></td></tr>
-    <tr><td>8GEMSDOE Hedge-v2</td><td>0.1563 floor</td><td class="mono">7f00890a + catalogue</td><td>Superset with proven floor, not new detector</td></tr>
-    <tr><td>6GEMSDOE</td><td>0.0286</td><td class="mono">33cec71ff0…</td><td>Distinct but catalogue-memorising (HGB 88ch top3%)</td></tr>
-    <tr><td>GEMSDOE3 Pindrop</td><td>0.1193/0.0830/0.1152</td><td class="mono">f347b70daa…, 37f9d5b855…</td><td>Distinct — sparse placement experiment</td></tr>
-  </table>
-  <p><strong>GEMSDOE9 fix:</strong> Every artifact built from scratch with UTC instant + SHA8, builder refuses to publish if SHA256 matches known duplicates (<code>7f00890a…</code>, <code>f347b70daa…</code>, etc.). Pixel budget 2.8% = 343,816 px vs previous 172,974 px — distinct.</p>
-</div>
-
-<div class="card">
-  <h2>What is actually scored — rules verbatim</h2>
-  <p>From <a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">Official Rules PDF</a> SHA256 <code>50d854b1e0239fe6…</code>, verified by <code>scripts/verify_rules_quotes.py</code>:</p>
-  <table>
-    <tr><th>Rule</th><th>Sentence</th></tr>
-    <tr><td>phase1_target</td><td>In Phase 1, submissions will be evaluated against a privately withheld subset of the original new fault dataset compiled by expert reviewers.</td></tr>
-    <tr><td>experts_revise</td><td>After Phase 1, expert reviewers will use submitted predictions to revise the new fault dataset.</td></tr>
-    <tr><td>phase2_target</td><td>Submissions will be reevaluated against the full, revised new fault dataset using the same distance-weighted Tversky index.</td></tr>
-    <tr><td>labels_source</td><td>The labels for this prize come from the USGS Quaternary Fault and Fold Database and from a set of newly identified faults labeled by geology experts at the National Laboratory of the Rockies (NLR) and USGS.</td></tr>
-  </table>
-  <p><strong>Consequence:</strong> Training labels are existing catalogue, but <em>both</em> prize phases score new faults only. Reproducing catalogue earns credit only where new labels coincide. See <a href="strategy.html">Strategy</a>.</p>
-</div>
-
-</div>
-
-<div>
-<div class="card">
-  <h2>Current Leaderboard</h2>
-  <p>Snapshot verified live 2026-09-27 from <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">official leaderboard</a> (see <a href="intel.html">Official Intel</a>):</p>
-  <table>
-    <tr><th>#</th><th>Team</th><th>Score</th></tr>
-    <tr><td>1</td><td>DARD</td><td><strong>0.3049</strong></td></tr>
-    <tr><td>2</td><td>alexoktaba</td><td>0.2993</td></tr>
-    <tr><td>3</td><td>HardcoreTechGod</td><td>0.2854</td></tr>
-    <tr><td>24</td><td>extradr19 (group)</td><td>0.1563</td></tr>
-    <tr><td>25</td><td>SDCF9 (group)</td><td>0.1563 duplicate</td></tr>
-    <tr><td>26</td><td>smashi34 (group)</td><td>0.1563 duplicate</td></tr>
-  </table>
-  <p>Goal: beat 0.3049 with distinct detector. Gap +0.1486 requires genuinely better detector of unmapped traces, not better fitting proxy.</p>
-  <a href="leaderboard.html" class="btn btn-secondary" style="margin-top:0.5rem;">Full analysis →</a>
-</div>
-
-<div class="card">
-  <h2>5 New Hypotheses — Ranked</h2>
-  <p>All distinct from siblings, with layer, signature, why missing, and cost:</p>
-  <table>
-    <tr><th>Rank</th><th>Hypothesis</th><th>Lift</th><th>Cost</th></tr>
-    <tr><td>1</td><td><strong>H9-1</strong> Relay stepover + dilation tendency + intersection density</td><td>+0.06-0.09 → 0.22-0.25</td><td>Low-Med, no external data</td></tr>
-    <tr><td>2</td><td><strong>H9-2</strong> Conductivity edge & clay cap gradient</td><td>+0.04-0.07</td><td>Low</td></tr>
-    <tr><td>3</td><td><strong>H9-3</strong> Fluvial SL & ksn from 10m DEM</td><td>+0.03-0.06</td><td>Med, needs 10m 3DEP</td></tr>
-    <tr><td>4</td><td><strong>H9-4</strong> Thermal + ASTER alteration</td><td>+0.05-0.10</td><td>Med-High, needs Landsat+ASTER</td></tr>
-    <tr><td>5</td><td><strong>H9-5</strong> Euler depth + grav-mag contact</td><td>+0.02-0.05</td><td>Low-Med</td></tr>
-  </table>
-  <p>Top candidate H9-1 validated via <code>scripts/lofso_train_eval.py</code> before spending weekly slot.</p>
-  <a href="hypotheses.html" class="btn btn-secondary">Details →</a>
-</div>
-
-<div class="card">
-  <h2>Executive Summary</h2>
-  <p>Step-by-step submission, format gates, error resolution, core values.</p>
-  <a href="executive_summary.html" class="btn btn-secondary">Read →</a>
-</div>
-
-<div class="card">
-  <h2>Verification — No Hallucinations</h2>
-  <ul style="margin:0; padding-left:1.2rem;">
-    <li>19 bands, not 10 — verified from training_features.tif</li>
-    <li>example_submission.tif = labels, not absence — irregularity flagged</li>
-    <li>DTI α=0.2 β=0.8 R=300m — from problem description</li>
-    <li>GeoDAWN DOI 10.5066/P93LGLVQ — official USGS</li>
-    <li>INGENIOUS DOI 10.15121/1881483 — GDR</li>
-    <li>Rules PDF SHA256 50d854b1e0239fe6…</li>
-  </ul>
-  <a href="verification.html" class="btn btn-secondary" style="margin-top:0.5rem;">Verify →</a>
-</div>
-
-</div>
-</div>
-
+<section class="card">
+  <h2>The five detectors</h2>
+  <table><thead><tr><th class='num'>#</th><th>Detector</th><th>Layers</th><th>Cost</th><th>Validated?</th></tr></thead><tbody><tr><td class='num'>G-1</td><td><strong>Catalogue geometry completion</strong></td><td>existing_faults.tif (as geometry); optional detrended-elevation slope + magnetic HGM modul…</td><td>Low - no new data, pure raster geometry</td><td><span class='pill bad'>blocked on data</span></td></tr><tr><td class='num'>G-2</td><td><strong>Geodetic dilation-tendency ridge</strong></td><td>dilatation rate; second invariant of the strain rate tensor</td><td>Low - both layers are already in training_feat…</td><td><span class='pill bad'>blocked on data</span></td></tr><tr><td class='num'>G-3</td><td><strong>Clay-cap conductivity edge</strong></td><td>surface conductivity; depth to conductive base</td><td>Low - both layers are already in training_feat…</td><td><span class='pill bad'>blocked on data</span></td></tr><tr><td class='num'>G-4</td><td><strong>Magnetic contact edge</strong></td><td>reduced-to-pole magnetic anomaly; total magnetic intensity; horizontal and vertical slope …</td><td>Low-Med - all four layers are in training_feat…</td><td><span class='pill bad'>blocked on data</span></td></tr><tr><td class='num'>G-5</td><td><strong>Fluvial knickpoint and drainage deflection</strong></td><td>detrended elevation; slope of detrended elevation; optional 10 m USGS 3DEP DEM (free, offi…</td><td>Low with the competition&#x27;s own detrended-eleva…</td><td><span class='pill bad'>blocked on data</span></td></tr></tbody></table>
+  <p class="small muted">Each is implemented as an explicit function in
+     <code>src/gems/features.py</code> with its layers, physical signature, and the reason
+     it should catch a fault the catalogue missed. <strong>None has been validated against
+     real rasters</strong> — that is the honest state, and the next session's first job.
+     <a href="hypotheses.html">Full hypotheses →</a></p>
+</section>
 </main>
-
 <footer>
-  <div style="max-width:1100px; margin:0 auto;">
-    <p>GEMSDOE9 — DOE GEMS Prize entry. Built to maximize P(Win) and own the outcome. Every claim measured, every source linked.</p>
-    <p>Official links: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">Competition</a> · <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">Problem</a> · <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">About</a> · <a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">Rules PDF</a> · <a href="https://github.com/drivendataorg/gems-prize-reference-solution">Reference</a> · <a href="https://doi.org/10.5066/P93LGLVQ">GeoDAWN DOI</a> · <a href="https://doi.org/10.15121/1881483">INGENIOUS DOI</a></p>
-    <p>Limitations: No DrivenData auth in sandbox → cannot auto-download training_features.tif etc. Run <code>bash scripts/download_competition_data.sh</code> on unrestricted machine into <code>data/</code>, then <code>python scripts/prepare_data.py</code>.</p>
-  </div>
+  <p><strong>Maximise P(Win).</strong> Every number on this site is either quoted from a
+  linked primary source, read live on 2026-09-27, or computed by code in this
+  repository from the published metric. Nothing is estimated.</p>
+  <p>Sources: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">Competition</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">Problem description</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">About</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">Leaderboard</a> ·
+     <a href="https://community.drivendata.org/c/gems-prize-challenge/111">Forum</a> ·
+     <a href="https://github.com/drivendataorg/gems-prize-reference-solution">Reference solution</a></p>
+  <p>Built by <code>python scripts/build_site.py</code>. Sources of every claim:
+     <a href="sources.html">Sources</a>. Problems found and fixed:
+     <a href="verification.html">Verification &amp; flags</a>.</p>
 </footer>
-
 <script src="geotiff_writer.js"></script>
+
 <script>
 (function(){
-  const $ = (id)=>document.getElementById(id);
-  const logEl = $('log');
-  const statusEl = $('status');
-  const buildTifBtn = $('buildTif');
-  const buildZipBtn = $('buildZip');
-  const buildCompatBtn = $('buildCompat');
-
-  function log(msg){
-    logEl.style.display='block';
-    logEl.textContent += msg + "\n";
-    console.log(msg);
-  }
-  function setStatus(msg, ok){
-    statusEl.style.display='block';
-    statusEl.textContent = msg;
-    statusEl.style.background = ok ? '#dcfce7' : '#fef3c7';
-    statusEl.style.borderColor = ok ? '#86efac' : '#fde68a';
-  }
-
-  async function buildAndDownload(asZip, maxCompat){
-    logEl.textContent='';
-    setStatus('Building…', true);
-    buildTifBtn.disabled=true; buildZipBtn.disabled=true; buildCompatBtn.disabled=true;
+  var b=document.getElementById('buildBtn'), s=document.getElementById('status');
+  if(!b) return;
+  b.addEventListener('click', async function(){
+    b.disabled=true; s.style.display='block'; s.className='note';
+    s.innerHTML='<b class="lbl">Working</b>Building the GeoTIFF in your browser…';
     try{
-      const W = Gems9Writer.WIDTH, H = Gems9Writer.HEIGHT;
-      const topk = 0.028; // 2.8% distinct from 0.1563's 172,974 px
-      log(`Generating H9-1 field ${W}x${H} topk ${topk*100}%…`);
-      const field = Gems9Writer.generateH91Field(W,H,topk);
-      const onePx = field.filter(v=>v===1).length;
-      const zeroPx = field.filter(v=>v===0).length;
-      log(`Field: ${onePx} at 1.0, ${zeroPx} at 0.0, ${field.length-onePx-zeroPx} other`);
-
-      // Ensure distinct from duplicate
-      if(onePx===172974){
-        throw new Error('Generated field has same pixel count as duplicate 0.1563 — refusing to publish duplicate');
-      }
-
-      const useNanOutside = !maxCompat;
-      log(`Writing GeoTIFF… useNanOutside=${useNanOutside} (maxCompat=${maxCompat})`);
-      const res = Gems9Writer.writeGeoTIFF(field, {width:W, height:H, useNanOutside:useNanOutside, rowsPerStrip:64});
-      log(`Wrote ${res.totalBytes} bytes, ${res.nStrips} strips`);
-
-      const sha = await Gems9Writer.sha256Hex(res.bytes);
-      const sha8 = sha.slice(0,8);
-      const utc = new Date().toISOString().replace(/[-:]/g,'').replace(/\..+/,'')+'Z';
-      const baseName = `gems9-${utc}-${sha8}`;
-      const tifName = baseName + '.tif';
-      const zipName = baseName + '.zip';
-      const note = `GEMSDOE9 H9-1 relay-stepover + dilation + intersection | top2.8% | ${sha8} | distinct, not 0.1563 duplicate`;
-
-      $('uniqueName').textContent = asZip ? zipName : tifName;
-      $('note').textContent = note;
-
-      log(`SHA256 ${sha}`);
-      log(`Unique name: ${asZip?zipName:tifName}`);
-      log(`Note: ${note}`);
-
-      // Self-check: re-read via simple header check
-      // Minimal validation: check TIFF header and size
-      if(res.bytes[0]!==0x49 || res.bytes[1]!==0x49){
-        throw new Error('Not little-endian TIFF');
-      }
-      log('Self-check PASS: header II, float32, EPSG:32611');
-
-      // Offer download
-      let blob, fileName;
-      if(asZip){
-        // Build simple zip containing tif
-        // For simplicity, we will use JSZip-like minimal: just offer tif as zip? We'll build minimal zip
-        // Reuse logic: create zip with one file
-        const tifBytes = res.bytes;
-        // Minimal zip builder (stored)
-        function crc32(u8){
-          let c=0xFFFFFFFF;
-          const table = new Uint32Array(256);
-          for(let n=0;n<256;n++){ let cc=n; for(let k=0;k<8;k++) cc=(cc&1)?(0xEDB88320^(cc>>>1)):(cc>>>1); table[n]=cc>>>0; }
-          for(let i=0;i<u8.length;i++) c=table[(c^u8[i])&0xff]^(c>>>8);
-          return (c^0xFFFFFFFF)>>>0;
-        }
-        function u16(v){ const b=new Uint8Array(2); new DataView(b.buffer).setUint16(0,v,true); return b; }
-        function u32(v){ const b=new Uint8Array(4); new DataView(b.buffer).setUint32(0,v,true); return b; }
-        function enc(s){ const b=new Uint8Array(s.length); for(let i=0;i<s.length;i++) b[i]=s.charCodeAt(i); return b; }
-        function cat(l){ let n=0; for(let a of l) n+=a.length; const o=new Uint8Array(n); let p=0; for(let a of l){ o.set(a,p); p+=a.length; } return o; }
-        const nameBytes = enc('submission.tif');
-        const crc = crc32(tifBytes);
-        const local = cat([u32(0x04034b50), u16(20), u16(0), u16(0), u16(0), u16(0), u32(crc), u32(tifBytes.length), u32(tifBytes.length), u16(nameBytes.length), u16(0), nameBytes, tifBytes]);
-        const central = cat([u32(0x02014b50), u16(20), u16(20), u16(0), u16(0), u16(0), u16(0), u32(crc), u32(tifBytes.length), u32(tifBytes.length), u16(nameBytes.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(0), nameBytes]);
-        const eocd = cat([u32(0x06054b50), u16(0), u16(0), u16(1), u16(1), u32(central.length), u32(local.length), u16(0)]);
-        const zipBytes = cat([local, central, eocd]);
-        blob = new Blob([zipBytes], {type:'application/zip'});
-        fileName = zipName;
-      } else {
-        blob = new Blob([res.bytes], {type:'image/tiff'});
-        fileName = tifName;
-      }
-
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href=url; a.download=fileName;
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1000);
-
-      setStatus(`Built ${fileName} (${res.totalBytes} bytes, SHA8 ${sha8}) — download started. Paste Note into DrivenData form.`, true);
-      log(`Download offered: ${fileName}`);
-
-    } catch(e){
-      log(`ERROR: ${e.message}\n${e.stack}`);
-      setStatus(`Build failed: ${e.message}`, false);
-    } finally {
-      buildTifBtn.disabled=false; buildZipBtn.disabled=false; buildCompatBtn.disabled=false;
-    }
-  }
-
-  buildTifBtn.addEventListener('click', ()=>buildAndDownload(false,false));
-  buildZipBtn.addEventListener('click', ()=>buildAndDownload(true,false));
-  buildCompatBtn.addEventListener('click', ()=>buildAndDownload(false,true));
-
+      var W = Gems9Writer;
+      var f = W.buildPlaceholderField(W.WIDTH, W.HEIGHT, {fraction:0.028});
+      var v = await W.writeAndVerify(f, {width:W.WIDTH, height:W.HEIGHT, rowsPerStrip:128});
+      if(!v.ok) throw new Error(v.reason);
+      var sha = await W.sha256Hex(v.res.bytes);
+      var sha8 = sha.slice(0,8);
+      var stamp = new Date().toISOString().replace(/[-:]/g,'').replace(/\..+/,'');
+      var name = 'gemsdoe9-PLACEHOLDER-'+stamp+'-'+sha8+'.tif';
+      var url = URL.createObjectURL(new Blob([v.res.bytes],{type:'image/tiff'}));
+      var a = document.createElement('a'); a.href=url; a.download=name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){URL.revokeObjectURL(url);},4000);
+      s.className='note ok';
+      s.innerHTML='<b class="lbl">Round-trip verified</b>Wrote '+v.res.totalBytes.toLocaleString()+
+        ' bytes, re-parsed the IFD, decoded every strip, compared all 12,279,160 values to the '+
+        'input — exact match. All finite, all in [0,1].<br><br>'+
+        '<strong>'+name+'</strong><br>SHA256 '+sha+'<br><br>'+
+        'Paste this in the Note box: <code>GEMSDOE9 FORMAT-CHECK placeholder (no model, no '+
+        'GeoDAWN data) | band-pattern 2.8% | '+sha8+'</code><br>'+
+        'Note: this is a format check, not a prediction. See '+
+        '<a href="executive_summary.html">How to submit</a>.';
+    }catch(e){
+      s.className='note bad';
+      s.innerHTML='<b class="lbl">Build failed</b>'+String(e.message||e);
+    }finally{ b.disabled=false; }
+  });
 })();
 </script>
-</body>
-</html>
+
+</body></html>

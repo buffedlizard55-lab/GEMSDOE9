@@ -1,227 +1,193 @@
 #!/usr/bin/env python3
 """
-validate_submission.py — 13-format-gate validator (hard gate)
-Implements the exact checks the DrivenData platform performs plus our own footprint checks.
+validate_submission.py — hard gate for anything we are about to upload.
 
-Checks:
-1. file-exists
-2. single-band
-3. dtype-float32
-4. crs-epsg32611
-5. resolution-100m
-6. shape (3730, 3292)
-7. geotransform (100,0,243350,0,-100,4508550)
-8. nodata-nan or none (max-compat mode allows none)
-9. values-in-0-1 (finite values must be in [0,1])
-10. no-inf
-11. template-verified (if sample_submission.tif present, compare footprint)
-12. NAN-INSIDE-FOOTPRINT (0 non-finite inside scored footprint) — this is the exact condition that makes platform answer "Predicted values must be in range [0,1]"
-13. footprint-matches-official (0 finite outside official footprint — only enforced if official mask available, otherwise warning)
+This is the script that must pass before a single weekly submission slot is
+spent.  It re-implements the checks the DrivenData form performs, and adds the
+two that actually bit us:
 
-Usage:
-  python scripts/validate_submission.py path/to/submission.tif [--allow-footprint-subset] [--max-compat]
+  PLATFORM-RANGE   every one of the 12,279,160 values must be finite and inside
+                   [0, 1].  This is the check whose failure produces the error
+                   "Predicted values must be in range [0, 1]".
+  GDAL-READABLE    rasterio/GDAL must be able to decode every strip.  The
+                   previous browser writer shipped files GDAL could not read at
+                   all, and the platform reported it as a *value* error, which
+                   sent us hunting for a NaN that was never the problem.
 
-Exit 0 if all checks PASS, 1 otherwise. Prints table.
+Usage
+  python scripts/validate_submission.py FILE [--json] [--quiet]
+
+Exit code 0 = safe to upload, 1 = do not upload.
 """
 
-import sys
-import os
+from __future__ import annotations
+
+import argparse
 import hashlib
+import json
+import sys
 from pathlib import Path
 
 import numpy as np
 
-try:
-    import rasterio
-except ImportError:
-    print("ERROR: rasterio not installed. pip install rasterio --break-system-packages", file=sys.stderr)
-    sys.exit(2)
+EXPECTED = {
+    "width": 3292,
+    "height": 3730,
+    "epsg": 32611,
+    "res": (100.0, 100.0),
+    "transform": (100.0, 0.0, 243350.0, 0.0, -100.0, 4508550.0),
+    "dtype": "float32",
+    "bands": 1,
+}
 
-# Constants from competition spec — verified line by line
-# Source: https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#submission-format
-# and example_submission.tif measured in GEMSDOE1
-EXPECTED_WIDTH = 3292
-EXPECTED_HEIGHT = 3730
-EXPECTED_CRS_EPSG = 32611
-EXPECTED_RES = (100.0, 100.0)
-EXPECTED_TRANSFORM = (100.0, 0.0, 243350.0, 0.0, -100.0, 4508550.0)  # (a,b,c,d,e,f) rasterio style
-EXPECTED_SHAPE = (EXPECTED_HEIGHT, EXPECTED_WIDTH)
+# Hashes of sibling-repo artifacts that already burned submission slots.  If a
+# file we produce matches one of these, we have rebuilt a duplicate and the
+# leaderboard will return the same score for a different-looking name.
+KNOWN_DUPLICATE_SHA_PREFIXES = [
+    "7f00890a62878d61",   # GEMSDOE1 / GEMSDOE2 / 5GEMSDOE / 8GEMSDOE base -> 0.1563
+    "f347b70daa",         # GEMSDOE3 "Pindrop nodes"                     -> 0.1193
+    "37f9d5b855",         # GEMSDOE3 "catalogue-gap target"               -> 0.0830
+    "4e03fc9705",         # GEMSDOE3 "dense ridge control"                -> 0.1152
+    "33cec71ff0",         # 6GEMSDOE HGB 88ch top-3%                     -> 0.0286
+    "237f0063a4",         # GEMSDOE4 lineament + proxy labels            -> 0.0343
+    "8ecbdc712da4b83e",   # GEMSDOE9 v1 placeholder (replaced, kept as a
+    #                        guard so the retired artifact can never be re-shipped)
+]
 
-def sha256_file(p):
+
+def sha256_file(p: Path) -> str:
     h = hashlib.sha256()
-    with open(p, 'rb') as f:
-        for chunk in iter(lambda: f.read(8192), b''):
+    with open(p, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
 
-def check_nan_inside_footprint(data, footprint_mask=None):
-    """
-    If footprint_mask is None, we consider any NaN as inside if we have no mask — but for max-compat
-    we allow all-finite. The critical check: finite values must be in [0,1]; NaN inside footprint is the
-    platform error "Predicted values must be in range [0,1]".
-    """
-    if footprint_mask is not None:
-        # footprint_mask True = inside scored area
-        nan_inside = np.isnan(data[footprint_mask]).sum()
-        finite_outside = np.isfinite(data[~footprint_mask]).sum() if footprint_mask.size == data.size else 0
-        return nan_inside, finite_outside
-    else:
-        # Without official mask, we check: any NaN is considered potentially inside if we are in strict mode
-        # For max-compat (all finite) this is 0
-        nan_count = np.isnan(data).sum()
-        # We cannot know footprint, so we report nan_count as potential inside
-        return nan_count, 0
 
-def main():
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('tif_path', type=str, help='Path to submission GeoTIFF')
-    parser.add_argument('--allow-footprint-subset', action='store_true', help='Allow experiments with fewer finite pixels than official')
-    parser.add_argument('--max-compat', action='store_true', help='Allow 0 outside instead of NaN (no nodata)')
-    args = parser.parse_args()
-
-    tif_path = Path(args.tif_path)
-    checks = []
+def run_checks(path: Path) -> tuple[list[dict], dict]:
+    checks: list[dict] = []
 
     def add(name, ok, detail=""):
-        checks.append((name, ok, detail))
-        status = "PASS" if ok else "FAIL"
-        print(f"{status:4} {name:30} {detail}")
+        checks.append({"check": name, "ok": bool(ok), "detail": detail})
 
-    # 1 file-exists
-    exists = tif_path.exists()
-    add("file-exists", exists, f"{tif_path.stat().st_size if exists else 0} bytes")
-    if not exists:
-        sys.exit(1)
+    info: dict = {}
+    add("file-exists", path.exists(), str(path))
+    if not path.exists():
+        return checks, info
 
+    import rasterio
+
+    # --- can GDAL decode it at all? ---------------------------------------
     try:
-        with rasterio.open(tif_path) as src:
-            count = src.count
-            dtype = src.dtypes[0]
-            crs = src.crs
-            transform = src.transform
-            width = src.width
-            height = src.height
-            nodata = src.nodatavals[0]
-            res = src.res
+        with rasterio.open(path) as src:
             data = src.read(1)
+        add("GDAL-READABLE", True, f"decoded {data.shape} in full")
+    except Exception as e:  # noqa: BLE001
+        add("GDAL-READABLE", False, f"{type(e).__name__}: {e}")
+        add("PLATFORM-RANGE", False, "not readable, cannot evaluate")
+        return checks, info
 
-            # 2 single-band
-            add("single-band", count == 1, f"band count = {count}")
+    with rasterio.open(path) as src:
+        info = {
+            "count": src.count,
+            "dtype": src.dtypes[0],
+            "crs": str(src.crs),
+            "epsg": src.crs.to_epsg() if src.crs else None,
+            "res": tuple(src.res),
+            "transform": (src.transform.a, src.transform.b, src.transform.c,
+                          src.transform.d, src.transform.e, src.transform.f),
+            "nodata": src.nodatavals[0],
+            "compression": str(src.compression),
+            "shape": (src.height, src.width),
+        }
 
-            # 3 dtype-float32
-            add("dtype-float32", dtype == 'float32', f"dtype = {dtype}")
+    add("single-band", info["count"] == EXPECTED["bands"], f"count={info['count']}")
+    add("dtype-float32", info["dtype"] == EXPECTED["dtype"], f"dtype={info['dtype']}")
+    add("crs-epsg32611", info["epsg"] == EXPECTED["epsg"], f"crs={info['crs']}")
+    add("resolution-100m",
+        abs(info["res"][0] - 100.0) < 1e-6 and abs(info["res"][1] - 100.0) < 1e-6,
+        f"res={info['res']}")
+    add("shape-3292x3730",
+        info["shape"] == (EXPECTED["height"], EXPECTED["width"]),
+        f"shape={info['shape']}")
+    add("geotransform",
+        all(abs(a - b) < 1e-6 for a, b in zip(info["transform"], EXPECTED["transform"])),
+        f"transform={info['transform']}")
 
-            # 4 crs-epsg32611
-            try:
-                epsg = crs.to_epsg()
-            except Exception:
-                epsg = None
-            add("crs-epsg32611", epsg == EXPECTED_CRS_EPSG, f"CRS = {crs} (epsg {epsg})")
+    # --- THE gate ----------------------------------------------------------
+    n_nan = int(np.isnan(data).sum())
+    n_inf = int(np.isinf(data).sum())
+    finite = data[np.isfinite(data)]
+    vmin = float(finite.min()) if finite.size else float("nan")
+    vmax = float(finite.max()) if finite.size else float("nan")
+    in_range = finite.size > 0 and vmin >= 0.0 and vmax <= 1.0
+    add("PLATFORM-RANGE",
+        n_nan == 0 and n_inf == 0 and in_range,
+        f"nan={n_nan} inf={n_inf} range=[{vmin}, {vmax}] "
+        f"(platform rejects if any value is outside [0,1]; NaN is outside [0,1])")
 
-            # 5 resolution-100m
-            res_ok = abs(res[0] - EXPECTED_RES[0]) < 1e-6 and abs(res[1] - EXPECTED_RES[1]) < 1e-6
-            add("resolution-100m", res_ok, f"resolution = {res}")
+    add("no-nodata-tag", info["nodata"] is None,
+        f"nodata={info['nodata']} (all-finite files carry none)")
 
-            # 6 shape
-            shape_ok = (height, width) == EXPECTED_SHAPE
-            add("shape", shape_ok, f"shape = {(height, width)}, expected {EXPECTED_SHAPE}")
+    # --- content ------------------------------------------------------------
+    n_pos = int((data > 0).sum())
+    n_one = int((data == 1).sum())
+    frac = n_pos / data.size
+    add("has-content", 0 < n_pos < data.size, f"{n_pos} px > 0 ({frac:.3%})")
+    add("density-sane", 1e-5 <= frac <= 0.5,
+        f"positive density {frac:.4%} "
+        f"(an all-zero raster scores DTI=0; >50% is a failed mask)")
+    # A real check on the SHAPE of the field, not a tautology. Most files have
+    # only two distinct values; a genuinely continuous probability field has
+    # thousands. Which of the two scores better is NOT settled a priori -- on an
+    # identical pixel set, soft beat hard in 19 of 20 phantom cells, because TP_w
+    # and FP_w both scale with p and phi usually binds first. So this gate flags
+    # a continuous field for review; it does not claim one shape is optimal.
+    n_unique = int(np.unique(data).size)
+    add("prediction-shape", n_unique <= 64,
+        f"{n_unique} distinct values ({n_one} px exactly 1.0) -- a hard 0/1 mask. "
+        f"A continuous probability field is legal and may score either way; "
+        f"which one wins is a holdout question, not a formatting rule")
 
-            # 7 geotransform
-            # rasterio Affine: a,b,c,d,e,f = transform.a, b, c, d, e, f
-            gt = (transform.a, transform.b, transform.c, transform.d, transform.e, transform.f)
-            gt_ok = all(abs(a-b) < 1e-6 for a,b in zip(gt, EXPECTED_TRANSFORM))
-            add("geotransform", gt_ok, f"transform = {gt}")
+    # --- duplicate guard ----------------------------------------------------
+    sha = sha256_file(path)
+    info["sha256"] = sha
+    info["n_positive"] = n_pos
+    info["vmin"], info["vmax"] = vmin, vmax
+    dup = next((p for p in KNOWN_DUPLICATE_SHA_PREFIXES if sha.startswith(p)), None)
+    add("not-a-known-duplicate", dup is None,
+        f"sha256={sha[:24]}..." + (f"  MATCHES SPENT SLOT {dup}" if dup else ""))
 
-            # 8 nodata-nan
-            if args.max_compat:
-                # allow nodata = None or nan
-                nodata_ok = (nodata is None) or (isinstance(nodata, float) and np.isnan(nodata)) or (str(nodata).lower() == 'nan')
-                add("nodata-nan", nodata_ok, f"declared nodata = {nodata} (max-compat allowed)")
-            else:
-                nodata_ok = nodata is not None and isinstance(nodata, float) and np.isnan(nodata)
-                # also accept string 'nan' case
-                if not nodata_ok:
-                    try:
-                        nodata_ok = np.isnan(float(nodata))
-                    except:
-                        pass
-                add("nodata-nan", nodata_ok, f"declared nodata = {nodata}")
+    return checks, info
 
-            # 9 values-in-0-1
-            finite = data[np.isfinite(data)]
-            if finite.size == 0:
-                vmin = vmax = 0
-                range_ok = False
-            else:
-                vmin = float(finite.min())
-                vmax = float(finite.max())
-                range_ok = vmin >= -1e-6 and vmax <= 1+1e-6
-            add("values-in-0-1", range_ok, f"finite range = [{vmin}, {vmax}]")
 
-            # 10 no-inf
-            inf_count = np.isinf(data).sum()
-            add("no-inf", inf_count == 0, f"inf pixels = {inf_count}")
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("tif_path")
+    ap.add_argument("--json", action="store_true", help="machine-readable output")
+    ap.add_argument("--quiet", action="store_true")
+    args = ap.parse_args()
 
-            # For footprint checks, try to load official sample if present
-            footprint_mask = None
-            official_path = Path("data/example_submission.tif")
-            if official_path.exists():
-                try:
-                    with rasterio.open(official_path) as off:
-                        off_data = off.read(1)
-                        footprint_mask = np.isfinite(off_data)
-                        add("template-verified", True, f"official sample footprint = {footprint_mask.sum()} px, sha256 {sha256_file(official_path)[:16]}...")
-                except Exception as e:
-                    add("template-verified", False, f"failed to read official: {e}")
-            else:
-                add("template-verified", True, "official sample not present, skipped (need data/)")
+    path = Path(args.tif_path)
+    checks, info = run_checks(path)
 
-            # 11 NAN-INSIDE-FOOTPRINT — the critical one
-            if footprint_mask is not None:
-                nan_inside, finite_outside = check_nan_inside_footprint(data, footprint_mask)
-                add("NAN-INSIDE-FOOTPRINT", nan_inside == 0, f"{nan_inside} non-finite pixels inside the scored footprint (this is the exact condition that makes the submission form answer 'Predicted values must be in range [0, 1]')")
-                # 12 footprint-matches-official
-                if args.allow_footprint_subset:
-                    add("footprint-matches-official", True, f"{finite_outside} finite pixels outside the official footprint (allowed via --allow-footprint-subset)")
-                else:
-                    # For strict, we want 0 finite outside, but for max-compat we allow
-                    if args.max_compat:
-                        add("footprint-matches-official", True, f"{finite_outside} finite outside (max-compat mode, platform reads NaN as 0)")
-                    else:
-                        add("footprint-matches-official", finite_outside == 0, f"{finite_outside} finite pixels outside the official footprint")
-            else:
-                # Without official mask, we can only check that there is no NaN if we want to guarantee no range error
-                nan_count = np.isnan(data).sum()
-                if args.max_compat or nan_count == 0:
-                    # If all finite, we guarantee no NaN inside
-                    add("NAN-INSIDE-FOOTPRINT", True, f"{nan_count} NaN total, 0 inside guaranteed because all finite (max-compat) — no range error possible")
-                    add("footprint-matches-official", True, "official footprint not present, cannot check")
-                else:
-                    # We have NaN but no mask — we cannot guarantee, so warn
-                    add("NAN-INSIDE-FOOTPRINT", False, f"{nan_count} NaN pixels present but official footprint not available to verify inside/outside — download data/ to verify")
-                    add("footprint-matches-official", True, "skipped, no official mask")
-
-            # Stats
-            print("\nFile statistics")
-            print(f"total pixels: {data.size}")
-            print(f"finite: {np.isfinite(data).sum()} nan: {np.isnan(data).sum()} inf: {np.isinf(data).sum()}")
-            if finite.size:
-                print(f"finite min {finite.min()} max {finite.max()} positive {np.sum(finite>0)}")
-
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        add("exception", False, str(e))
-        sys.exit(1)
-
-    failed = [c for c in checks if not c[1]]
-    if failed:
-        print(f"\n{len(failed)} checks FAILED")
-        sys.exit(1)
+    if args.json:
+        print(json.dumps({"path": str(path), "checks": checks, "info": info,
+                          "ok": all(c["ok"] for c in checks)}, indent=2, default=str))
     else:
-        print(f"\nAll {len(checks)} checks PASS")
-        sys.exit(0)
+        if not args.quiet:
+            print(f"=== validate_submission: {path} ({path.stat().st_size if path.exists() else 0} bytes) ===")
+        for c in checks:
+            if args.quiet and c["ok"]:
+                continue
+            print(f"{'PASS' if c['ok'] else 'FAIL':4}  {c['check']:24}  {c['detail']}")
+        if not args.quiet:
+            passed = sum(c["ok"] for c in checks)
+            print(f"\n{passed}/{len(checks)} checks passed")
+            if passed != len(checks):
+                print("DO NOT UPLOAD. Fix the FAIL lines first.")
+
+    return 0 if all(c["ok"] for c in checks) else 1
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

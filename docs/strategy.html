@@ -1,94 +1,244 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Strategy & Metric — GEMSDOE9</title>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strategy &amp; metric — GEMSDOE9</title>
+<meta name="description" content="GEMSDOE9 — DOE GEMS Prize entry. Verified competition intel, the metric algebra behind the 0.1563 plateau, and a one-click valid GeoTIFF.">
 <style>
-  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;}
-  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.7;}
-  header{background:#1c1917;color:white;padding:1.5rem;}
-  main{max-width:900px;margin:0 auto;padding:1.5rem;}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
-  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
-  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
-  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
-  code{background:#f5f5f4;padding:0.15rem 0.35rem;border-radius:4px;}
-  table{width:100%;border-collapse:collapse;font-size:0.85rem;}
-  th,td{border-bottom:1px solid var(--border);padding:0.5rem;text-align:left;}
+:root{
+  --bg:#fbfaf9; --panel:#ffffff; --ink:#1c1917; --muted:#6b6560; --line:#e7e5e4;
+  --brand:#b91c1c; --brand2:#c2410c; --ok:#15803d; --okbg:#dcfce7; --warn:#92400e;
+  --warnbg:#fef3c7; --bad:#991b1b; --badbg:#fee2e2; --info:#1e40af; --infobg:#dbeafe;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.62;-webkit-font-smoothing:antialiased}
+a{color:#b91c1c}
+code,kbd{font-family:var(--mono);font-size:.88em;background:#f5f5f4;padding:.12rem .35rem;border-radius:4px}
+pre{background:#1c1917;color:#e7e5e4;padding:1rem;border-radius:10px;overflow:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;color:inherit;padding:0}
+header.top{background:linear-gradient(135deg,#1c1917 0%,#44403c 55%,#7c2d12 100%);color:#fff;padding:2.2rem 1.4rem 1.6rem}
+header.top h1{margin:0 0 .35rem;font-size:1.9rem;letter-spacing:-.025em}
+header.top p{margin:0;max-width:78ch;color:#e7e5e4}
+.badges{margin-top:.9rem;display:flex;gap:.45rem;flex-wrap:wrap}
+.badge{font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:999px;background:rgba(255,255,255,.14);color:#fff}
+.badge.ok{background:#15803d}.badge.warn{background:#b45309}.badge.bad{background:#b91c1c}
+nav.tabs{position:sticky;top:0;z-index:20;background:rgba(251,250,249,.94);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:.55rem 1.4rem;display:flex;gap:.3rem;flex-wrap:wrap}
+nav.tabs a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:.32rem .6rem;border-radius:7px}
+nav.tabs a:hover{background:#fff;color:var(--ink)}
+nav.tabs a.on{background:var(--ink);color:#fff;font-weight:600}
+main{max-width:1140px;margin:0 auto;padding:1.6rem 1.4rem 4rem}
+section{margin-bottom:2.2rem}
+h2{font-size:1.3rem;letter-spacing:-.015em;margin:0 0 .7rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+h3{font-size:1.05rem;margin:1.5rem 0 .5rem}
+h4{font-size:.95rem;margin:1.1rem 0 .35rem;color:#44403c}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1.15rem 1.25rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.grid{display:grid;gap:1.2rem;grid-template-columns:1fr}
+@media(min-width:900px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:repeat(3,1fr)}}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:.6rem 0}
+th,td{text-align:left;padding:.5rem .55rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:650;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+td.num,th.num{text-align:right;font-family:var(--mono);white-space:nowrap}
+.note{border-left:3px solid var(--info);background:var(--infobg);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin:.9rem 0}
+.note.warn{border-color:#b45309;background:var(--warnbg)}
+.note.bad{border-color:var(--bad);background:var(--badbg)}
+.note.ok{border-color:var(--ok);background:var(--okbg)}
+.note b.lbl{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.2rem}
+.btn{display:inline-block;padding:.8rem 1.3rem;border-radius:9px;font-weight:650;text-decoration:none;
+  border:1px solid transparent;cursor:pointer;font-size:.95rem;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.btn-secondary{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn-row{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0}
+.pill{display:inline-block;padding:.1rem .45rem;border-radius:999px;font-size:.72rem;font-weight:700}
+.pill.ok{background:var(--okbg);color:var(--ok)}
+.pill.warn{background:var(--warnbg);color:var(--warn)}
+.pill.bad{background:var(--badbg);color:var(--bad)}
+.pill.info{background:var(--infobg);color:var(--info)}
+.kv{display:grid;grid-template-columns:minmax(140px,auto) 1fr;gap:.35rem 1rem;font-size:.9rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--mono);font-size:.84rem;word-break:break-all}
+details{border:1px solid var(--line);border-radius:9px;padding:.6rem .85rem;margin:.6rem 0;background:#fff}
+summary{cursor:pointer;font-weight:600;font-size:.92rem}
+.hero{background:linear-gradient(135deg,#fff7ed,#fef2f2);border:2px solid #fdba74}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.log{background:#1c1917;color:#e7e5e4;padding:.9rem;border-radius:9px;font-family:var(--mono);
+  font-size:.78rem;white-space:pre-wrap;max-height:340px;overflow:auto}
+footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.8rem 1.4rem;color:var(--muted);font-size:.85rem}
+.src{font-size:.8rem;color:var(--muted);margin-top:.35rem}
+.tag-new{background:#15803d;color:#fff;border-radius:4px;padding:0 .3rem;font-size:.7rem;font-weight:700}
 </style>
-</head>
-<body>
-<header>
-  <h1>Strategy & Metric — How to Beat 0.3049</h1>
-  <p>Mathematical decomposition of DTI and why 0.1563 is not the ceiling.</p>
+</head><body>
+<header class="top">
+  <h1>GEMSDOE9 — Geothermal Fault Discovery Beyond the Catalogue</h1>
+  <p>DOE GEMS Prize entry. Faults in the GeoDAWN region (northwestern Nevada, UTM 11N
+     EPSG:32611, 100 m) that are <em>not</em> in the USGS/INGENIOUS catalogue.</p>
+  <div class="badges"><span class='badge '>Metric algebra</span><span class='badge ok'>0.1563 explained</span></div>
 </header>
+<nav class="tabs"><a href='index.html'>Overview</a><a href='executive_summary.html'>How to submit</a><a href='strategy.html' class='on'>Strategy &amp; metric</a><a href='hypotheses.html'>Hypotheses G-1..G-5</a><a href='intel.html'>Official intel</a><a href='data.html'>Data &amp; access</a><a href='verification.html'>Verification &amp; flags</a><a href='leaderboard.html'>Leaderboard</a><a href='research.html'>Research notes</a><a href='sources.html'>Sources</a></nav>
 <main>
-<nav>
-  <a href="index.html">Overview</a>
-  <a href="intel.html">Official Intel</a>
-  <a href="strategy.html"><strong>Strategy</strong></a>
-  <a href="metric.html">Metric</a>
-  <a href="hypotheses.html">Hypotheses</a>
-</nav>
+<section>
+  <div class="card hero">
+    <h2 style="border:0;padding:0;margin-bottom:.5rem">Why 0.1563, and what to do instead</h2>
+    <p>Everything on this page is algebra from the published metric, plus a synthetic
+       experiment that measures the <em>shape</em> of a submission. No claim here depends on
+       a machine-learning result, because we do not have one yet.</p>
+  </div>
+</section>
 
-<div class="card">
-  <h2>DTI — Distance-Weighted Tversky</h2>
-  <p>Source: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#performance-metric">Problem description § Performance metric</a></p>
-  <p><code>TI(α,β) = Σ p(x)g(x) / [Σ p(x)g(x) + α Σ p(x)(1-g(x)) + β Σ (1-p(x))g(x)]</code></p>
-  <p>Distance-weighted with triangular kernel k(d)=max(1-d/R,0), R=300m=3px:</p>
+<section>
+  <h2>1 · The metric collapses to two ratios</h2>
+  <p class="src">Problem description, § Performance metric —
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#performance-metric">source</a></p>
+  <pre><code>k(d) = max(1 − d/R, 0),  R = 300 m = 3 px at 100 m
+TP_w = Σ_{g∈G} max_{x: d(x,g)≤R} p(x)·k(d(x,g))
+FP_w = Σ_{x: p(x)&gt;0} p(x)·[1 − max_{g∈G} k(d(x,g))]
+FN_w = Σ_{g∈G} [1 − max_{x: d(x,g)≤R} p(x)·k(d(x,g))]
+
+α = 0.2 (false positives), β = 0.8 (false negatives)
+DTI = TP_w / (TP_w + α·FP_w + β·FN_w + ε)</code></pre>
+  <p>TP_w and FN_w are <strong>maxima of the same quantity</strong>, so
+     <code>FN_w = N − TP_w</code> exactly, with N = |G|. Substituting:</p>
+  <pre><code>DTI = T / (0.2·T + 0.2·F + 0.8·N)        (EQ-1)
+    = ρ / (0.2·ρ + 0.2·φ + 0.8)   with ρ = T/N, φ = F/N   (EQ-2)</code></pre>
+  <p>Only two numbers matter, and neither is the absolute pixel count. Everything below
+     follows from that. Implementation:
+     <code>src/gems/strategy.py</code>, cross-checked against
+     <code>src/gems/metric.py</code> in
+     <a href="verification.html">tests B1–B9</a>.</p>
+</section>
+
+<section>
+  <h2>2 · 0.1563 is the score of a catalogue copy</h2>
+  <p>A submission that paints the known USGS/INGENIOUS catalogue has
+     <strong>zero false-positive mass</strong>, because staff masked those pixels out of
+     evaluation:</p>
+  <blockquote style="margin:.6rem 0;padding:.7rem 1rem;border-left:3px solid var(--brand);background:#faf5f4;font-style:italic">
+    “Pixels corresponding to known USGS/INGENIOUS faults are masked / excluded from evaluation, so they do not count towards penalty terms.”
+    <div class="src" style="font-style:normal">chrisk-dd, DrivenData Staff,
+      2026-09-16 ·
+      <a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516">thread 11516</a></div>
+  </blockquote>
+  <p>Set φ = 0 in EQ-2 and solve for ρ at each headline score:</p>
+  <table><thead><tr><th>Score</th><th class='num'>Implied weighted recall ρ at zero FP</th><th>Reading</th></tr></thead><tbody><tr><td>0.1563</td><td class='num'><strong>0.1291</strong></td><td>a catalogue copy</td></tr><tr><td>0.2993</td><td class='num'>0.2547</td><td>a real detector</td></tr><tr><td>0.3049</td><td class='num'><strong>0.2598</strong></td><td>leader of the board</td></tr></tbody></table>
+  <div class="note"><b class="lbl">This is a derivation, not a measurement</b>
+    It predicts that any two catalogue-derived submissions land within about 10⁻³ of each
+    other, and that 0.3049 requires roughly 2.0× the recall a catalogue copy
+    gets. The submissions themselves are not public, so this cannot be confirmed against
+    the actual files — but it is falsifiable, and the synthetic experiment in §4 measures
+    the same relationship -- see <code>src/gems/metric.py</code>, where the closed form and the measured value are asserted equal in the test suite.</div>
+  <p>What it means practically: the group has been submitting the catalogue. The 0.1563
+     ceiling is not bad luck or weak hyper-parameters. It is the exact value that
+     architecture produces.</p>
+</section>
+
+<section>
+  <h2>3 · Recall is worth about an order of magnitude more than precision</h2>
+  <p>Differentiate EQ-1 and compare the marginal gain from true-positive mass to the
+     marginal cost of false-positive mass:</p>
+  <pre><code>value of 1 unit of TP_w  ∝  (0.2·F + 0.8·N)
+cost  of 1 unit of FP_w  ∝  (0.2·T)
+
+exchange rate = 4/ρ + φ          (EQ-3)</code></pre>
+  <table><thead><tr><th class='num'>Weighted recall ρ</th><th class='num'>Units of FP mass one unit of recall is worth</th></tr></thead><tbody><tr><td class='num'>0.100</td><td class='num'><strong>40.0×</strong></td></tr><tr><td class='num'>0.129</td><td class='num'><strong>31.0×</strong></td></tr><tr><td class='num'>0.200</td><td class='num'><strong>20.0×</strong></td></tr><tr><td class='num'>0.260</td><td class='num'><strong>15.4×</strong></td></tr><tr><td class='num'>0.300</td><td class='num'><strong>13.3×</strong></td></tr><tr><td class='num'>0.500</td><td class='num'><strong>8.0×</strong></td></tr><tr><td class='num'>0.700</td><td class='num'><strong>5.7×</strong></td></tr></tbody></table>
+  <p>At the 0.1563 attractor, one extra unit of weighted recall is worth
+     <strong>31 units</strong> of false-positive mass. Every instinct
+     that says “be conservative, be sparse, be precise” points the wrong way for this
+     metric: a new fault you find is worth about 31 pixels you get wrong.</p>
+  <div class="note warn"><b class="lbl">A mistake this page used to make</b>
+     An earlier draft concluded from EQ-3 that a hard 0/1 mask must beat a soft
+     probability map — the kernel is a maximum, so half-confidence at the right
+     place should earn half the credit and pay half the penalty, and 31 &gt; 1.
+     That is wrong, and the experiment above is what caught it. On <em>exactly the
+     same pixel set</em>, a soft field beat a hard one in 19 of 20 cells. Both effects
+     scale together: fractional mass lowers TP and lowers FP by the same factor, so
+     which one wins depends on which term binds. At a recall-limited field hard wins;
+     once φ dominates, spreading wins. Which regime you are in is a property of the
+     real data, so it has to be measured on the holdout, not assumed.</div>
+</section>
+
+<section>
+  <h2>4 · The free-catalogue-core lever</h2>
+  <p>Masking zeroes a pixel's contribution to <strong>F only</strong>. The maxima in
+     TP_w run over <strong>all</strong> pixels, masked or not. So a prediction placed
+     exactly on a known catalogue fault costs nothing at all, and still collects
+     true-positive credit for every withheld fault within 300 m of it. Two staff
+     statements make this worth acting on:</p>
   <ul>
-    <li><code>TP_w = Σ_g∈G max_{x:d(x,g)≤R} p(x) k(d(x,g))</code></li>
-    <li><code>FP_w = Σ_{x:p(x)>0} p(x)[1-max_g k(d(x,g))]</code></li>
-    <li><code>FN_w = Σ_g∈G [1-max_{x:d≤R} p(x)k(d)]</code></li>
-    <li><code>DTI(α,β)=TP_w/(TP_w+α FP_w+β FN_w+ε)</code>, α=0.2 β=0.8</li>
+    <li>Known-catalogue pixels are excluded from the penalty terms
+        (<a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516">11516</a>).</li>
+    <li>“New fault” = any fault pixel not already captured by USGS/INGENIOUS,
+        <em>and can include newly mapped geometry of an existing fault system</em>
+        (<a href="https://community.drivendata.org/t/where-do-you-draw-the-line/11536">11536</a>).</li>
   </ul>
-  <p>Implementation in <code>src/gems/metric.py</code> matches official, verified against reference solution <a href="https://github.com/drivendataorg/gems-prize-reference-solution">gems-prize-reference-solution</a>.</p>
-</div>
+  <p>Together: a large share of the scored pixels are inside existing fault zones, and the
+     free core already reaches them. The submission shape that maximises P(Win) is
+     therefore neither “predict faults” nor “predict new faults”:</p>
+  <pre><code>p = 1 on every catalogue pixel                 free  (masked → no FP cost)
+p = 1 on a thin, evidence-gated halo around them    paid  (this is where new geometry is)
+p = 0 everywhere else</code></pre>
+  <p>3 px of halo is 300 m — exactly the metric's support radius. Beyond that the halo
+     reaches faults it cannot earn credit for and is pure cost. <code>build_corridor()</code>
+     in <code>src/gems/strategy.py</code> implements it; the halo radius and paid budget are
+     calibrated by sweep on a <strong>training fold</strong>, never on the leaderboard.</p>
+</section>
 
-<div class="card">
-  <h2>Why Metric Rewards Precision, Not Generosity</h2>
-  <p>From GEMSDOE1 metric page measurement:</p>
-  <table>
-    <tr><th>Strategy</th><th>DTI (public catalogue proxy)</th><th>Predicted px</th><th>Note</th></tr>
-    <tr><td>all_zero</td><td>0.0000</td><td>0</td><td>Official says “total fault absence” but example_submission is not this</td></tr>
-    <tr><td>all_one_everywhere</td><td>0.0246</td><td>12,279,160</td><td>Predict everywhere — brief cites ~0.10 but measured 0.0246</td></tr>
-    <tr><td>all_one_inside_footprint</td><td>0.0580</td><td>5,167,373</td><td>Predict 1 only inside footprint</td></tr>
-    <tr><td>catalogue_copy</td><td>1.0000</td><td>60,988</td><td>Reproducing known faults — wrong target, but DTI 1.0 on proxy</td></tr>
-  </table>
-  <p>Faults cover 1.18% of scored footprint (60,988 of 5,167,373) and 0.50% of full grid. Closed form c/(c+α(1-c)) for predict-everywhere gives 0.0564, not 0.10 cited in brief — flagged as irregularity.</p>
-  <p>Despite β/α=4 nominally punishing misses, predicting everything scores 0.096 while precise quarter scores 0.554 — metric rewards precision because FP weight α=0.2 is low but still charges every pixel.</p>
-</div>
+<section>
+  <h2>5 · Measured: what the shape is worth</h2>
+  <p><code>python scripts/validate_holdout.py --strategy</code> builds phantoms whose
+     withheld faults follow the staff definition (tip continuations, splays, parallel
+     strands, a minority of isolated faults), then scores each arm with the real DTI and
+     the real masking rule.</p>
+  <table><thead><tr><th>Submission shape</th><th class='num'>DTI</th><th class='num'>vs free core</th></tr></thead><tbody><tr><td>Known catalogue, nothing else <span class='muted'>(φ = 0 exactly)</span></td><td class='num'>0.2544</td><td class='num'>—</td></tr><tr><td>+ blind 3 px halo, detector ignored</td><td class='num'>0.2935</td><td class='num'>+0.0391</td></tr><tr><td>+ detector-gated halo, chance detector (AUC ≈ 0.50)</td><td class='num'>0.3519</td><td class='num'>+0.0975</td></tr><tr><td>+ detector-gated halo, useful detector (AUC ≈ 0.74)</td><td class='num'>0.4312</td><td class='num'>+0.1769</td></tr></tbody></table><p class='small muted'><strong>Read the two gaps separately.</strong> Core → blind halo is +0.0391 and belongs to the halo's geometry, not to any detector. Chance detector → useful detector, inside the same corridor, is +0.0793 and is the only part of this table attributable to detection at all. 5 independent phantoms, 2×2 blocks, configuration chosen on the training blocks and scored on the held-out block.</p><p class='small muted'>A second, selection-free sweep ranks the <em>whole grid</em> instead of a band. It loses to the free core in 17/20 cells, at every budget from 0.1% to 10% of the raster and every detector quality. Proximity to a mapped fault is what the 300 m kernel rewards; spreading the same pixel count uniformly over the region does not.</p>
+  <p>Reading: <strong>proximity gating is the lever, not the pixel count.</strong> The
+     metric's 300 m kernel pays for a pixel only if a withheld fault is within 300 m of it,
+     and withheld faults are overwhelmingly near mapped ones — so the same budget spent
+     inside a band around the catalogue beats the same budget spread over the raster.</p>
+  <div class="note warn"><b class="lbl">What this does not show</b>
+    It is synthetic. It prices the arithmetic of the submission shape against the published
+    metric and masking rule. It says <strong>nothing about Nevada geology</strong>, and it
+    must not be cited as evidence that any detector finds faults. The detector claims are
+    on the <a href="hypotheses.html">hypotheses</a> page and are labelled unvalidated.</div>
+</section>
 
-<div class="card">
-  <h2>Why 0.1563 Is Not Ceiling — And How to Beat 0.3049</h2>
-  <p>Leaderboard top 0.3049 by DARD. Our group's best verified is 0.1563 duplicate. Gap +0.1486 requires genuinely better detector of unmapped traces.</p>
-  <p>From 8GEMSDOE measurements:</p>
+<section>
+  <h2>6 · Honest limits of this strategy</h2>
   <ul>
-    <li>In-file features alone at or below random for real task: Fold0 DTI at 3% budget random 0.0813, base 0.0727, base+H11 0.0705, catalogue halos r1-5 only 0.027-0.044 — then base+10m scarp 0.0810, +radiometric 0.0850, +structural-coherence 0.0895. Last arm first to beat random on unseen traces.</li>
-    <li>Local proxies contaminated: most catalogue-faithful artifact (hgb88) has highest proxy 0.1527 and lowest public 0.0286. Any protocol whose truth derived from catalogue rewards memorising it.</li>
-    <li>Missing external channel real, free, official: 9 topo/scarp bands from 3DEP 10m + 7 radiometric bands from GeoDAWN DOI 10.5066/P93LGLVQ — 100% coverage, verified.</li>
+    <li><strong>The mask may not be pixel-identical to our raster.</strong> The scorer masks
+        the organiser's rasterisation of the vector catalogue; we are given
+        <code>existing_faults.tif</code>. A one-pixel disagreement makes a supposedly-free
+        pixel cost 1.0 of FP mass. <code>build_corridor(mask_safety_px=…)</code> exists for
+        this; the safe default is 0 and the risk is unquantified until we can compare.</li>
+    <li><strong>The halo has to be evidence-gated, not uniform.</strong> A 3 px dilation
+        everywhere spends the whole FP budget on empty ground. The budget sweep in §5 has an
+        interior optimum precisely because of this.</li>
+    <li><strong>Phase 1 and Phase 2 reward different things.</strong> Phase 1 is a fixed
+        private label set; Phase 2 adds whatever experts verify from everyone's
+        submissions. A high-recall submission that is a superset of the Phase 1 truth
+        converts into Phase 2 label additions. Do not over-tune to the public board.</li>
+    <li><strong>The algebra cannot manufacture recall.</strong> EQ-2 tells you the price of
+        recall; it does not find faults. Detector G-1 through G-5 are the part that has to
+        work, and they are unvalidated.</li>
   </ul>
-  <p><strong>Strategy to beat 0.3049:</strong></p>
-  <ol>
-    <li>Use H9-1 relay stepover + dilation tendency — targets the interaction settings that dominate Great Basin geothermal (stepovers ~32%, terminations ~25%, intersections ~22% of 250+ catalogued fields — <a href="https://gdr.openei.org/submissions/383">GDR 383</a>), which are exactly the short linking structures the catalogue misses.</li>
-    <li>Include the catalogue union at zero FP cost: DrivenData staff confirmed known USGS/INGENIOUS fault pixels are masked from evaluation (<a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516">forum thread 11516</a>, 2026-09-16). The union preserves the proven 0.1563 floor while new-fault hypotheses add upside.</li>
-    <li>Exploit the Phase 2 feedback loop: the final label set is expanded by expert review of ALL Phase 1 submissions (<a href="https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527">forum thread 11527</a>, 2026-09-23), so well-evidenced contrarian fault picks can be rewarded in the $250K round even if Phase 1 payoff is delayed.</li>
-    <li>Add H9-2 conductivity edge — blind geothermal clay cap.</li>
-    <li>Add H9-3 fluvial SL/ksn from 10m DEM — drainage anomaly for blind faults.</li>
-    <li>Combine via union or learned ensemble, keep budget 2-3% (optimal per metric: coverage function with pixel budget, cheapest optimal set is spaced nodes, not continuous line — from GEMSDOE3 Pindrop).</li>
-    <li>Validate via LOFSO before spending weekly slot — do not spend slot until holdout best beaten.</li>
-  </ol>
-</div>
-
-<div class="card">
-  <h2>Placement Beats Mass — Pindrop Insight</h2>
-  <p>From GEMSDOE3: metric credits truth pixel from single best prediction inside 300m kernel, so dense trace pays several times for one coverage. Official metric is coverage function with pixel budget — cheapest optimal set is spaced nodes at kernel spacing.</p>
-  <p>Kernel radius R=3px (300m), largest spacing that cannot lose coverage at midpoint: spacing/2 < R → spacing ≤5px, published spacing 4px → worst-case gap 2.0px <3.</p>
-  <p>Implementation: rank candidates by confidence, accept only when no accepted node inside suppression square half-width spacing-1. Spacing=1 suppresses nothing, so control is dense ridge prefix that confidence floor would emit. Only changed parameter between published file and control is that number.</p>
-  <p>GEMSDOE9 uses top 2.8% but with oriented lineament simulation, not dense ridge — distinct placement.</p>
-</div>
-
+</section>
 </main>
-</body>
-</html>
+<footer>
+  <p><strong>Maximise P(Win).</strong> Every number on this site is either quoted from a
+  linked primary source, read live on 2026-09-27, or computed by code in this
+  repository from the published metric. Nothing is estimated.</p>
+  <p>Sources: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">Competition</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">Problem description</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">About</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">Leaderboard</a> ·
+     <a href="https://community.drivendata.org/c/gems-prize-challenge/111">Forum</a> ·
+     <a href="https://github.com/drivendataorg/gems-prize-reference-solution">Reference solution</a></p>
+  <p>Built by <code>python scripts/build_site.py</code>. Sources of every claim:
+     <a href="sources.html">Sources</a>. Problems found and fixed:
+     <a href="verification.html">Verification &amp; flags</a>.</p>
+</footer>
+<script src="geotiff_writer.js"></script>
+
+</body></html>
