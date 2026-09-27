@@ -4,7 +4,10 @@ verify_rules_quotes.py — checks verbatim sentences from Official Rules PDF
 Source: https://docs.nlr.gov/docs/fy26osti/96647.pdf SHA256 50d854b1e0239fe6...
 """
 
-# Sentences to verify — from GEMSDOE1, re-verified
+# Six key sentences tracked in this repo. (GEMSDOE1 reported matching all 29
+# quoted sentences against the PDF on 2026-09-21; these six are the subset we
+# keep under automated check here. When data/GEMS_96647.pdf is present and
+# PyPDF2 is installed, each is checked verbatim against the extracted text.)
 QUOTES = {
     "phase1_target": "In Phase 1, submissions will be evaluated against a privately withheld subset of the original new fault dataset compiled by expert reviewers.",
     "experts_revise": "After Phase 1, expert reviewers will use submitted predictions to revise the new fault dataset.",

@@ -5,33 +5,76 @@ These are derived features not present in previous repos, or implemented differe
 
 All functions operate on numpy arrays HxW.
 
-Band mapping (from training_features.tif 19 bands, verified in GEMSDOE1 Data page):
-0: surface conductivity
-1: depth to conductive base
-2: detrended elevation
-3: slope of detrended elevation
-4: dilatation rate
-5: shear strain rate
+Band inventory — verification status (no hallucinations policy):
+
+VERIFIED (official problem description, feature bullet list, checked 2026-09-27):
+https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#provided-features
+  The page lists these layer groups for training_features.tif (100 m, EPSG:32611):
+  - Surface conductivity and depth to conductive base surface
+  - Detrended elevation and the slope of detrended elevation
+  - Dilatation rate, shear strain rate, second invariant of the strain rate tensor
+  - Isostatic gravity anomaly and the slope of the isostatic gravity anomaly
+  - Magnetics: reduced-to-pole magnetic anomaly, total magnetic intensity,
+    vertical and horizontal slope of total magnetic intensity,
+    top-of-crustal magnetic source depth estimate
+  - Density of earthquakes
+  (Radiometric layers are implied by the page's figure caption "total radiometric
+  counts per second" but are not in the bullet list.)
+
+VERIFIED (GEMSDOE1 measurement on the actual file): 19 bands total.
+
+UNVERIFIED until data/ is placed: the exact per-index band order inside the file.
+  The authoritative order lives in the GeoTIFF band tags; the official reference
+  solution reads them via src.tags(i)['description'] / ['data_category']
+  (https://github.com/drivendataorg/gems-prize-reference-solution).
+  scripts/prepare_data.py dumps these tags when the file is present.
+
+PROVISIONAL INDEXING used below (assumes the file follows the page's bullet
+order, plus 4 radiometric bands K/Th/U/total-count at the end):
+0: surface conductivity                10: total magnetic intensity
+1: depth to conductive base            11: vertical slope of TMI
+2: detrended elevation                 12: horizontal slope of TMI
+3: slope of detrended elevation        13: top-of-crustal magnetic source depth
+4: dilatation rate                     14: density of earthquakes
+5: shear strain rate                   15-18: radiometric (order unverified)
 6: second invariant of strain rate
 7: isostatic gravity anomaly
 8: slope of isostatic gravity anomaly
 9: reduced-to-pole magnetic anomaly
-10: total magnetic intensity
-11: vertical slope of TMI
-12: horizontal slope of TMI
-13: top-of-crustal magnetic source depth
-14: density of earthquakes
-15: total radiometric? (actually band 6 is radiometric total count, not magnetic tilt — bug found in 8GEMSDOE)
-16: K radiometric?
-17: Th?
-18: U? etc — see data.html for full list
 
-We will reference by index but also by name where possible.
+Every consumer of band indices must call assert_band_count() first and the
+provisional mapping must be confirmed against the band-tag dump before any
+scored submission is built from these features.
 """
 
 import numpy as np
 from scipy.ndimage import gaussian_filter, sobel, generic_filter
 from scipy.signal import convolve2d
+
+# Provisional band indices (see module docstring — unverified until band tags read)
+BAND_SURFACE_CONDUCTIVITY = 0
+BAND_DEPTH_CONDUCTIVE_BASE = 1
+BAND_DETRENDED_ELEVATION = 2
+BAND_DETRENDED_SLOPE = 3
+BAND_DILATATION_RATE = 4
+BAND_SHEAR_STRAIN_RATE = 5
+BAND_SECOND_INVARIANT = 6
+BAND_ISOSTATIC_GRAVITY = 7
+BAND_ISOSTATIC_GRAVITY_SLOPE = 8
+EXPECTED_BAND_COUNT = 19  # verified by GEMSDOE1 measurement of the actual file
+
+
+def assert_band_count(feature_stack):
+    """Hard gate: refuse to build features from a stack whose band count we
+    have not verified. 19 bands was measured on the real file in GEMSDOE1.
+    Accepts shapes (19, H, W) or (H, W, 19)."""
+    if feature_stack.ndim != 3:
+        raise ValueError("feature stack must be a 3-D array")
+    if EXPECTED_BAND_COUNT not in (feature_stack.shape[0], feature_stack.shape[-1]):
+        raise ValueError(
+            f"feature stack shape {feature_stack.shape} has no axis of size "
+            f"{EXPECTED_BAND_COUNT}; run scripts/prepare_data.py to dump and "
+            "verify band tags first")
 
 def dilation_tendency(dilatation, shear, second_inv):
     """
@@ -153,18 +196,22 @@ def build_h91_features(feature_stack):
     Build H9-1 feature set from 19-band stack.
     feature_stack: (19, H, W) or (H, W, 19)
     Returns dict of new features.
+
+    NOTE: band indexing is PROVISIONAL (see module docstring) until the
+    GeoTIFF band tags have been dumped by scripts/prepare_data.py.
     """
-    if feature_stack.shape[0] == 19:
+    assert_band_count(feature_stack)
+    if feature_stack.shape[0] == EXPECTED_BAND_COUNT:
         # (19, H, W)
         fs = feature_stack
     else:
         fs = np.moveaxis(feature_stack, -1, 0)
 
-    dilatation = fs[4]
-    shear = fs[5]
-    second = fs[6]
-    detrended_slope = fs[3]
-    grav_slope = fs[8]
+    dilatation = fs[BAND_DILATATION_RATE]
+    shear = fs[BAND_SHEAR_STRAIN_RATE]
+    second = fs[BAND_SECOND_INVARIANT]
+    detrended_slope = fs[BAND_DETRENDED_SLOPE]
+    grav_slope = fs[BAND_ISOSTATIC_GRAVITY_SLOPE]
 
     Td = dilation_tendency(dilatation, shear, second)
     # Fake orientation from detrended slope gradient for now — in real pipeline compute structure tensor

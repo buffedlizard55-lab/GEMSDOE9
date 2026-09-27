@@ -26,6 +26,7 @@
 <main>
 <nav>
   <a href="index.html">Overview</a>
+  <a href="intel.html">Official Intel</a>
   <a href="strategy.html"><strong>Strategy</strong></a>
   <a href="metric.html">Metric</a>
   <a href="hypotheses.html">Hypotheses</a>
@@ -70,7 +71,9 @@
   </ul>
   <p><strong>Strategy to beat 0.3049:</strong></p>
   <ol>
-    <li>Use H9-1 relay stepover + dilation tendency — targets structural control that hosts 70% of Great Basin geothermal, misses in catalogue.</li>
+    <li>Use H9-1 relay stepover + dilation tendency — targets the interaction settings that dominate Great Basin geothermal (stepovers ~32%, terminations ~25%, intersections ~22% of 250+ catalogued fields — <a href="https://gdr.openei.org/submissions/383">GDR 383</a>), which are exactly the short linking structures the catalogue misses.</li>
+    <li>Include the catalogue union at zero FP cost: DrivenData staff confirmed known USGS/INGENIOUS fault pixels are masked from evaluation (<a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516">forum thread 11516</a>, 2026-09-16). The union preserves the proven 0.1563 floor while new-fault hypotheses add upside.</li>
+    <li>Exploit the Phase 2 feedback loop: the final label set is expanded by expert review of ALL Phase 1 submissions (<a href="https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527">forum thread 11527</a>, 2026-09-23), so well-evidenced contrarian fault picks can be rewarded in the $250K round even if Phase 1 payoff is delayed.</li>
     <li>Add H9-2 conductivity edge — blind geothermal clay cap.</li>
     <li>Add H9-3 fluvial SL/ksn from 10m DEM — drainage anomaly for blind faults.</li>
     <li>Combine via union or learned ensemble, keep budget 2-3% (optimal per metric: coverage function with pixel budget, cheapest optimal set is spaced nodes, not continuous line — from GEMSDOE3 Pindrop).</li>

@@ -87,10 +87,17 @@
 - **Task:** Predict per-pixel probability of geological fault presence across GeoDAWN region (northwestern Nevada, UTM 11N EPSG:32611, 100 m). Faults are structural markers of hidden geothermal systems.
 - **Training labels:** USGS Quaternary Fault and Fold Database + INGENIOUS Great Basin Regional Dataset Compilation https://doi.org/10.15121/1881483 — *incomplete*.
 - **Test labels (scored):** Privately withheld new faults mapped by NLR/USGS experts *absent* from USGS catalogue. Both Phase 1 and Phase 2 score *new* faults only. Phase 1 = private subset, Phase 2 = expanded set after expert review of all submissions.
-- **Metric:** Distance-weighted Tversky index, α=0.2 (FP), β=0.8 (FN), triangular kernel R=300 m (3 px). `DTI = TP_w / (TP_w + α FP_w + β FN_w + ε)`. [Source: Problem description § Performance metric, verified 2026-09-26].
+- **Metric:** Distance-weighted Tversky index, α=0.2 (FP), β=0.8 (FN), triangular kernel R=300 m (3 px). `DTI = TP_w / (TP_w + α FP_w + β FN_w + ε)`. [Source: Problem description § Performance metric, re-verified 2026-09-27; official worked example TP_w=3.00, FP_w=1.89, FN_w=2.00 → 0.60].
 - **Submission format:** Single-band GeoTIFF, float32 in [0,1], 3292×3730 px, EPSG:32611, geotransform `[100,0,243350,0,-100,4508550]`, NaN outside footprint (or 0.0 for max-compatibility), nodata=nan.
-- **Current top:** 0.3049 by DARD (2026-09-26 leaderboard, https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/).
-- **Reference solution:** https://github.com/drivendataorg/gems-prize-reference-solution — UNet Monte Carlo CV, baseline.
+- **Current top:** 0.3049 by DARD (leaderboard re-verified live 2026-09-27, https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/).
+- **Reference solution:** https://github.com/drivendataorg/gems-prize-reference-solution — UNet Monte Carlo CV, Tversky loss α=0.2/β=0.8, band names read from GeoTIFF band tags (notebook blob `d45bf7bdb1d3…` fetched via GitHub API 2026-09-27).
+
+## Official Intel — Staff Clarifications (Verified 2026-09-27, full page: docs/intel.html)
+
+1. **Catalogue masking:** "Pixels corresponding to known USGS/INGENIOUS faults are masked / excluded from evaluation, so they do not count towards penalty terms." Same in the final round. — DrivenData staff, 2026-09-16, https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516
+2. **Phase 2 feedback loop:** "the largest prize pool (Phase 2) will use a test set that is updated by expert review of all Phase 1 submissions, so your fault predictions have an impact on final evaluation even if they are not the most performant in Phase 1." — DrivenData staff, 2026-09-23, https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527
+3. **Submission cadence:** 3 scored submissions per rolling 7-day window. — DrivenData staff, 2026-09-17, https://community.drivendata.org/t/weekly-submissions/11524
+4. **0.1563 is a catalogue attractor:** three separate accounts (extradr19, SDCF9, smashi34 — ownership not verifiable publicly) sit at exactly 0.1563 with only 2 submissions each, matching our group's duplicate score. Catalogue-derived submissions saturate there because catalogue pixels are masked and only haloes within 300 m of withheld faults earn partial credit.
 
 ---
 
@@ -112,6 +119,7 @@
 GEMSDOE9/
 ├── docs/                      # GitHub Pages site (clean UI, no install needed to download)
 │   ├── index.html             # Top: build button, audit of 0.1563 duplicates, leaderboard
+│   ├── intel.html             # Official staff clarifications + 2026-09-27 leaderboard snapshot
 │   ├── executive_summary.html # Step-by-step submission, format gates, error resolution
 │   ├── how_to_submit.html     # Click-by-click guide with screenshots description
 │   ├── research.html          # Scientific discovery of geothermal vents, verified sources
@@ -127,12 +135,14 @@ GEMSDOE9/
 │   └── downloads/             # Pre-built valid submission.tif + zip + manifest
 ├── scripts/
 │   ├── download_competition_data.sh  # Requires DrivenData login, places files in data/
-│   ├── prepare_data.py               # Verifies SHA, splits, builds footprint mask
+│   ├── prepare_data.py               # Verifies SHA, dumps authoritative band tags, builds footprint mask
 │   ├── validate_submission.py        # 13-format-gate validator (hard gate)
 │   ├── build_submission.py           # Builds submission from model or heuristic
 │   ├── build_site.py                 # Builds docs/ from JSON evidence
-│   ├── verify_rules_quotes.py        # Checks 29 verbatim sentences vs PDF
-│   └── lofso_train_eval.py           # Leave-One-Fault-System-Out CV, clean protocol
+│   ├── verify_rules_quotes.py        # Checks verbatim sentences vs PDF
+│   ├── lofso_train_eval.py           # Blocked holdout CV; --synthetic runs the full
+│   │                                 # machinery (metric+masking+protocol) without data
+│   └── run_all_checks.sh             # One-command audit: tests, gates, holdout, site
 ├── src/gems/
 │   ├── metric.py              # DTI implementation, matches official
 │   ├── features.py            # New features: dilation tendency, stepover, conductivity edge, SL index
@@ -169,7 +179,7 @@ GEMSDOE9/
 - **Physical signature:** Extensional relay stepovers (left-stepping in right-lateral Walker Lane) and fault intersections create dilational jogs where permeability spikes 10-100×. Signature = high dilation tendency (computed from strain eigenvectors) × intersection density (Hough line intersections per km²) × curvature inflection. Target 2-5 km stepovers.
 - **Why catches missing faults:** USGS catalogue maps through-going traces, but misses short linking faults inside stepovers that have subtle topographic expression but strong strain signal. Geothermal upflow at Steamboat, Brady, etc. is at stepovers, not mid-segment.
 - **How differs:** GEMSDOE4 used lineament features but not explicit stepover detection; 6GEMSDOE used 88 channels but no dilation tendency or intersection density; 8GEMSDOE used scarp + radiometric but not strain-derived dilation. This is first to compute `Td = (σ1 - σn)/(σ1-σ3)` from strain rate tensor and cross with Hough intersections.
-- **Expected DTI lift:** +0.06-0.09 over 0.1563 baseline (based on 8GEMSDOE's +0.008 lift from structural coherence alone, plus literature that 70% of Great Basin geothermal is stepover-controlled — Faulds et al. 2010). **Rank 1, Low-Med cost** (no new external data, only derived features from existing 19 bands).
+- **Expected DTI lift:** +0.06-0.09 over 0.1563 baseline (based on 8GEMSDOE's +0.008 lift from structural coherence alone, plus verified literature: stepovers/relay ramps are the single most favorable setting for Great Basin geothermal, hosting ~32% of 250+ catalogued fields, with terminations ~25% and intersections ~22% — Faulds, Hinz & Kreemer, GDR submission 383, https://gdr.openei.org/submissions/383 ; DOE project DE-EE0002748, https://gbcge.org/recent-projects/characterizing-structural-controls/). H9-1 targets all three interaction settings. **Rank 1, Low-Med cost** (no new external data, only derived features from existing 19 bands).
 
 ### H9-2: Conductivity Edge & Clay Cap Gradient
 - **Layers:** Surface conductivity, depth to conductive base (bands 1-2) + isostatic gravity + radiometric Th/K (clay proxy).
@@ -259,11 +269,22 @@ This project is for the DOE GEMS Prize Challenge. Data sources are cited with of
 
 ## Suggestions for Next Session
 
-1. Obtain 10 m 3DEP DEM and Landsat TIRS to implement H9-3 and H9-4 — free official, but ~5-10 GB.
-2. Run `lofso_train_eval.py` for H9-1 on GPU to get clean DTI vs random control.
-3. Implement Euler deconvolution for H9-5.
-4. Archive duplicate repos (GEMSDOE, GEMSDOE2, etc.) to comply with single-entry rule (Appendix A.3).
-5. Once H9-1 beats 0.1563 on holdout, spend weekly slot with unique name `GEMSDOE9 H9-1 relay-stepover | top2.8% | <sha8>`.
+Completed this session (2026-09-27):
+- Live leaderboard re-verified (top DARD 0.3049; 0.1563 confirmed as a cross-team catalogue attractor).
+- Official staff clarifications captured with verbatim quotes (docs/intel.html): catalogue masking, Phase 2 feedback loop, rolling 7-day 3-submission window.
+- Fast exact DTI implementation + `fp_ignore_mask` (official masking) with cross-checked tests (14/14 PASS).
+- `scripts/lofso_train_eval.py --synthetic` — full blocked-holdout machinery validated on CPU (H9-1 arm beats budget-matched random and catalogue-halo controls; geology validation still requires real rasters).
+- Corrected the unsupported "70% stepover" claim to the verified GDR-383 breakdown (~32% stepovers, 25% terminations, 22% intersections).
+- `scripts/prepare_data.py` now dumps the authoritative GeoTIFF band tags (same method as the official reference solution).
+- Bugs fixed: tests now run without PYTHONPATH; build_submission.py argv bug; deprecated utcnow; speculative band map marked provisional.
+
+Next session priorities:
+1. **Place the data** (the single remaining training blocker): run `bash scripts/download_competition_data.sh` on an unrestricted machine with a DrivenData account, then `python scripts/prepare_data.py` — this also verifies the provisional band indexing in `src/gems/features.py` against the band tags.
+2. Run the real-data branch of `lofso_train_eval.py` (GPU preferred) for H9-1; only spend a weekly slot if it beats both the random control and the catalogue baseline.
+3. Obtain 1 m/10 m 3DEP DEM tiles (official About page confirms GeoDAWN-coordinated lidar) to implement H9-3 — free official, but heavy (~130 GB for 1 m; use 10 m seamless first).
+4. Implement Euler deconvolution for H9-5.
+5. Build the union submission: catalogue trace (free under masking) + H9-1 picks, budget 2-3%.
+6. Archive duplicate sibling repos to comply with the single-entry rule (Rules Appendix A.3).
 
 ---
 
@@ -273,7 +294,15 @@ This project is for the DOE GEMS Prize Challenge. Data sources are cited with of
 - Problem description: https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/
 - About: https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/
 - Data tab (login required): https://www.drivendata.org/competitions/306/competition-doe-gems/data/
-- Leaderboard: https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/
+- Leaderboard (re-verified live 2026-09-27): https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/
+- Forum — scoring/masking clarification (staff): https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516
+- Forum — test-fault sources & Phase 2 feedback (staff): https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527
+- Forum — weekly submission window (staff): https://community.drivendata.org/t/weekly-submissions/11524
+- Structural controls of Great Basin geothermal (Faulds, Hinz & Kreemer): https://gdr.openei.org/submissions/383
+- GBCGE structural-controls project (DE-EE0002748): https://gbcge.org/recent-projects/characterizing-structural-controls/
+- Faulds et al. 2012 GeoNZ paper (open PDF): https://gdr.openei.org/files/383/Faulds%20et%20al%202012%20GeoNZ%20Paper.pdf
+- Mattéo et al. 2021 (cited by the competition About page): https://doi.org/10.1029/2020JB021269
+- Hermant et al. 2025 (cited by the competition About page): https://pangea.stanford.edu/ERE/db/GeoConf/papers/SGW/2025/Hermant.pdf
 - Rules PDF: https://docs.nlr.gov/docs/fy26osti/96647.pdf
 - GDR: https://gdr.openei.org/submissions/1391
 - Reference solution: https://github.com/drivendataorg/gems-prize-reference-solution
