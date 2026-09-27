@@ -187,7 +187,7 @@ def main():
         sha = write_geotiff(data, out_path, use_nan_outside=False, footprint_mask=None)
 
     # Unique name with UTC and sha8
-    utc = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+    utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     sha8 = sha[:8]
     unique_name = f"gems9-{utc}-{sha8}.tif"
     print(f"Built {out_path} sha256 {sha}")
@@ -203,7 +203,10 @@ def main():
     # Validate
     print("\nValidating...")
     import subprocess
-    result = subprocess.run(["python", "scripts/validate_submission.py", str(out_path), "--max-compat" if args.max_compat or footprint_mask is None else ""], capture_output=False)
+    cmd = ["python", "scripts/validate_submission.py", str(out_path)]
+    if args.max_compat or footprint_mask is None:
+        cmd.append("--max-compat")
+    result = subprocess.run(cmd, capture_output=False)
     if result.returncode != 0:
         print("Validation FAILED")
     else:

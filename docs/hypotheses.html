@@ -27,6 +27,7 @@
 <main>
 <nav>
   <a href="index.html">Overview</a>
+  <a href="intel.html">Official Intel</a>
   <a href="executive_summary.html">Executive Summary</a>
   <a href="hypotheses.html"><strong>Hypotheses</strong></a>
   <a href="research.html">Research</a>
@@ -53,7 +54,7 @@
   <ul>
     <li><strong>Specific layer(s):</strong> Dilatation rate (band 4), shear strain rate (band 5), second invariant (band 6) + detrended elevation slope (band 3) + isostatic gravity slope (band 8) + derived fault azimuth from structure-tensor coherence (new, from detrended elevation)</li>
     <li><strong>Physical signature:</strong> Extensional relay stepovers (left-stepping in right-lateral Walker Lane) and fault intersections create dilational jogs where permeability spikes 10-100×. Signature = high dilation tendency Td × intersection density (Hough line intersections per km²) × curvature inflection. Target 2-5 km stepovers. Td = (σ1-σn)/(σ1-σ3) ≈ 0.5*(1+dilatation/(shear+|second|)). Intersection density via gradient of orientation.</li>
-    <li><strong>Why catches missing:</strong> USGS catalogue maps through-going traces, but misses short linking faults inside stepovers that have subtle topographic expression but strong strain signal. Geothermal upflow at Steamboat, Brady, Dixie Valley is at stepovers, not mid-segment. 70% of Great Basin geothermal at stepovers (Faulds et al. 2010, verified).</li>
+    <li><strong>Why catches missing:</strong> USGS catalogue maps through-going traces, but misses short linking faults inside stepovers that have subtle topographic expression but strong strain signal. Geothermal upflow at Steamboat, Brady, Dixie Valley is at stepovers/interaction zones, not mid-segment. Verified literature: stepovers/relay ramps are the single most favorable setting (~32% of 250+ catalogued Great Basin fields), terminations ~25%, intersections ~22% — Faulds, Hinz &amp; Kreemer, <a href="https://gdr.openei.org/submissions/383">GDR submission 383</a>; DOE project DE-EE0002748, <a href="https://gbcge.org/recent-projects/characterizing-structural-controls/">GBCGE structural controls project</a>.</li>
     <li><strong>How differs from siblings:</strong> GEMSDOE4 used lineament features (Sato ridgeness, structure-tensor coherence) but not explicit stepover detection or dilation tendency. 6GEMSDOE used 88 channels (horizontal-gradient magnitude, analytic-signal, tilt, curvature, break-in-slope, structure-tensor) but no Td or intersection density. 8GEMSDOE used scarp + radiometric but not strain-derived Td. First to compute Td from strain rate tensor and cross with Hough intersections.</li>
     <li><strong>Implementation:</strong> <code>src/gems/features.py: dilation_tendency(), intersection_density(), build_h91_features()</code> — derived from existing bands, no new external data. Free official sources: strain rate bands from training_features.tif (verified).</li>
     <li><strong>Validation:</strong> Should beat 0.0895 structural-coherence on Fold0 at 3% budget → projected 0.095-0.11. If >0.0895, allowed to spend weekly slot.</li>

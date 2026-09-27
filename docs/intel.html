@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Official Intel — GEMSDOE9</title>
+<style>
+  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;--ok:#16a34a;}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;}
+  header{background:#1c1917;color:white;padding:1.5rem;}
+  main{max-width:980px;margin:0 auto;padding:1.5rem;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
+  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
+  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
+  table{width:100%;border-collapse:collapse;font-size:0.9rem;}
+  th,td{border-bottom:1px solid var(--border);padding:0.5rem;text-align:left;}
+  blockquote{margin:0.75rem 0;padding:0.75rem 1rem;background:#f5f5f4;border-left:4px solid #dc2626;border-radius:6px;font-style:italic;}
+  .src{font-size:0.82rem;color:var(--muted);}
+  .pill{display:inline-block;padding:0.1rem 0.5rem;border-radius:999px;font-size:0.72rem;font-weight:600;background:#dcfce7;color:#166534;}
+  code{background:#f5f5f4;padding:0.1rem 0.35rem;border-radius:4px;font-size:0.88em;}
+</style>
+</head>
+<body>
+<header>
+  <h1>Official Intel — Verified Clarifications</h1>
+  <p>Every item below is a verbatim statement from the official competition pages or from DrivenData staff on the official forum, fetched and verified 2026-09-27. Links provided for manual review.</p>
+</header>
+<main>
+<nav>
+  <a href="index.html">Overview</a>
+  <a href="intel.html"><strong>Official Intel</strong></a>
+  <a href="leaderboard.html">Leaderboard</a>
+  <a href="strategy.html">Strategy</a>
+  <a href="results.html">Results</a>
+  <a href="sources.html">Sources</a>
+</nav>
+
+<div class="card">
+  <h2><span class="pill">STAFF-CONFIRMED</span> 1 · Known catalogue faults are masked from scoring</h2>
+  <blockquote>“Pixels corresponding to known USGS/INGENIOUS faults are masked / excluded from evaluation, so they do not count towards penalty terms.” … “Re-evaluation will also mask/exclude the existing USGS/INGENIOUS faults.”</blockquote>
+  <p class="src">DrivenData staff (chrisk-dd), 2026-09-16, forum thread 11516 —
+  <a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516">community.drivendata.org/t/…/11516</a></p>
+  <p><strong>Implication (our analysis):</strong> predicting catalogue faults is free — it can never add FP penalty, and it can only help where catalogue traces fall within 300 m of withheld new faults. Therefore a safe submission is the <em>union</em> of the catalogue (or a modest dilation of it) plus genuinely new-fault hypotheses. This is exactly why the 0.1563 pattern is a floor, not a ceiling. Our metric implements this masking as <code>fp_ignore_mask</code> (<code>src/gems/metric.py</code>) so holdout evaluation matches the platform.</p>
+</div>
+
+<div class="card">
+  <h2><span class="pill">STAFF-CONFIRMED</span> 2 · Phase 2 label set is built from ALL Phase 1 submissions</h2>
+  <blockquote>“Note that the largest prize pool (Phase 2) will use a test set that is updated by expert review of all Phase 1 submissions, so your fault predictions have an impact on final evaluation even if they are not the most performant in Phase 1.”</blockquote>
+  <p class="src">DrivenData staff (chrisk-dd), 2026-09-23, forum thread 11527 —
+  <a href="https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527">community.drivendata.org/t/…/11527</a>. Same structure in the problem description: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">drivendata.org …/page/967/</a> (“an expert panel will use submitted predictions to update fault labels for the full region”).</p>
+  <p><strong>Implication (our analysis):</strong> Phase 2 ($250K pool: $100K/$70K/$40K/$25K/$15K per the problem description) rewards well-evidenced contrarian picks: faults we flag that experts verify become part of the final label set. A submission should therefore spend some probability mass on high-evidence fault candidates even where Phase 1 payoff is uncertain — the Phase 2 feedback loop pays for discoveries.</p>
+</div>
+
+<div class="card">
+  <h2><span class="pill">STAFF-CONFIRMED</span> 3 · Test-fault data sources will not be disclosed</h2>
+  <blockquote>“We’re not sharing details about the data sources, fault types, or coverage behind the test faults beyond what’s in the problem description.”</blockquote>
+  <p class="src">DrivenData staff (chrisk-dd), 2026-09-23, forum thread 11527 — <a href="https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527">community.drivendata.org/t/…/11527</a></p>
+  <p><strong>Implication (our analysis):</strong> no shortcut via source-matching. The only way to find the withheld faults is structural/geophysical detection on the provided layers plus permitted external data (rules allow any licensed external data — problem description § External datasets).</p>
+</div>
+
+<div class="card">
+  <h2><span class="pill">STAFF-CONFIRMED</span> 4 · Three scored submissions per rolling week</h2>
+  <blockquote>“The submission allowance resets based on a rolling window, not at a specific date and time.”</blockquote>
+  <p class="src">DrivenData staff (chrisk-dd), 2026-09-17, forum thread 11524 — <a href="https://community.drivendata.org/t/weekly-submissions/11524">community.drivendata.org/t/…/11524</a></p>
+  <p><strong>Implication:</strong> submission slots are scarce (3 per rolling 7 days). The gate stands: no slot is spent on a candidate that has not beaten the budget-matched random control and the catalogue baseline on our blocked holdout (<code>scripts/lofso_train_eval.py</code>).</p>
+</div>
+
+<div class="card">
+  <h2><span class="pill">VERIFIED</span> 5 · Metric and format (re-checked 2026-09-27 against the problem description)</h2>
+  <ul>
+    <li>Distance-weighted Tversky index, α=0.2 (FP), β=0.8 (FN), triangular kernel R=300 m (3 px). Source: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#performance-metric">problem description § Performance metric</a>.</li>
+    <li>Official worked example on that page: TP_w=3.00, FP_w=1.89, FN_w=2.00 → DTI(0.2, 0.8) = 0.60. Our <code>src/gems/metric.py</code> implements these exact formulas; <code>tests/test_validation.py</code> cross-checks the fast and naive implementations to &lt;1e-9.</li>
+    <li>Submission: single-band float32 GeoTIFF, values in [0,1], same CRS (EPSG:32611), resolution (100 m) and bounds as training data; data outside the bounds null or NaN. Source: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#submission-format">problem description § Submission format</a>.</li>
+    <li>Reference solution: UNet Monte-Carlo CV, Tversky loss α=0.2/β=0.8, band names read from the GeoTIFF band tags. Source: <a href="https://github.com/drivendataorg/gems-prize-reference-solution">github.com/drivendataorg/gems-prize-reference-solution</a> (notebook blob sha <code>d45bf7bdb1d3…</code> fetched 2026-09-27 via GitHub API).</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>Leaderboard snapshot — 2026-09-27 (verified live today)</h2>
+  <p>Source: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">official leaderboard</a>, fetched 2026-09-27. 50 teams listed; top rows:</p>
+  <table>
+    <tr><th>#</th><th>Participant</th><th>Best public DW-Tversky</th><th>Submissions</th></tr>
+    <tr><td>1</td><td>DARD</td><td><strong>0.3049</strong></td><td>10</td></tr>
+    <tr><td>2</td><td>alexoktaba</td><td>0.2993</td><td>14</td></tr>
+    <tr><td>3</td><td>HardcoreTechGod</td><td>0.2854</td><td>6</td></tr>
+    <tr><td>4</td><td>mzoorob</td><td>0.2843</td><td>16</td></tr>
+    <tr><td>5</td><td>joeyfezster</td><td>0.2806</td><td>13</td></tr>
+    <tr><td>6</td><td>GrigorSargsyan</td><td>0.2504</td><td>5</td></tr>
+    <tr><td>7</td><td>xiaofanhu</td><td>0.2367</td><td>2</td></tr>
+    <tr><td>8</td><td>exposed</td><td>0.2340</td><td>13</td></tr>
+    <tr><td>9</td><td>hiii12345</td><td>0.2262</td><td>6</td></tr>
+    <tr><td>10</td><td>tchu</td><td>0.2220</td><td>11</td></tr>
+    <tr><td>…</td><td colspan="3"></td></tr>
+    <tr><td>24</td><td>extradr19</td><td>0.1563</td><td>2</td></tr>
+    <tr><td>25</td><td>SDCF9</td><td>0.1563</td><td>2</td></tr>
+    <tr><td>26</td><td>smashi34</td><td>0.1563</td><td>2</td></tr>
+  </table>
+  <p><strong>Observation:</strong> three separate accounts with only two submissions each sit at <em>exactly</em> 0.1563 — the same value as our group's GEMSDOE1/5GEMSDOE/8GEMSDOE. 0.1563 is the catalogue-derived attractor score: any submission that essentially re-emits (a dilation of) the provided USGS/INGENIOUS catalogue lands there, because catalogue pixels are masked and only haloes within 300 m of withheld faults earn partial credit. Account ownership of extradr19/SDCF9/smashi34 is <em>not verifiable</em> from public data — we only assert the score coincidence, not who owns the accounts.</p>
+  <p><strong>Contrarian reading:</strong> the ~0.15 gap between the catalogue attractor (0.1563) and the current top (0.3049) is being harvested by teams that find <em>genuinely new</em> fault traces. Our path is H9-1..H9-5 (see <a href="hypotheses.html">hypotheses</a>), gated by the blocked holdout before any slot is spent.</p>
+</div>
+
+</main>
+</body>
+</html>

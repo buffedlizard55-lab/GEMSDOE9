@@ -58,6 +58,25 @@ def main():
                     if meta['bands'] and src.count != meta['bands']:
                         print(f"  ERROR: expected {meta['bands']} bands")
                         ok = False
+                    # Dump authoritative per-band tags (the official reference
+                    # solution reads the band order from exactly these tags:
+                    # src.tags(i)['description'] / ['data_category']
+                    # https://github.com/drivendataorg/gems-prize-reference-solution)
+                    if fname == "training_features.tif":
+                        tag_lines = []
+                        for i in range(1, src.count + 1):
+                            tags = src.tags(i)
+                            desc = tags.get('description', '<no description tag>')
+                            cat = tags.get('data_category', '<no data_category tag>')
+                            line = f"Band {i-1} (rasterio band {i}): {desc} (Category: {cat})"
+                            print("  " + line)
+                            tag_lines.append(line)
+                        out_tags = PROCESSED_DIR / "band_tags.txt"
+                        out_tags.write_text("\n".join(tag_lines) + "\n")
+                        print(f"  band tags written to {out_tags}")
+                        print("  ACTION: compare band_tags.txt against the PROVISIONAL "
+                              "indexing in src/gems/features.py and correct any mismatch "
+                              "before building scored submissions.")
             except Exception as e:
                 print(f"  ERROR reading {fname}: {e}")
                 ok = False
