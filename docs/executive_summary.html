@@ -1,105 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Executive Summary — GEMSDOE9</title>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to submit — GEMSDOE9</title>
+<meta name="description" content="GEMSDOE9 — DOE GEMS Prize entry. Verified competition intel, the metric algebra behind the 0.1563 plateau, and a one-click valid GeoTIFF.">
 <style>
-  :root{--bg:#fafaf9;--fg:#1c1917;--accent:#dc2626;--muted:#78716c;--card:#fff;--border:#e7e5e4;}
-  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;}
-  header{background:#1c1917;color:white;padding:1.5rem;}
-  main{max-width:900px;margin:0 auto;padding:1.5rem;}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
-  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
-  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
-  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
-  code{background:#f5f5f4;padding:0.15rem 0.35rem;border-radius:4px;}
-  .btn{display:inline-block;padding:0.6rem 1rem;border-radius:8px;font-weight:600;text-decoration:none;background:linear-gradient(135deg,#dc2626,#ea580c);color:white;}
+:root{
+  --bg:#fbfaf9; --panel:#ffffff; --ink:#1c1917; --muted:#6b6560; --line:#e7e5e4;
+  --brand:#b91c1c; --brand2:#c2410c; --ok:#15803d; --okbg:#dcfce7; --warn:#92400e;
+  --warnbg:#fef3c7; --bad:#991b1b; --badbg:#fee2e2; --info:#1e40af; --infobg:#dbeafe;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.62;-webkit-font-smoothing:antialiased}
+a{color:#b91c1c}
+code,kbd{font-family:var(--mono);font-size:.88em;background:#f5f5f4;padding:.12rem .35rem;border-radius:4px}
+pre{background:#1c1917;color:#e7e5e4;padding:1rem;border-radius:10px;overflow:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;color:inherit;padding:0}
+header.top{background:linear-gradient(135deg,#1c1917 0%,#44403c 55%,#7c2d12 100%);color:#fff;padding:2.2rem 1.4rem 1.6rem}
+header.top h1{margin:0 0 .35rem;font-size:1.9rem;letter-spacing:-.025em}
+header.top p{margin:0;max-width:78ch;color:#e7e5e4}
+.badges{margin-top:.9rem;display:flex;gap:.45rem;flex-wrap:wrap}
+.badge{font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:999px;background:rgba(255,255,255,.14);color:#fff}
+.badge.ok{background:#15803d}.badge.warn{background:#b45309}.badge.bad{background:#b91c1c}
+nav.tabs{position:sticky;top:0;z-index:20;background:rgba(251,250,249,.94);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:.55rem 1.4rem;display:flex;gap:.3rem;flex-wrap:wrap}
+nav.tabs a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:.32rem .6rem;border-radius:7px}
+nav.tabs a:hover{background:#fff;color:var(--ink)}
+nav.tabs a.on{background:var(--ink);color:#fff;font-weight:600}
+main{max-width:1140px;margin:0 auto;padding:1.6rem 1.4rem 4rem}
+section{margin-bottom:2.2rem}
+h2{font-size:1.3rem;letter-spacing:-.015em;margin:0 0 .7rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+h3{font-size:1.05rem;margin:1.5rem 0 .5rem}
+h4{font-size:.95rem;margin:1.1rem 0 .35rem;color:#44403c}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1.15rem 1.25rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.grid{display:grid;gap:1.2rem;grid-template-columns:1fr}
+@media(min-width:900px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:repeat(3,1fr)}}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:.6rem 0}
+th,td{text-align:left;padding:.5rem .55rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:650;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+td.num,th.num{text-align:right;font-family:var(--mono);white-space:nowrap}
+.note{border-left:3px solid var(--info);background:var(--infobg);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin:.9rem 0}
+.note.warn{border-color:#b45309;background:var(--warnbg)}
+.note.bad{border-color:var(--bad);background:var(--badbg)}
+.note.ok{border-color:var(--ok);background:var(--okbg)}
+.note b.lbl{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.2rem}
+.btn{display:inline-block;padding:.8rem 1.3rem;border-radius:9px;font-weight:650;text-decoration:none;
+  border:1px solid transparent;cursor:pointer;font-size:.95rem;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.btn-secondary{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn-row{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0}
+.pill{display:inline-block;padding:.1rem .45rem;border-radius:999px;font-size:.72rem;font-weight:700}
+.pill.ok{background:var(--okbg);color:var(--ok)}
+.pill.warn{background:var(--warnbg);color:var(--warn)}
+.pill.bad{background:var(--badbg);color:var(--bad)}
+.pill.info{background:var(--infobg);color:var(--info)}
+.kv{display:grid;grid-template-columns:minmax(140px,auto) 1fr;gap:.35rem 1rem;font-size:.9rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--mono);font-size:.84rem;word-break:break-all}
+details{border:1px solid var(--line);border-radius:9px;padding:.6rem .85rem;margin:.6rem 0;background:#fff}
+summary{cursor:pointer;font-weight:600;font-size:.92rem}
+.hero{background:linear-gradient(135deg,#fff7ed,#fef2f2);border:2px solid #fdba74}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.log{background:#1c1917;color:#e7e5e4;padding:.9rem;border-radius:9px;font-family:var(--mono);
+  font-size:.78rem;white-space:pre-wrap;max-height:340px;overflow:auto}
+footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.8rem 1.4rem;color:var(--muted);font-size:.85rem}
+.src{font-size:.8rem;color:var(--muted);margin-top:.35rem}
+.tag-new{background:#15803d;color:#fff;border-radius:4px;padding:0 .3rem;font-size:.7rem;font-weight:700}
 </style>
-</head>
-<body>
-<header>
-  <h1>Executive Summary — GEMSDOE9</h1>
-  <p>How to submit, what we ship, and why it beats the 0.1563 duplicate pattern.</p>
+</head><body>
+<header class="top">
+  <h1>GEMSDOE9 — Geothermal Fault Discovery Beyond the Catalogue</h1>
+  <p>DOE GEMS Prize entry. Faults in the GeoDAWN region (northwestern Nevada, UTM 11N
+     EPSG:32611, 100 m) that are <em>not</em> in the USGS/INGENIOUS catalogue.</p>
+  <div class="badges"><span class='badge '>Step-by-step</span><span class='badge ok'>Rejection explained</span></div>
 </header>
+<nav class="tabs"><a href='index.html'>Overview</a><a href='executive_summary.html' class='on'>How to submit</a><a href='strategy.html'>Strategy &amp; metric</a><a href='hypotheses.html'>Hypotheses G-1..G-5</a><a href='intel.html'>Official intel</a><a href='data.html'>Data &amp; access</a><a href='verification.html'>Verification &amp; flags</a><a href='leaderboard.html'>Leaderboard</a><a href='research.html'>Research notes</a><a href='sources.html'>Sources</a></nav>
 <main>
-<nav>
-  <a href="index.html">Overview</a>
-  <a href="intel.html">Official Intel</a>
-  <a href="executive_summary.html"><strong>Executive Summary</strong></a>
-  <a href="how_to_submit.html">How to Submit</a>
-  <a href="research.html">Research</a>
-  <a href="hypotheses.html">Hypotheses</a>
-  <a href="strategy.html">Strategy</a>
-  <a href="data.html">Data</a>
-  <a href="results.html">Results</a>
-  <a href="sources.html">Sources</a>
-</nav>
+<section>
+  <div class="card hero">
+    <h2 style="border:0;padding:0;margin-bottom:.5rem">Submitting to the GEMS Prize — step by step</h2>
+    <p>Five steps. The whole thing takes about a minute once the file is on disk.</p>
+  </div>
+</section>
 
-<div class="card">
-  <h2>Core Values — Every Session</h2>
-  <p><strong>Maximize P(Win):</strong> Every decision maximizes probability of winning DOE GEMS. We set aside bias and optimize for geological ground truth and scoring metric.</p>
-  <p><strong>Own the Outcome:</strong> End-to-end accountability — data verification, training, format compliance, submission generation, public scoring.</p>
-</div>
+<section class="grid two">
+  <div class="card">
+    <h3>1 · Get the file</h3>
+    <p><a class="btn btn-primary" href="downloads/gemsdoe9-PLACEHOLDER-2314b599.tif" download>⬇ gemsdoe9-PLACEHOLDER-2314b599.tif</a></p>
+    <p class="small muted">Or press <em>Build in this browser</em> on the
+       <a href="index.html">overview</a>, which produces the identical pixel field with a
+       fresh name and a fresh hash. Nothing is uploaded from your browser — the GeoTIFF is
+       assembled locally with <code>geotiff_writer.js</code>.</p>
 
-<div class="card">
-  <h2>The File to Submit — One Click</h2>
-  <p>The competition wants a single-band float32 GeoTIFF, 3292×3730, EPSG:32611, values in [0,1]. Our site builds it in your browser:</p>
-  <ol>
-    <li>Open <a href="index.html">index.html</a> — top of page has <strong>Build submission.tif</strong> button.</li>
-    <li>Click it — browser generates H9-1 relay-stepover field (343,816 px at 1.0, distinct from duplicate's 172,974 px), writes GeoTIFF with <code>geotiff_writer.js</code>, re-reads own bytes, offers download only when self-check passes.</li>
-    <li>File appears as <code>gems9-&lt;UTC&gt;-&lt;sha8&gt;.tif</code> — unique name per build. Example: <code>gems9-20260926T234507Z-8ecbdc71.tif</code> SHA256 <code>8ecbdc712da4b83e…</code>.</li>
-    <li>Suggested Note shown beside: <code>GEMSDOE9 H9-1 relay-stepover + dilation + intersection | top2.8% | 8ecbdc71 | distinct, not 0.1563 duplicate</code> — paste into DrivenData “Note (optional)” field.</li>
-    <li>Upload to <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/">DrivenData Submissions</a> → New submission → Choose file → Paste Note → Submit.</li>
-  </ol>
-  <p><a href="downloads/gemsdoe9_submission.tif" class="btn">⬇ Download pre-built .tif (660 KB, 13/13 PASS)</a> <a href="downloads/gemsdoe9_submission.zip" class="btn" style="background:white;color:#1c1917;border:1px solid #e7e5e4;">⬇ .zip</a></p>
-  <p>Pre-built file stats: 12,279,160 total px, 12,279,160 finite (max-compat, 0 NaN), 343,816 positive, min 0 max 1, EPSG:32611, transform [100,0,243350,0,-100,4508550], SHA256 <code>8ecbdc712da4b83eda2b01b906bb4cd2bb6042871ea07b165c9e4dd02256dce7</code>.</p>
-</div>
+    <h3>2 · Make the name unique</h3>
+    <p>The DrivenData form does not require a unique file name, but a submission history
+       where every row is <code>submission.tif</code> is useless to you in a week. Use
+       <code>gemsdoe9-&lt;what&gt;-&lt;sha8&gt;.tif</code>. The shipped file already follows
+       this rule; the hash is the first 8 hex characters of its SHA256, so the name
+       identifies the exact bytes.</p>
+    <p>If you upload the <em>same</em> bytes twice, rename the second one
+       (<code>…-r2.tif</code>) so you can tell the two rows apart.</p>
 
-<div class="card">
-  <h2>Resolution of “Predicted values must be in range [0,1]”</h2>
-  <p><strong>Root cause:</strong> Platform validator checks all 5,167,373 scored footprint pixels. If any inside contains NaN, it raises “Predicted values must be in range [0,1]” because NaN ∉ [0,1].</p>
-  <p><strong>Previous repos:</strong> Shipped NaN outside footprint, but if footprint mask mismatched template, NaN leaked inside → error.</p>
-  <p><strong>GEMSDOE9 fix:</strong></p>
-  <ul>
-    <li>Primary build asserts 0 NaN inside footprint (checked via <code>scripts/validate_submission.py</code> gate <code>NAN-INSIDE-FOOTPRINT</code>).</li>
-    <li>Max-compat fallback: all 12,279,160 px finite in [0,1], no nodata tag. Platform reads NaN as 0, so score identical, but no range check can fail because no NaN exists. Use this if you previously saw error.</li>
-    <li>Validation: <code>python scripts/validate_submission.py docs/downloads/gemsdoe9_submission.tif --max-compat</code> → 13/13 PASS.</li>
-  </ul>
-</div>
+    <h3>3 · Open the submission form</h3>
+    <p><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/">drivendata.org → this competition → Submissions → New submission</a></p>
+    <p>The dialog says: <em>“You can submit a single-band GeoTIFF (.tif) file, or a .zip
+       file containing a single GeoTIFF, with your predictions. It must match the
+       submission format's CRS, shape, and geotransform.”</em></p>
+    <p>Drag the .tif in. (A .zip is accepted too — the browser build can emit one. The
+       competition form also accepts a .zip of a single GeoTIFF, but a .tif is simpler and
+       there is no reason to risk it.)</p>
 
-<div class="card">
-  <h2>Why 0.1563 Repeats — And How GEMSDOE9 Is Distinct</h2>
-  <p>Previous group had 11 repos with same payload: <code>docs/submission_field.bin</code> SHA256 <code>b966d47c7c02b1c2…</code> → <code>submission.tif</code> SHA256 <code>7f00890a62878d61…</code> 172,974 px. 5GEMSDOE and GEMSDOE1 byte-identical, hence same leaderboard score 0.1563.</p>
-  <p>GEMSDOE9:</p>
-  <ul>
-    <li>Pixel field built from scratch via H9-1 synthetic: 343,816 px (2.8% of grid) vs 172,974 px (1.4%).</li>
-    <li>SHA256 <code>8ecbdc71…</code> ≠ <code>7f00890a…</code> — builder refuses to publish duplicate.</li>
-    <li>Strategy distinct: relay stepover + dilation tendency + intersection density, not just top-k of HGB or UNet.</li>
-    <li>Unique name per build: <code>gems9-&lt;UTC&gt;-&lt;sha8&gt;.tif</code> guarantees leaderboard history distinguishes submissions.</li>
-  </ul>
-</div>
+    <h3>4 · Write the Note</h3>
+    <p>The <em>Note (optional)</em> box exists so you can tell your own submissions apart
+       later. The example in the form is “clustering with k=25”. For this submission:</p>
+    <pre><code>GEMSDOE9 FORMAT-CHECK placeholder (no model, no GeoDAWN data) | band-pattern 2.8% | 2314b599</code></pre>
+    <p>Put the SHA8 in it. Two weeks from now that is the only thing that will tell you
+       which file scored what.</p>
 
-<div class="card">
-  <h2>What Is Actually Scored</h2>
-  <p>From <a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">Official Rules PDF</a> §3.3, §3.5, §3.6.2:</p>
-  <blockquote>“In Phase 1, submissions will be evaluated against a privately withheld subset of the original new fault dataset compiled by expert reviewers.”<br>“After Phase 1, expert reviewers will use submitted predictions to revise the new fault dataset.”<br>“Submissions will be reevaluated against the full, revised new fault dataset using the same distance-weighted Tversky index.”</blockquote>
-  <p>Training labels = USGS Quaternary + INGENIOUS (incomplete). Test labels = new faults absent from catalogue. Both phases score new faults only. Reproducing catalogue ≠ leaderboard.</p>
-  <p>Metric: DTI α=0.2 β=0.8 R=300m triangular. <code>DTI = TP_w / (TP_w + 0.2*FP_w + 0.8*FN_w)</code>. See <a href="strategy.html">Strategy</a>.</p>
-</div>
+    <h3>5 · Submit, then check the leaderboard</h3>
+    <p>Submissions are scored on a
+       <a href="https://community.drivendata.org/t/weekly-submissions/11524">rolling 7-day window</a>, three per
+       window. Your <em>best</em> public score is what the leaderboard shows. The
+       Initial Prize Round uses a private test set fixed before the competition; the
+       Final Prize Round re-scores your chosen submission against an expanded label set
+       that experts build partly <em>from the Phase 1 submissions themselves</em>.</p>
+  </div>
 
-<div class="card">
-  <h2>Next Steps — Own the Outcome</h2>
-  <ol>
-    <li>Download data via <code>bash scripts/download_competition_data.sh</code> on unrestricted machine.</li>
-    <li>Run <code>python scripts/prepare_data.py</code> → footprint mask 5,167,373 px.</li>
-    <li>Validate top candidate H9-1 via <code>python scripts/lofso_train_eval.py --hypothesis H9-1 --folds 4 --buffer 3</code> — must beat current holdout best (0.0895 structural-coherence) before spending weekly slot.</li>
-    <li>Train full model GPU: H9-1 features + H9-2 conductivity edge + 10m DEM.</li>
-    <li>Build submission: <code>python scripts/build_submission.py --strategy H9-1-relay --topk 0.028 --out docs/downloads/gemsdoe9_submission.tif --use-footprint</code></li>
-    <li>Submit with unique note, record leaderboard score.</li>
-  </ol>
-</div>
+  <div>
+    <div class="card">
+      <h2>Rejection: “Predicted values must be in range [0, 1]”</h2>
+      <p class="src">Reported by the team, 2026-09-27</p>
+      <div class="note bad"><b class="lbl">What actually happened</b>
+        The file downloaded from this site was a 49 MB GeoTIFF whose strip-offset table was
+        truncated, so GDAL could not decode it. The platform reported an unreadable file
+        using its value-range error. There was no NaN in it to find.</div>
+      <p>What is now guaranteed, and how to re-check it yourself:</p>
+      <table><thead><tr><th>Check</th><th>Meaning</th></tr></thead><tbody><tr><td><code>GDAL-READABLE</code></td><td>rasterio decodes every strip; the file is readable at all</td></tr><tr><td><code>PLATFORM-RANGE</code></td><td>0 NaN, 0 Inf, min ≥ 0, max ≤ 1 across all 12,279,160 values</td></tr><tr><td><code>no-nodata-tag</code></td><td>no nodata declaration, so no reader can substitute a value</td></tr><tr><td><code>shape / crs / transform / dtype</code></td><td>3,292 × 3,730, EPSG:32611, 100 m, float32, 1 band</td></tr><tr><td><code>not-a-known-duplicate</code></td><td>SHA256 is not one that already spent a slot</td></tr></tbody></table>
+      <pre><code>python scripts/validate_submission.py docs/downloads/gemsdoe9-PLACEHOLDER-2314b599.tif</code></pre>
+      <p>Every line must read <span class="pill ok">PASS</span>. If
+         <code>GDAL-READABLE</code> fails, the file is truncated in transfer — download it
+         again and compare the SHA256.</p>
+    </div>
 
+    <div class="card">
+      <h2>Other rejections, and what they mean</h2>
+      <table><thead><tr><th>Message</th><th>Cause</th><th>Fix</th></tr></thead><tbody><tr><td>Predicted values must be in range [0, 1]</td><td>Any NaN, Inf or out-of-range value — <em>or</em> a file the platform cannot decode</td><td>Run the validator; it checks both</td></tr><tr><td>CRS mismatch / does not match submission format</td><td>Wrong projection or geotransform</td><td>EPSG:32611, transform (100, 0, 243350, 0, −100, 4508550)</td></tr><tr><td>Wrong shape</td><td>Not 3,292 × 3,730</td><td>The validator hard-fails on this</td></tr><tr><td>Rate limited</td><td>More than 3 scored submissions in a rolling 7 days</td><td><a href="https://community.drivendata.org/t/weekly-submissions/11524">Forum: rolling window</a></td></tr></tbody></table>
+    </div>
+
+    <div class="card">
+      <h2>The exact format, quoted</h2>
+      <p class="src">Problem description, § Submission format —
+        <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#submission-format">source</a></p>
+      <ul class="small">
+        <li>projected coordinate system for UTM zone 11N, EPSG 32611</li>
+        <li>same resolution as the training data (100m)</li>
+        <li>same bounds as the training data, and data outside the bounds is null or nan</li>
+        <li>single layer with datatype of 32-bit float (float32) with values between 0 and 1 indicating the confidence or probability of fault presence, with higher values indicating higher probability</li>
+      </ul>
+      <div class="note warn"><b class="lbl">Why we write 0.0 instead of NaN outside the bounds</b>
+        The spec permits “null or nan” outside the bounds, but NaN is not a member of [0, 1]
+        and a range validator will reject it. 0.0 means “no fault predicted”, which is what
+        a null cell means to the scorer, and it cannot fail a range check. We therefore
+        publish only the all-finite variant and set no nodata tag.
+        <a href="verification.html#irregularity-tiff">Why this was the right call →</a></div>
+    </div>
+  </div>
+</section>
 </main>
-</body>
-</html>
+<footer>
+  <p><strong>Maximise P(Win).</strong> Every number on this site is either quoted from a
+  linked primary source, read live on 2026-09-27, or computed by code in this
+  repository from the published metric. Nothing is estimated.</p>
+  <p>Sources: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">Competition</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">Problem description</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">About</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">Leaderboard</a> ·
+     <a href="https://community.drivendata.org/c/gems-prize-challenge/111">Forum</a> ·
+     <a href="https://github.com/drivendataorg/gems-prize-reference-solution">Reference solution</a></p>
+  <p>Built by <code>python scripts/build_site.py</code>. Sources of every claim:
+     <a href="sources.html">Sources</a>. Problems found and fixed:
+     <a href="verification.html">Verification &amp; flags</a>.</p>
+</footer>
+<script src="geotiff_writer.js"></script>
+
+</body></html>

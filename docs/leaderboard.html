@@ -1,84 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Leaderboard — GEMSDOE9</title>
+<meta name="description" content="GEMSDOE9 — DOE GEMS Prize entry. Verified competition intel, the metric algebra behind the 0.1563 plateau, and a one-click valid GeoTIFF.">
 <style>
-  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;}
-  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;}
-  header{background:#1c1917;color:white;padding:1.5rem;}
-  main{max-width:900px;margin:0 auto;padding:1.5rem;}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
-  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
-  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
-  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
-  table{width:100%;border-collapse:collapse;font-size:0.85rem;}
-  th,td{border-bottom:1px solid var(--border);padding:0.5rem;text-align:left;}
-  code{background:#f5f5f4;padding:0.1rem 0.35rem;border-radius:4px;font-size:0.88em;}
+:root{
+  --bg:#fbfaf9; --panel:#ffffff; --ink:#1c1917; --muted:#6b6560; --line:#e7e5e4;
+  --brand:#b91c1c; --brand2:#c2410c; --ok:#15803d; --okbg:#dcfce7; --warn:#92400e;
+  --warnbg:#fef3c7; --bad:#991b1b; --badbg:#fee2e2; --info:#1e40af; --infobg:#dbeafe;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.62;-webkit-font-smoothing:antialiased}
+a{color:#b91c1c}
+code,kbd{font-family:var(--mono);font-size:.88em;background:#f5f5f4;padding:.12rem .35rem;border-radius:4px}
+pre{background:#1c1917;color:#e7e5e4;padding:1rem;border-radius:10px;overflow:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;color:inherit;padding:0}
+header.top{background:linear-gradient(135deg,#1c1917 0%,#44403c 55%,#7c2d12 100%);color:#fff;padding:2.2rem 1.4rem 1.6rem}
+header.top h1{margin:0 0 .35rem;font-size:1.9rem;letter-spacing:-.025em}
+header.top p{margin:0;max-width:78ch;color:#e7e5e4}
+.badges{margin-top:.9rem;display:flex;gap:.45rem;flex-wrap:wrap}
+.badge{font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:999px;background:rgba(255,255,255,.14);color:#fff}
+.badge.ok{background:#15803d}.badge.warn{background:#b45309}.badge.bad{background:#b91c1c}
+nav.tabs{position:sticky;top:0;z-index:20;background:rgba(251,250,249,.94);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:.55rem 1.4rem;display:flex;gap:.3rem;flex-wrap:wrap}
+nav.tabs a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:.32rem .6rem;border-radius:7px}
+nav.tabs a:hover{background:#fff;color:var(--ink)}
+nav.tabs a.on{background:var(--ink);color:#fff;font-weight:600}
+main{max-width:1140px;margin:0 auto;padding:1.6rem 1.4rem 4rem}
+section{margin-bottom:2.2rem}
+h2{font-size:1.3rem;letter-spacing:-.015em;margin:0 0 .7rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+h3{font-size:1.05rem;margin:1.5rem 0 .5rem}
+h4{font-size:.95rem;margin:1.1rem 0 .35rem;color:#44403c}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1.15rem 1.25rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.grid{display:grid;gap:1.2rem;grid-template-columns:1fr}
+@media(min-width:900px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:repeat(3,1fr)}}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:.6rem 0}
+th,td{text-align:left;padding:.5rem .55rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:650;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+td.num,th.num{text-align:right;font-family:var(--mono);white-space:nowrap}
+.note{border-left:3px solid var(--info);background:var(--infobg);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin:.9rem 0}
+.note.warn{border-color:#b45309;background:var(--warnbg)}
+.note.bad{border-color:var(--bad);background:var(--badbg)}
+.note.ok{border-color:var(--ok);background:var(--okbg)}
+.note b.lbl{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.2rem}
+.btn{display:inline-block;padding:.8rem 1.3rem;border-radius:9px;font-weight:650;text-decoration:none;
+  border:1px solid transparent;cursor:pointer;font-size:.95rem;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.btn-secondary{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn-row{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0}
+.pill{display:inline-block;padding:.1rem .45rem;border-radius:999px;font-size:.72rem;font-weight:700}
+.pill.ok{background:var(--okbg);color:var(--ok)}
+.pill.warn{background:var(--warnbg);color:var(--warn)}
+.pill.bad{background:var(--badbg);color:var(--bad)}
+.pill.info{background:var(--infobg);color:var(--info)}
+.kv{display:grid;grid-template-columns:minmax(140px,auto) 1fr;gap:.35rem 1rem;font-size:.9rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--mono);font-size:.84rem;word-break:break-all}
+details{border:1px solid var(--line);border-radius:9px;padding:.6rem .85rem;margin:.6rem 0;background:#fff}
+summary{cursor:pointer;font-weight:600;font-size:.92rem}
+.hero{background:linear-gradient(135deg,#fff7ed,#fef2f2);border:2px solid #fdba74}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.log{background:#1c1917;color:#e7e5e4;padding:.9rem;border-radius:9px;font-family:var(--mono);
+  font-size:.78rem;white-space:pre-wrap;max-height:340px;overflow:auto}
+footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.8rem 1.4rem;color:var(--muted);font-size:.85rem}
+.src{font-size:.8rem;color:var(--muted);margin-top:.35rem}
+.tag-new{background:#15803d;color:#fff;border-radius:4px;padding:0 .3rem;font-size:.7rem;font-weight:700}
 </style>
-</head>
-<body>
-<header>
-  <h1>Leaderboard Analysis</h1>
-  <p>Snapshot verified live 2026-09-27 · why 0.1563 repeats · how to beat 0.3049.</p>
+</head><body>
+<header class="top">
+  <h1>GEMSDOE9 — Geothermal Fault Discovery Beyond the Catalogue</h1>
+  <p>DOE GEMS Prize entry. Faults in the GeoDAWN region (northwestern Nevada, UTM 11N
+     EPSG:32611, 100 m) that are <em>not</em> in the USGS/INGENIOUS catalogue.</p>
+  <div class="badges"><span class='badge '>Snapshot 2026-09-27</span><span class='badge ok'>Live-read</span></div>
 </header>
+<nav class="tabs"><a href='index.html'>Overview</a><a href='executive_summary.html'>How to submit</a><a href='strategy.html'>Strategy &amp; metric</a><a href='hypotheses.html'>Hypotheses G-1..G-5</a><a href='intel.html'>Official intel</a><a href='data.html'>Data &amp; access</a><a href='verification.html'>Verification &amp; flags</a><a href='leaderboard.html' class='on'>Leaderboard</a><a href='research.html'>Research notes</a><a href='sources.html'>Sources</a></nav>
 <main>
-<nav>
-  <a href="index.html">Overview</a>
-  <a href="intel.html">Official Intel</a>
-  <a href="leaderboard.html"><strong>Leaderboard</strong></a>
-  <a href="results.html">Results</a>
-  <a href="strategy.html">Strategy</a>
-</nav>
+<section>
+  <div class="card hero">
+    <h2 style="border:0;padding:0;margin-bottom:.5rem">Leaderboard</h2>
+    <p>Read live on 2026-09-27 from
+       <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/</a>. This is a
+       snapshot; open the link for the current state.</p>
+  </div>
+</section>
 
-<div class="card">
-  <h2>Official Leaderboard — snapshot 2026-09-27 (verified live)</h2>
-  <p>Source: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/</a> — fetched 2026-09-27; 50 teams listed.</p>
-  <table>
-    <tr><th>Rank</th><th>Participant</th><th>Best public DW-Tversky</th><th>Submissions</th></tr>
-    <tr><td>#1</td><td>DARD</td><td><strong>0.3049</strong></td><td>10</td></tr>
-    <tr><td>#2</td><td>alexoktaba</td><td>0.2993</td><td>14</td></tr>
-    <tr><td>#3</td><td>HardcoreTechGod</td><td>0.2854</td><td>6</td></tr>
-    <tr><td>#4</td><td>mzoorob</td><td>0.2843</td><td>16</td></tr>
-    <tr><td>#5</td><td>joeyfezster</td><td>0.2806</td><td>13</td></tr>
-    <tr><td>#6</td><td>GrigorSargsyan</td><td>0.2504</td><td>5</td></tr>
-    <tr><td>#7</td><td>xiaofanhu</td><td>0.2367</td><td>2</td></tr>
-    <tr><td>#8</td><td>exposed</td><td>0.2340</td><td>13</td></tr>
-    <tr><td>#9</td><td>hiii12345</td><td>0.2262</td><td>6</td></tr>
-    <tr><td>#10</td><td>tchu</td><td>0.2220</td><td>11</td></tr>
-    <tr><td>#24</td><td>extradr19</td><td>0.1563</td><td>2</td></tr>
-    <tr><td>#25</td><td>SDCF9</td><td>0.1563</td><td>2</td></tr>
-    <tr><td>#26</td><td>smashi34</td><td>0.1563</td><td>2</td></tr>
-    <tr><td>—</td><td>GEMSDOE9</td><td>Not yet uploaded</td><td>0</td></tr>
-  </table>
-  <p class="src" style="font-size:0.82rem;color:#78716c;">Account ownership of extradr19/SDCF9/smashi34 is not verifiable from public data; only the score coincidence is asserted.</p>
-</div>
+<section class="card">
+  <table><thead><tr><th class='num'>#</th><th>Participant</th><th class='num'>Submissions</th><th class='num'>Best public DW-Tversky</th><th></th></tr></thead><tbody><tr><td class='num'>1</td><td>DARD</td><td class='num'>10</td><td class='num'><strong>0.3049</strong></td><td><span class='pill ok'>leader</span></td></tr><tr><td class='num'>2</td><td>alexoktaba</td><td class='num'>14</td><td class='num'><strong>0.2993</strong></td><td></td></tr><tr><td class='num'>3</td><td>HardcoreTechGod</td><td class='num'>6</td><td class='num'><strong>0.2854</strong></td><td></td></tr><tr><td class='num'>4</td><td>mzoorob</td><td class='num'>16</td><td class='num'><strong>0.2843</strong></td><td></td></tr><tr><td class='num'>5</td><td>joeyfezster</td><td class='num'>13</td><td class='num'><strong>0.2806</strong></td><td></td></tr><tr><td class='num'>6</td><td>GrigorSargsyan</td><td class='num'>6</td><td class='num'><strong>0.2742</strong></td><td></td></tr><tr><td class='num'>7</td><td>xiaofanhu</td><td class='num'>2</td><td class='num'><strong>0.2367</strong></td><td></td></tr><tr><td class='num'>8</td><td>exposed</td><td class='num'>13</td><td class='num'><strong>0.2340</strong></td><td></td></tr><tr><td class='num'>9</td><td>hiii12345</td><td class='num'>6</td><td class='num'><strong>0.2262</strong></td><td></td></tr><tr><td class='num'>10</td><td>tchu</td><td class='num'>11</td><td class='num'><strong>0.2220</strong></td><td></td></tr><tr><td class='num'>11</td><td>oshbocker</td><td class='num'>16</td><td class='num'><strong>0.2185</strong></td><td></td></tr><tr><td class='num'>12</td><td>moongrega</td><td class='num'>10</td><td class='num'><strong>0.2174</strong></td><td></td></tr><tr><td class='num'>13</td><td>ad3002</td><td class='num'>12</td><td class='num'><strong>0.1994</strong></td><td></td></tr><tr><td class='num'>14</td><td>Batik Shirt Brothers</td><td class='num'>11</td><td class='num'><strong>0.1956</strong></td><td></td></tr><tr><td class='num'>15</td><td>doegemsDrivendata</td><td class='num'>5</td><td class='num'><strong>0.1847</strong></td><td></td></tr><tr><td class='num'>16</td><td>ndavis7</td><td class='num'>2</td><td class='num'><strong>0.1797</strong></td><td></td></tr><tr><td class='num'>17</td><td>nsabaj</td><td class='num'>3</td><td class='num'><strong>0.1744</strong></td><td></td></tr><tr><td class='num'>18</td><td>jgaines</td><td class='num'>12</td><td class='num'><strong>0.1694</strong></td><td></td></tr><tr><td class='num'>19</td><td>dmitry_v</td><td class='num'>3</td><td class='num'><strong>0.1672</strong></td><td></td></tr><tr><td class='num'>20</td><td>hall4jm</td><td class='num'>7</td><td class='num'><strong>0.1642</strong></td><td></td></tr><tr><td class='num'>21</td><td>VictorCallejas</td><td class='num'>1</td><td class='num'><strong>0.1629</strong></td><td></td></tr><tr><td class='num'>22</td><td>Scotty77</td><td class='num'>5</td><td class='num'><strong>0.1590</strong></td><td></td></tr><tr><td class='num'>23</td><td>fishnchips</td><td class='num'>7</td><td class='num'><strong>0.1587</strong></td><td></td></tr><tr><td class='num'>24</td><td>extradr19</td><td class='num'>2</td><td class='num'><strong>0.1563</strong></td><td><span class='pill warn'>pinned</span></td></tr><tr><td class='num'>25</td><td>SDCF9</td><td class='num'>2</td><td class='num'><strong>0.1563</strong></td><td><span class='pill warn'>pinned</span></td></tr></tbody></table>
+  <p class="small muted">Public leaderboard. Rank shown is by best public DW-Tversky. Submissions count is the participant&#x27;s total.</p>
+  <div class="note"><b class="lbl">The observation that matters</b>
+    Ranks 24 and 25 sit at an identical 0.1563 with two submissions each. Three separate accounts are pinned at exactly that value to four decimals. That is not a coincidence of tuning -- see Strategy for the closed form that produces it.</div>
+</section>
 
-<div class="card">
-  <h2>Why 0.1563 Repeats — Two Independent Causes</h2>
-  <p><strong>Cause 1 — our own byte-identical duplicates (audited 2026-09-26):</strong></p>
-  <ul>
-    <li>GEMSDOE1 and 5GEMSDOE ship identical <code>docs/submission_field.bin</code> SHA256 <code>b966d47c7c02b1c2…</code> (532,072 B, 259,495 runs) → <code>submission.tif</code> SHA256 <code>7f00890a62878d61…</code> 172,974 px at 1.0. Identical bytes ⇒ identical DTI.</li>
-    <li>GEMSDOE2 recall arm shipped the same bytes again — triple duplicate.</li>
-    <li>Fix in this repo: builder generates unique UTC + SHA8 and refuses to publish any artifact whose SHA matches a known duplicate (<code>scripts/build_site.py</code>, <code>tests/test_validation.py::test_no_duplicate_sha</code>).</li>
-  </ul>
-  <p><strong>Cause 2 — the catalogue attractor (observed 2026-09-27 on the live leaderboard):</strong> three unrelated-looking accounts at exactly 0.1563 with only 2 submissions each. DrivenData staff confirmed known-catalogue pixels are masked from scoring (forum thread <a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516">11516</a>), so any submission that mostly re-emits the provided catalogue scores only through haloes within 300 m of withheld faults — and that evidently saturates at ≈0.1563. Beating it requires predicting faults that are <em>not</em> in the catalogue. See <a href="intel.html">Official Intel</a> and <a href="strategy.html">Strategy</a>.</p>
-</div>
-
-<div class="card">
-  <h2>How to Beat 0.3049 — Distinct Strategy</h2>
-  <p>Gap +0.1486 requires a genuinely better detector of unmapped traces, not a better fitting proxy.</p>
-  <ul>
-    <li>Previous best 0.1563 used a 12-fold ensemble, floor 0.1, skeleton width 0 — thinned skeleton at floor 0.1, width curve peaks at 0 px on every ensemble (GEMSDOE1 width measurement).</li>
-    <li>6GEMSDOE 0.0286 used HGB 88ch top 3% — catalogue-memorising signature, lowest public score, highest proxy 0.1527 — proxy contaminated.</li>
-    <li>8GEMSDOE measurement: in-file features alone at or below random for the real task, but adding external channels beats random — base+structural-coherence 0.0895 vs random 0.0813 on Fold0 at 3% budget — first to beat random on unseen traces.</li>
-    <li>H9-1 relay stepover + dilation tendency targets the interaction settings that dominate Great Basin geothermal (stepovers ~32%, terminations ~25%, intersections ~22% of 250+ catalogued fields — <a href="https://gdr.openei.org/submissions/383">GDR 383</a>, details in <a href="research.html">Research</a>) — faults missing from the catalogue, strong strain signal.</li>
-    <li>Union strategy: catalogue trace included free of FP cost (staff-confirmed masking) + H9 hypotheses on top. Floor is preserved; upside is open.</li>
-    <li>Every candidate passes the blocked holdout gate (<code>scripts/lofso_train_eval.py</code>, machinery validated on the synthetic phantom 2026-09-27) before a weekly slot is spent.</li>
-  </ul>
-</div>
-
+<section class="grid two">
+  <div class="card">
+    <h2>What the top score implies</h2>
+    <p>From the closed form on the <a href="strategy.html">Strategy</a> page, with zero
+       false-positive mass:</p>
+    <table><thead><tr><th>Score</th><th class='num'>Minimum weighted recall</th><th class='num'>Ratio vs 0.1563</th></tr></thead><tbody><tr><td>0.1563</td><td class='num'>0.1291</td><td class='num'>1.00×</td></tr><tr><td>0.2993</td><td class='num'>0.2547</td><td class='num'>1.97×</td></tr><tr><td>0.3049</td><td class='num'>0.2598</td><td class='num'><strong>2.01×</strong></td></tr></tbody></table>
+    <p>A detector must roughly double the recall a catalogue copy gets. Submissions can
+       carry false positives and still make it — the cost is 1/5 of a missing one — but
+       0.3049 with <em>no</em> false positives requires ρ ≥ 0.2598.</p>
+  </div>
+  <div class="card">
+    <h2>The group's submissions</h2>
+    <table><thead><tr><th>Submission</th><th class='num'>Score</th><th>What it was</th></tr></thead><tbody><tr><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE/docs/index.html" target="_blank" rel="noopener">GEMSDOE1</a></td><td class='num'>0.1563</td><td>original artifact</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE2/docs/index.html" target="_blank" rel="noopener">GEMSDOE2</a></td><td class='num'>0.1560</td><td>recall arm of the same artifact</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/5GEMSDOE/docs/index.html" target="_blank" rel="noopener">5GEMSDOE</a></td><td class='num'>0.1563</td><td>same artifact, different repo</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/8GEMSDOE/" target="_blank" rel="noopener">8GEMSDOE</a></td><td class='num'>0.1563</td><td>same artifact plus a catalogue union</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html" target="_blank" rel="noopener">GEMSDOE3 a</a></td><td class='num'>0.1193</td><td>Pindrop nodes</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html" target="_blank" rel="noopener">GEMSDOE3 b</a></td><td class='num'>0.0830</td><td>Pindrop catalogue-gap target</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html" target="_blank" rel="noopener">GEMSDOE3 c</a></td><td class='num'>0.1152</td><td>Pindrop dense ridge control</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/GEMSDOE4/" target="_blank" rel="noopener">GEMSDOE4</a></td><td class='num'>0.0343</td><td>lineament + proxy labels</td></tr><tr><td><a href="https://buffedlizard55-lab.github.io/6GEMSDOE/" target="_blank" rel="noopener">6GEMSDOE</a></td><td class='num'>0.0286</td><td>gradient boosting over 88 channels, top 3%</td></tr></tbody></table>
+    <div class="note warn"><b class="lbl">Ranks 24–25 are not the problem, the ceiling is</b>
+      Two unrelated accounts sitting on exactly 0.1563 is the signature of a degenerate
+      optimum, not of a tuning failure. Breaking it requires a detector that finds
+      something the catalogue does not already contain — see
+      <a href="hypotheses.html">G-1</a>.</div>
+  </div>
+</section>
 </main>
-</body>
-</html>
+<footer>
+  <p><strong>Maximise P(Win).</strong> Every number on this site is either quoted from a
+  linked primary source, read live on 2026-09-27, or computed by code in this
+  repository from the published metric. Nothing is estimated.</p>
+  <p>Sources: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">Competition</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">Problem description</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">About</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">Leaderboard</a> ·
+     <a href="https://community.drivendata.org/c/gems-prize-challenge/111">Forum</a> ·
+     <a href="https://github.com/drivendataorg/gems-prize-reference-solution">Reference solution</a></p>
+  <p>Built by <code>python scripts/build_site.py</code>. Sources of every claim:
+     <a href="sources.html">Sources</a>. Problems found and fixed:
+     <a href="verification.html">Verification &amp; flags</a>.</p>
+</footer>
+<script src="geotiff_writer.js"></script>
+
+</body></html>

@@ -1,0 +1,23 @@
+# GEMSDOE9 runtime dependencies
+#
+# Install with:
+#     python3 -m pip install -r requirements.txt
+# or, on a PEP-668 managed system (Debian/Ubuntu 23.04+):
+#     python3 -m pip install --break-system-packages -r requirements.txt
+#
+# Minimum versions are the ones this repository was verified against on
+# 2026-09-27 (Python 3.11.2). Nothing here needs a GPU.
+
+numpy>=1.26          # arrays, the whole DTI implementation
+scipy>=1.11          # distance transforms, morphology, structure tensor, filters
+rasterio>=1.3        # GeoTIFF read/write; GDAL under the hood
+scikit-learn>=1.4    # HistGradientBoostingClassifier for the pixel model
+
+# Optional, only if you want to reproduce the reference-solution architecture
+# or train a UNet. NOT required by anything in scripts/ or tests/.
+# torch>=2.0
+#
+# Optional, for downloading 1 m / 10 m DEM tiles for detector G-5.
+# G-5 falls back to the competition's own detrended-elevation layers, so the
+# pipeline is not blocked on these.
+# requests>=2.31

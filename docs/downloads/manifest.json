@@ -1,0 +1,40 @@
+{
+  "file": "gemsdoe9-PLACEHOLDER-2314b599.tif",
+  "sha256": "2314b59920bfeeaf6a592d4868b25eca62212825620f9945723c2f6d0a2e5b22",
+  "bytes": 439456,
+  "note": "GEMSDOE9 FORMAT-CHECK placeholder (no model, no GeoDAWN data) | band-pattern 2.8% | 2314b599",
+  "kind": "PLACEHOLDER",
+  "built_utc": "20260927T034123Z",
+  "positive_px": 343816,
+  "positive_fraction": 0.027999960909378167,
+  "validator": {
+    "all_passed": true,
+    "n_checks": 14,
+    "checks": [
+      "file-exists",
+      "GDAL-READABLE",
+      "single-band",
+      "dtype-float32",
+      "crs-epsg32611",
+      "resolution-100m",
+      "shape-3292x3730",
+      "geotransform",
+      "PLATFORM-RANGE",
+      "no-nodata-tag",
+      "has-content",
+      "density-sane",
+      "prediction-shape",
+      "not-a-known-duplicate"
+    ],
+    "failed": []
+  },
+  "build_info": {
+    "kind": "FORMAT-CHECK PLACEHOLDER",
+    "generator": "scripts/build_submission.py::placeholder_field",
+    "uses_competition_data": false,
+    "seed": 20260927,
+    "fraction": 0.028,
+    "warning": "This file is a fixed-seed geometric band pattern. It is NOT a geological prediction and carries no information about faults. It exists so the GeoTIFF format, the validator and the DrivenData upload form can be exercised end to end."
+  },
+  "holdout": null
+}

@@ -1,104 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Data Sources — GEMSDOE9</title>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data &amp; access — GEMSDOE9</title>
+<meta name="description" content="GEMSDOE9 — DOE GEMS Prize entry. Verified competition intel, the metric algebra behind the 0.1563 plateau, and a one-click valid GeoTIFF.">
 <style>
-  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;}
-  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;}
-  header{background:#1c1917;color:white;padding:1.5rem;}
-  main{max-width:1100px;margin:0 auto;padding:1.5rem;}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
-  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
-  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
-  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
-  table{width:100%;border-collapse:collapse;font-size:0.85rem;}
-  th,td{border-bottom:1px solid var(--border);padding:0.5rem;text-align:left;vertical-align:top;}
-  code{background:#f5f5f4;padding:0.15rem 0.35rem;border-radius:4px;}
+:root{
+  --bg:#fbfaf9; --panel:#ffffff; --ink:#1c1917; --muted:#6b6560; --line:#e7e5e4;
+  --brand:#b91c1c; --brand2:#c2410c; --ok:#15803d; --okbg:#dcfce7; --warn:#92400e;
+  --warnbg:#fef3c7; --bad:#991b1b; --badbg:#fee2e2; --info:#1e40af; --infobg:#dbeafe;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.62;-webkit-font-smoothing:antialiased}
+a{color:#b91c1c}
+code,kbd{font-family:var(--mono);font-size:.88em;background:#f5f5f4;padding:.12rem .35rem;border-radius:4px}
+pre{background:#1c1917;color:#e7e5e4;padding:1rem;border-radius:10px;overflow:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;color:inherit;padding:0}
+header.top{background:linear-gradient(135deg,#1c1917 0%,#44403c 55%,#7c2d12 100%);color:#fff;padding:2.2rem 1.4rem 1.6rem}
+header.top h1{margin:0 0 .35rem;font-size:1.9rem;letter-spacing:-.025em}
+header.top p{margin:0;max-width:78ch;color:#e7e5e4}
+.badges{margin-top:.9rem;display:flex;gap:.45rem;flex-wrap:wrap}
+.badge{font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:999px;background:rgba(255,255,255,.14);color:#fff}
+.badge.ok{background:#15803d}.badge.warn{background:#b45309}.badge.bad{background:#b91c1c}
+nav.tabs{position:sticky;top:0;z-index:20;background:rgba(251,250,249,.94);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:.55rem 1.4rem;display:flex;gap:.3rem;flex-wrap:wrap}
+nav.tabs a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:.32rem .6rem;border-radius:7px}
+nav.tabs a:hover{background:#fff;color:var(--ink)}
+nav.tabs a.on{background:var(--ink);color:#fff;font-weight:600}
+main{max-width:1140px;margin:0 auto;padding:1.6rem 1.4rem 4rem}
+section{margin-bottom:2.2rem}
+h2{font-size:1.3rem;letter-spacing:-.015em;margin:0 0 .7rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+h3{font-size:1.05rem;margin:1.5rem 0 .5rem}
+h4{font-size:.95rem;margin:1.1rem 0 .35rem;color:#44403c}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1.15rem 1.25rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.grid{display:grid;gap:1.2rem;grid-template-columns:1fr}
+@media(min-width:900px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:repeat(3,1fr)}}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:.6rem 0}
+th,td{text-align:left;padding:.5rem .55rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:650;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+td.num,th.num{text-align:right;font-family:var(--mono);white-space:nowrap}
+.note{border-left:3px solid var(--info);background:var(--infobg);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin:.9rem 0}
+.note.warn{border-color:#b45309;background:var(--warnbg)}
+.note.bad{border-color:var(--bad);background:var(--badbg)}
+.note.ok{border-color:var(--ok);background:var(--okbg)}
+.note b.lbl{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.2rem}
+.btn{display:inline-block;padding:.8rem 1.3rem;border-radius:9px;font-weight:650;text-decoration:none;
+  border:1px solid transparent;cursor:pointer;font-size:.95rem;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.btn-secondary{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn-row{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0}
+.pill{display:inline-block;padding:.1rem .45rem;border-radius:999px;font-size:.72rem;font-weight:700}
+.pill.ok{background:var(--okbg);color:var(--ok)}
+.pill.warn{background:var(--warnbg);color:var(--warn)}
+.pill.bad{background:var(--badbg);color:var(--bad)}
+.pill.info{background:var(--infobg);color:var(--info)}
+.kv{display:grid;grid-template-columns:minmax(140px,auto) 1fr;gap:.35rem 1rem;font-size:.9rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--mono);font-size:.84rem;word-break:break-all}
+details{border:1px solid var(--line);border-radius:9px;padding:.6rem .85rem;margin:.6rem 0;background:#fff}
+summary{cursor:pointer;font-weight:600;font-size:.92rem}
+.hero{background:linear-gradient(135deg,#fff7ed,#fef2f2);border:2px solid #fdba74}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.log{background:#1c1917;color:#e7e5e4;padding:.9rem;border-radius:9px;font-family:var(--mono);
+  font-size:.78rem;white-space:pre-wrap;max-height:340px;overflow:auto}
+footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.8rem 1.4rem;color:var(--muted);font-size:.85rem}
+.src{font-size:.8rem;color:var(--muted);margin-top:.35rem}
+.tag-new{background:#15803d;color:#fff;border-radius:4px;padding:0 .3rem;font-size:.7rem;font-weight:700}
 </style>
-</head>
-<body>
-<header>
-  <h1>Data Sources — Verified Line by Line</h1>
-  <p>Every file measured with SHA256, every URL checked live. No hallucinations.</p>
+</head><body>
+<header class="top">
+  <h1>GEMSDOE9 — Geothermal Fault Discovery Beyond the Catalogue</h1>
+  <p>DOE GEMS Prize entry. Faults in the GeoDAWN region (northwestern Nevada, UTM 11N
+     EPSG:32611, 100 m) that are <em>not</em> in the USGS/INGENIOUS catalogue.</p>
+  <div class="badges"><span class='badge '>Access status</span><span class='badge bad'>Data blocked</span></div>
 </header>
+<nav class="tabs"><a href='index.html'>Overview</a><a href='executive_summary.html'>How to submit</a><a href='strategy.html'>Strategy &amp; metric</a><a href='hypotheses.html'>Hypotheses G-1..G-5</a><a href='intel.html'>Official intel</a><a href='data.html' class='on'>Data &amp; access</a><a href='verification.html'>Verification &amp; flags</a><a href='leaderboard.html'>Leaderboard</a><a href='research.html'>Research notes</a><a href='sources.html'>Sources</a></nav>
 <main>
-<nav>
-  <a href="index.html">Overview</a>
-  <a href="intel.html">Official Intel</a>
-  <a href="data.html"><strong>Data</strong></a>
-  <a href="sources.html">Sources</a>
-  <a href="verification.html">Verification</a>
-</nav>
+<section>
+  <div class="card hero">
+    <h2 style="border:0;padding:0;margin-bottom:.5rem">Data, access, and what is blocked</h2>
+    <p>Stated plainly, because the blocker is the single thing standing between this repo
+       and a trained model.</p>
+  </div>
+</section>
 
-<div class="card">
-  <h2>Competition Files — Verified on Download (from GEMSDOE1 audit)</h2>
-  <table>
-    <tr><th>File</th><th>Size</th><th>SHA256 prefix</th><th>Bands</th><th>Status</th><th>Source</th></tr>
-    <tr><td><code>training_features.tif</code></td><td>399.5 MB</td><td class="mono">4371c82e3b8339b8…</td><td>19 (not 10)</td><td>verified</td><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/data/">Data tab (login)</a></td></tr>
-    <tr><td><code>existing_faults.tif</code> / <code>labels.tif</code></td><td>415.8 KB</td><td class="mono">7ba308ccdc4418b3…</td><td>1, 60,988 px</td><td>verified</td><td>same</td></tr>
-    <tr><td><code>example_submission.tif</code></td><td>1.5 MB</td><td class="mono">2176d08e485aa2cd…</td><td>1</td><td>verified, but NOT total absence — bit-identical to labels (irregularity)</td><td>same</td></tr>
-    <tr><td><code>1m_DEM_links.csv</code> / PDF</td><td>22.0 MB PDF scan</td><td class="mono">c2996eaf0adcc76b…</td><td>716 URLs</td><td>verified, no text layer, OCR needed</td><td>same + Dropbox mirror</td></tr>
-    <tr><td><code>GEMS_96647.pdf</code></td><td>444.5 KB</td><td class="mono">50d854b1e0239fe6…</td><td>—</td><td>verified</td><td><a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">Official Rules</a></td></tr>
-  </table>
-  <p>Full list on <a href="https://buffedlizard55-lab.github.io/GEMSDOE/docs/index.html">GEMSDOE1 Data page</a> — 19 bands, not 10 implied by problem page prose.</p>
-</div>
+<section class="card">
+  <h2>Access status, measured in this environment</h2>
+  <table><thead><tr><th>Resource</th><th>Status</th><th>Detail</th></tr></thead><tbody><tr><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/data/" target="_blank" rel="noopener">DrivenData competition data tab</a></td><td><span class='pill bad'>BLOCKED</span></td><td>Requires a DrivenData account. No credentials are available in this environment and none will be requested. The sandbox also has no outbound network from the shell (TLS handshake fails, curl exit 35), so no file can be fetched here at all -- including the Dropbox mirrors below.</td></tr><tr><td><a href="https://www.dropbox.com/scl/fi/3vz9o0wwavi26xaeoxlwr/gems-geodawn-numerical-features.tif?rlkey=je8d8fepqfbst9lnwsq9rkplu&amp;st=zj1lag1r&amp;dl=0" target="_blank" rel="noopener">Dropbox mirrors listed in the project brief</a></td><td><span class='pill bad'>BLOCKED</span></td><td>Unreachable from the shell: outbound HTTPS is denied. Provenance of these mirrors is also unestablished -- they are not linked from any official DrivenData or DOE page. Treat as unverified third-party copies; the data tab is the authoritative source.</td></tr><tr><td><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/" target="_blank" rel="noopener">DrivenData competition pages, forum, leaderboard</a></td><td><span class='pill ok'>OK</span></td><td>Read live through the research fetch tool. Every quote on this site was read from these pages on 2026-09-27.</td></tr><tr><td><a href="https://apps.nationalmap.gov/3dep/" target="_blank" rel="noopener">USGS 3DEP 10 m DEM</a></td><td><span class='pill warn'>FREE / OFFICIAL / NOT NEEDED</span></td><td>Optional input for detector G-5. G-5 falls back to the competition&#x27;s own detrended-elevation layers, so the pipeline is not blocked on it.</td></tr><tr><td><a href="https://www.usgs.gov/data/geodawn-airborne-magnetic-and-radiometric-surveys-northwestern-great-basin-nevada-and" target="_blank" rel="noopener">USGS GeoDAWN survey (ScienceBase)</a></td><td><span class='pill warn'>FREE / OFFICIAL / REDUNDANT</span></td><td>The competition already ships derived GeoDAWN products. Use the data tab, not this.</td></tr></tbody></table>
+  <div class="note bad"><b class="lbl">We are not going to ask for credentials</b>
+    The data tab requires a DrivenData account. No credentials exist in this environment
+    and none will be requested, stored, or worked around. The shell additionally has no
+    outbound HTTPS (TLS handshake fails; <code>curl</code> exit 35), so no file — official
+    or mirrored — can be fetched here regardless. Everything downstream of
+    <code>data/</code> is therefore written, reviewed and unit-tested, but unexecuted.</div>
+</section>
 
-<div class="card">
-  <h2>19 Bands — Line by Line (from training_features.tif)</h2>
-  <p>Source: GEMSDOE1 measurement via rasterio, band_name/data_category tags.</p>
-  <table>
-    <tr><th>#</th><th>Band name (from file)</th><th>Category</th><th>Used in H9?</th></tr>
-    <tr><td>0</td><td>Surface conductivity</td><td>Conductivity</td><td>H9-2</td></tr>
-    <tr><td>1</td><td>Depth to conductive base</td><td>Conductivity</td><td>H9-2</td></tr>
-    <tr><td>2</td><td>Detrended elevation</td><td>Elevation</td><td>H9-1, H9-3</td></tr>
-    <tr><td>3</td><td>Slope of detrended elevation</td><td>Elevation</td><td>H9-1</td></tr>
-    <tr><td>4</td><td>Dilatation rate</td><td>Strain</td><td>H9-1 (Td)</td></tr>
-    <tr><td>5</td><td>Shear strain rate</td><td>Strain</td><td>H9-1</td></tr>
-    <tr><td>6</td><td>Second invariant of strain rate</td><td>Strain</td><td>H9-1</td></tr>
-    <tr><td>7</td><td>Isostatic gravity anomaly</td><td>Gravity</td><td>H9-2, H9-5</td></tr>
-    <tr><td>8</td><td>Slope of isostatic gravity anomaly</td><td>Gravity</td><td>H9-1, H9-5</td></tr>
-    <tr><td>9</td><td>Reduced-to-pole magnetic anomaly</td><td>Magnetics</td><td>H9-5</td></tr>
-    <tr><td>10</td><td>Total magnetic intensity</td><td>Magnetics</td><td>H9-5</td></tr>
-    <tr><td>11</td><td>Vertical slope of TMI</td><td>Magnetics</td><td>H9-5</td></tr>
-    <tr><td>12</td><td>Horizontal slope of TMI</td><td>Magnetics</td><td>H9-5</td></tr>
-    <tr><td>13</td><td>Top-of-crustal magnetic source depth</td><td>Magnetics</td><td>H9-5</td></tr>
-    <tr><td>14</td><td>Density of earthquakes</td><td>Seismic</td><td>—</td></tr>
-    <tr><td>15</td><td>Radiometric total count (band 6 is NOT magnetic tilt — bug found in 8GEMSDOE, Pearson/Spearman 1.0 vs GeoDAWN grid)</td><td>Radiometric</td><td>H9-2</td></tr>
-    <tr><td>16</td><td>K radiometric</td><td>Radiometric</td><td>H9-2, H9-4</td></tr>
-    <tr><td>17</td><td>Th radiometric</td><td>Radiometric</td><td>H9-2</td></tr>
-    <tr><td>18</td><td>U radiometric</td><td>Radiometric</td><td>H9-2</td></tr>
-  </table>
-  <p>Note: 8GEMSDOE found band 6 is radiometric total count, not magnetic tilt-angle product its tag claims — verified via Pearson/Spearman 1.0 against GeoDAWN grid DOI 10.5066/P93LGLVQ.</p>
-</div>
+<section class="card">
+  <h2>Files the pipeline expects</h2>
+  <table><thead><tr><th>File</th><th>What it is</th><th>Used for</th></tr></thead><tbody><tr><td><code>data/training_features.tif</code></td><td>GeoTIFF, EPSG:32611, 100 m, multi-band. The problem description lists the layer groups; the exact band count and order are read from the file's own per-band description tags at load time rather than assumed.</td><td>all five detectors</td></tr><tr><td><code>data/existing_faults.tif</code></td><td>The known USGS/INGENIOUS faults, rasterised. These are the training labels <em>and</em> the free core of the submission <em>and</em> the evaluation mask in the holdout.</td><td>model fitting, corridor, masking</td></tr><tr><td><code>data/example_submission.tif</code></td><td>The organiser's template. The problem description says it “predicts total fault absence”.</td><td>grid/footprint cross-check only</td></tr><tr><td><code>data/1m_DEM_links.csv</code></td><td>URLs for 1 m DEM tiles.</td><td>optional input to G-5</td></tr></tbody></table>
+  <div class="note warn"><b class="lbl">Claims removed, not repeated</b>
+    The previous revision of this site stated a file size, a band count and a SHA256 for
+    each raster, and claimed <code>example_submission.tif</code> was “bit-identical to the
+    label raster”. None of it is checkable from this repository and the last claim
+    contradicts the problem description. It has been removed rather than softened.
+    <a href="verification.html#irregularity-raster">See the flag →</a></div>
+</section>
 
-<div class="card">
-  <h2>External Free Official Sources for New Hypotheses</h2>
-  <table>
-    <tr><th>Source</th><th>URL</th><th>What</th><th>Coverage</th><th>Verified</th></tr>
-    <tr><td>USGS GeoDAWN magnetic & radiometric</td><td><a href="https://doi.org/10.5066/P93LGLVQ">DOI 10.5066/P93LGLVQ</a></td><td>7 radiometric K,Th,U,TC,U/K,Th/K,U/Th</td><td>99.975%</td><td>Yes, 8GEMSDOE</td></tr>
-    <tr><td>USGS 3DEP 10m DEM</td><td><a href="https://apps.nationalmap.gov/3dep/">3dep</a></td><td>9 topo/scarp bands, SL, ksn</td><td>100%</td><td>Yes</td></tr>
-    <tr><td>USGS 3DEP 1m DEM tiles</td><td><a href="https://prd-tnm.s3.amazonaws.com/?list-type=2&prefix=StagedProducts/Elevation/1m/">S3 bucket</a></td><td>High-res scarp, 716 tiles ~130GB</td><td>100% heavy</td><td>One tile 185,344,605 B verified live</td></tr>
-    <tr><td>Landsat-8/9 TIRS</td><td><a href="https://earthexplorer.usgs.gov/">EarthExplorer</a></td><td>Thermal anomaly B10-11 100m</td><td>100%</td><td>Official</td></tr>
-    <tr><td>ASTER L1T</td><td><a href="https://search.earthdata.nasa.gov/">Earthdata</a></td><td>Clay alteration kaolinite, alunite</td><td>100%</td><td>Official</td></tr>
-    <tr><td>INGENIOUS</td><td><a href="https://doi.org/10.15121/1881483">DOI 10.15121/1881483</a></td><td>Training labels</td><td>—</td><td>Official GDR</td></tr>
-    <tr><td>USGS Quaternary Faults</td><td><a href="https://www.usgs.gov/programs/earthquake-hazards/faults">USGS</a></td><td>Training labels</td><td>—</td><td>Official</td></tr>
-  </table>
-</div>
+<section class="card">
+  <h2>Free, official external data — and whether we need it</h2>
+  <table><thead><tr><th>Source</th><th>URL</th><th>Licence</th><th>Needed for G-5?</th></tr></thead><tbody><tr><td>USGS 3DEP 10 m DEM</td><td>https://apps.nationalmap.gov/3dep/</td><td>Public domain (USGS)</td><td><span class='pill warn'>optional</span> — G-5 falls back to the competition's own detrended-elevation layers, so the pipeline is not blocked</td></tr><tr><td>USGS ScienceBase (GeoDAWN)</td><td>https://www.sciencebase.gov/catalog/item/657e1d85d34e23d3533209f7</td><td>Public domain (USGS)</td><td><span class='pill ok'>no</span> — the competition already ships derived GeoDAWN products</td></tr><tr><td>USGS Quaternary Fault and Fold Database</td><td>https://www.usgs.gov/programs/earthquake-hazards/faults</td><td>Public domain (USGS)</td><td><span class='pill ok'>no</span> — already in the labels</td></tr><tr><td>Landsat-8/9 TIRS (thermal)</td><td>https://earthexplorer.usgs.gov/</td><td>Public domain (USGS)</td><td><span class='pill ok'>no</span> — dropped from the candidate set; the previous revision's H9-4 depended on it and is not carried forward</td></tr><tr><td>ASTER L1T (alteration)</td><td>https://search.earthdata.nasa.gov/</td><td>Public domain (NASA)</td><td><span class='pill ok'>no</span> — same reason</td></tr></tbody></table>
+  <p class="small muted">The competition permits external data provided the participant
+     holds a licence that allows use in the challenge and sharing with the sponsor for
+     evaluation. Everything listed above is public domain, so all of it is usable. The
+     constraint is engineering time and download volume, not licensing — and none of it is
+     on the critical path.</p>
+</section>
 
-<div class="card">
-  <h2>Dropbox Mirrors (from prompt, transient)</h2>
-  <ul>
-    <li><a href="https://www.dropbox.com/scl/fi/aemhtutjgcp6tr3tint94/GEMS_96647.pdf?rlkey=rek210cj2smnmzb8n0sla1vmd&st=wz4kofki&dl=0">GEMS_96647.pdf</a></li>
-    <li><a href="https://www.dropbox.com/scl/fi/6rgvnuady818ol8yqgis4/example_submission.tif?rlkey=kbykilvau066xuogoosbf4cq8&st=8junzdyw&dl=0">example_submission.tif</a></li>
-    <li><a href="https://www.dropbox.com/scl/fi/t7fyt03qdh9egyme0itwo/existing_faults.tif?rlkey=yiao96uluqdkipf0h5vju71jf&st=rnino7ya&dl=0">existing_faults.tif</a></li>
-    <li><a href="https://www.dropbox.com/scl/fi/3vz9o0wwavi26xaeoxlwr/gems-geodawn-numerical-features.tif?rlkey=je8d8fepqfbst9lnwsq9rkplu&st=zj1lag1r&dl=0">gems-geodawn-numerical-features.tif</a></li>
-    <li><a href="https://www.dropbox.com/scl/fi/ig0mban712ns1atphgphe/Digital-elevation-model-links-JSON.pdf?rlkey=zm77f1vbtt2if8hlruymptnu3&st=srhhir10&dl=0">Digital-elevation-model-links-JSON.pdf</a></li>
-  </ul>
-  <p>These are mirrors provided in prompt; official source is data tab login required.</p>
-</div>
+<section class="card">
+  <h2>Getting the data onto a machine that can reach the internet</h2>
+  <pre><code>git clone https://github.com/buffedlizard55-lab/GEMSDOE9.git
+cd GEMSDOE9
+python3 -m pip install -r requirements.txt
 
+# 1. Sign in at https://www.drivendata.org/competitions/306/competition-doe-gems/data/ and download:
+#      training_features.tif, existing_faults.tif, example_submission.tif,
+#      1m_DEM_links.csv      →  data/
+#    (scripts/download_competition_data.sh lists what is expected and why)
+
+# 2. Prove the pipeline is real before spending a slot
+python scripts/validate_holdout.py            # blocked holdout, prints the gate
+python scripts/validate_submission.py docs/downloads/*.tif</code></pre>
+</section>
 </main>
-</body>
-</html>
+<footer>
+  <p><strong>Maximise P(Win).</strong> Every number on this site is either quoted from a
+  linked primary source, read live on 2026-09-27, or computed by code in this
+  repository from the published metric. Nothing is estimated.</p>
+  <p>Sources: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">Competition</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">Problem description</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">About</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">Leaderboard</a> ·
+     <a href="https://community.drivendata.org/c/gems-prize-challenge/111">Forum</a> ·
+     <a href="https://github.com/drivendataorg/gems-prize-reference-solution">Reference solution</a></p>
+  <p>Built by <code>python scripts/build_site.py</code>. Sources of every claim:
+     <a href="sources.html">Sources</a>. Problems found and fixed:
+     <a href="verification.html">Verification &amp; flags</a>.</p>
+</footer>
+<script src="geotiff_writer.js"></script>
+
+</body></html>

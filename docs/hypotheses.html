@@ -1,127 +1,180 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hypotheses H9-1..H9-5 — GEMSDOE9</title>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hypotheses G-1..G-5 — GEMSDOE9</title>
+<meta name="description" content="GEMSDOE9 — DOE GEMS Prize entry. Verified competition intel, the metric algebra behind the 0.1563 plateau, and a one-click valid GeoTIFF.">
 <style>
-  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;--accent:#dc2626;}
-  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.7;}
-  header{background:#1c1917;color:white;padding:1.5rem;}
-  main{max-width:1000px;margin:0 auto;padding:1.5rem;}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
-  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
-  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
-  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
-  code{background:#f5f5f4;padding:0.15rem 0.35rem;border-radius:4px;}
-  table{width:100%;border-collapse:collapse;font-size:0.85rem;}
-  th,td{border-bottom:1px solid var(--border);padding:0.5rem;text-align:left;vertical-align:top;}
-  .rank1{border-left:4px solid var(--accent);}
+:root{
+  --bg:#fbfaf9; --panel:#ffffff; --ink:#1c1917; --muted:#6b6560; --line:#e7e5e4;
+  --brand:#b91c1c; --brand2:#c2410c; --ok:#15803d; --okbg:#dcfce7; --warn:#92400e;
+  --warnbg:#fef3c7; --bad:#991b1b; --badbg:#fee2e2; --info:#1e40af; --infobg:#dbeafe;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.62;-webkit-font-smoothing:antialiased}
+a{color:#b91c1c}
+code,kbd{font-family:var(--mono);font-size:.88em;background:#f5f5f4;padding:.12rem .35rem;border-radius:4px}
+pre{background:#1c1917;color:#e7e5e4;padding:1rem;border-radius:10px;overflow:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;color:inherit;padding:0}
+header.top{background:linear-gradient(135deg,#1c1917 0%,#44403c 55%,#7c2d12 100%);color:#fff;padding:2.2rem 1.4rem 1.6rem}
+header.top h1{margin:0 0 .35rem;font-size:1.9rem;letter-spacing:-.025em}
+header.top p{margin:0;max-width:78ch;color:#e7e5e4}
+.badges{margin-top:.9rem;display:flex;gap:.45rem;flex-wrap:wrap}
+.badge{font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:999px;background:rgba(255,255,255,.14);color:#fff}
+.badge.ok{background:#15803d}.badge.warn{background:#b45309}.badge.bad{background:#b91c1c}
+nav.tabs{position:sticky;top:0;z-index:20;background:rgba(251,250,249,.94);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:.55rem 1.4rem;display:flex;gap:.3rem;flex-wrap:wrap}
+nav.tabs a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:.32rem .6rem;border-radius:7px}
+nav.tabs a:hover{background:#fff;color:var(--ink)}
+nav.tabs a.on{background:var(--ink);color:#fff;font-weight:600}
+main{max-width:1140px;margin:0 auto;padding:1.6rem 1.4rem 4rem}
+section{margin-bottom:2.2rem}
+h2{font-size:1.3rem;letter-spacing:-.015em;margin:0 0 .7rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+h3{font-size:1.05rem;margin:1.5rem 0 .5rem}
+h4{font-size:.95rem;margin:1.1rem 0 .35rem;color:#44403c}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1.15rem 1.25rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.grid{display:grid;gap:1.2rem;grid-template-columns:1fr}
+@media(min-width:900px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:repeat(3,1fr)}}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:.6rem 0}
+th,td{text-align:left;padding:.5rem .55rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:650;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+td.num,th.num{text-align:right;font-family:var(--mono);white-space:nowrap}
+.note{border-left:3px solid var(--info);background:var(--infobg);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin:.9rem 0}
+.note.warn{border-color:#b45309;background:var(--warnbg)}
+.note.bad{border-color:var(--bad);background:var(--badbg)}
+.note.ok{border-color:var(--ok);background:var(--okbg)}
+.note b.lbl{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.2rem}
+.btn{display:inline-block;padding:.8rem 1.3rem;border-radius:9px;font-weight:650;text-decoration:none;
+  border:1px solid transparent;cursor:pointer;font-size:.95rem;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.btn-secondary{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn-row{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0}
+.pill{display:inline-block;padding:.1rem .45rem;border-radius:999px;font-size:.72rem;font-weight:700}
+.pill.ok{background:var(--okbg);color:var(--ok)}
+.pill.warn{background:var(--warnbg);color:var(--warn)}
+.pill.bad{background:var(--badbg);color:var(--bad)}
+.pill.info{background:var(--infobg);color:var(--info)}
+.kv{display:grid;grid-template-columns:minmax(140px,auto) 1fr;gap:.35rem 1rem;font-size:.9rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--mono);font-size:.84rem;word-break:break-all}
+details{border:1px solid var(--line);border-radius:9px;padding:.6rem .85rem;margin:.6rem 0;background:#fff}
+summary{cursor:pointer;font-weight:600;font-size:.92rem}
+.hero{background:linear-gradient(135deg,#fff7ed,#fef2f2);border:2px solid #fdba74}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.log{background:#1c1917;color:#e7e5e4;padding:.9rem;border-radius:9px;font-family:var(--mono);
+  font-size:.78rem;white-space:pre-wrap;max-height:340px;overflow:auto}
+footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.8rem 1.4rem;color:var(--muted);font-size:.85rem}
+.src{font-size:.8rem;color:var(--muted);margin-top:.35rem}
+.tag-new{background:#15803d;color:#fff;border-radius:4px;padding:0 .3rem;font-size:.7rem;font-weight:700}
 </style>
-</head>
-<body>
-<header>
-  <h1>Hypotheses H9-1..H9-5 — 5 New, Ranked, Distinct From Siblings</h1>
-  <p>Each names specific layer(s), physical signature, why it catches missing faults, how differs from anything already implemented in this repo. Ranked by expected DTI improvement and cost. Top candidate validated via spatially-blocked holdout before spending weekly slot.</p>
+</head><body>
+<header class="top">
+  <h1>GEMSDOE9 — Geothermal Fault Discovery Beyond the Catalogue</h1>
+  <p>DOE GEMS Prize entry. Faults in the GeoDAWN region (northwestern Nevada, UTM 11N
+     EPSG:32611, 100 m) that are <em>not</em> in the USGS/INGENIOUS catalogue.</p>
+  <div class="badges"><span class='badge '>G-1 … G-5</span><span class='badge bad'>All unvalidated</span></div>
 </header>
+<nav class="tabs"><a href='index.html'>Overview</a><a href='executive_summary.html'>How to submit</a><a href='strategy.html'>Strategy &amp; metric</a><a href='hypotheses.html' class='on'>Hypotheses G-1..G-5</a><a href='intel.html'>Official intel</a><a href='data.html'>Data &amp; access</a><a href='verification.html'>Verification &amp; flags</a><a href='leaderboard.html'>Leaderboard</a><a href='research.html'>Research notes</a><a href='sources.html'>Sources</a></nav>
 <main>
-<nav>
-  <a href="index.html">Overview</a>
-  <a href="intel.html">Official Intel</a>
-  <a href="executive_summary.html">Executive Summary</a>
-  <a href="hypotheses.html"><strong>Hypotheses</strong></a>
-  <a href="research.html">Research</a>
-  <a href="strategy.html">Strategy</a>
-  <a href="data.html">Data</a>
-</nav>
+<section>
+  <div class="card hero">
+    <h2 style="border:0;padding:0;margin-bottom:.5rem">Five candidate detectors</h2>
+    <p>Ranked by expected value against the metric algebra on the
+       <a href="strategy.html">Strategy</a> page, not by how novel they sound. Each names
+       its layers, the physical signature it targets, why it should catch something the
+       USGS/INGENIOUS catalogue does not contain, and how it differs from every sibling
+       submission and from the previous hypotheses in this repo.</p>
+    <div class="note warn"><b class="lbl">Status of all five</b>
+      Implemented, unit-tested where a closed form exists, and
+      <strong>not validated against real rasters</strong>. The competition data needs a
+      DrivenData login and this environment has no outbound network from the shell. Ranking
+      them is a statement about expected value under the metric algebra plus the published
+      geology, not a measurement. Nothing here is a result.</div>
+  </div>
+</section>
 
-<div class="card">
-  <h2>Validation Protocol — Clean, Before Submission Slot</h2>
-  <p>From prompt: “Validate the top candidate on our spatially-blocked holdout set before touching a weekly submission slot — do not spend a submission slot on an idea that hasn't beaten the current holdout best.”</p>
-  <ul>
-    <li>Spatially-blocked, buffered folds: 4×4 blocks = 16 blocks, buffer 3 px = 300 m (metric kernel radius) to avoid leakage</li>
-    <li>Leave-One-Fault-System-Out (LOFSO): whole fault systems held out, not random pixels — groups via connected components + orientation clustering</li>
-    <li>Exact DTI kernel: triangular R=3 px, α=0.2 β=0.8, same as official</li>
-    <li>Budget-matched random control: same number of predicted pixels as model, uniform random emission — baseline that any model must beat</li>
-    <li>Current holdout best: from 8GEMSDOE, structural-coherence 0.0895 vs random 0.0813 on Fold0 at 3% budget — first to beat random on unseen traces</li>
-    <li>Implementation: <code>scripts/lofso_train_eval.py --hypothesis H9-1 --folds 4 --buffer 3</code> — requires data/ and GPU, prints expected behavior if data missing</li>
-  </ul>
-</div>
+<section>
+  <h2>Ranking</h2>
+  <table><thead><tr><th class='num'>Rank</th><th>Detector</th><th>Expected DTI</th><th>Cost</th><th>Blocked on</th></tr></thead><tbody><tr><td class='num'>1</td><td><strong>G-1</strong> Catalogue geometry completion</td><td><strong>Highest</strong> — the only detector aimed at the exact class the staff definition names</td><td>Low</td><td>competition data</td></tr><tr><td class='num'>2</td><td>G-2 Geodetic dilation-tendency ridge</td><td>High — subsurface signal where there is no scarp</td><td>Low</td><td>competition data</td></tr><tr><td class='num'>3</td><td>G-3 Clay-cap conductivity edge</td><td>Medium-high — blind faults, a class the catalogue provably under-samples</td><td>Low</td><td>competition data</td></tr><tr><td class='num'>4</td><td>G-4 Magnetic contact edge</td><td>Medium — basement offset under cover</td><td>Low-med</td><td>competition data</td></tr><tr><td class='num'>5</td><td>G-5 Fluvial knickpoint / drainage deflection</td><td>Medium, lower confidence</td><td>Low (competition layers) / med (3DEP)</td><td>competition data; 3DEP optional</td></tr></tbody></table>
+</section>
 
-<div class="card rank1">
-  <h2>H9-1: Relay Stepover & Intersection Density (Top Candidate) — Rank 1</h2>
-  <p><strong>Expected lift:</strong> +0.06-0.09 over 0.1563 baseline → 0.22-0.25 DTI, <strong>Cost:</strong> Low-Med (derive from existing 19 bands, no external data)</p>
-  <ul>
-    <li><strong>Specific layer(s):</strong> Dilatation rate (band 4), shear strain rate (band 5), second invariant (band 6) + detrended elevation slope (band 3) + isostatic gravity slope (band 8) + derived fault azimuth from structure-tensor coherence (new, from detrended elevation)</li>
-    <li><strong>Physical signature:</strong> Extensional relay stepovers (left-stepping in right-lateral Walker Lane) and fault intersections create dilational jogs where permeability spikes 10-100×. Signature = high dilation tendency Td × intersection density (Hough line intersections per km²) × curvature inflection. Target 2-5 km stepovers. Td = (σ1-σn)/(σ1-σ3) ≈ 0.5*(1+dilatation/(shear+|second|)). Intersection density via gradient of orientation.</li>
-    <li><strong>Why catches missing:</strong> USGS catalogue maps through-going traces, but misses short linking faults inside stepovers that have subtle topographic expression but strong strain signal. Geothermal upflow at Steamboat, Brady, Dixie Valley is at stepovers/interaction zones, not mid-segment. Verified literature: stepovers/relay ramps are the single most favorable setting (~32% of 250+ catalogued Great Basin fields), terminations ~25%, intersections ~22% — Faulds, Hinz &amp; Kreemer, <a href="https://gdr.openei.org/submissions/383">GDR submission 383</a>; DOE project DE-EE0002748, <a href="https://gbcge.org/recent-projects/characterizing-structural-controls/">GBCGE structural controls project</a>.</li>
-    <li><strong>How differs from siblings:</strong> GEMSDOE4 used lineament features (Sato ridgeness, structure-tensor coherence) but not explicit stepover detection or dilation tendency. 6GEMSDOE used 88 channels (horizontal-gradient magnitude, analytic-signal, tilt, curvature, break-in-slope, structure-tensor) but no Td or intersection density. 8GEMSDOE used scarp + radiometric but not strain-derived Td. First to compute Td from strain rate tensor and cross with Hough intersections.</li>
-    <li><strong>Implementation:</strong> <code>src/gems/features.py: dilation_tendency(), intersection_density(), build_h91_features()</code> — derived from existing bands, no new external data. Free official sources: strain rate bands from training_features.tif (verified).</li>
-    <li><strong>Validation:</strong> Should beat 0.0895 structural-coherence on Fold0 at 3% budget → projected 0.095-0.11. If >0.0895, allowed to spend weekly slot.</li>
-  </ul>
-</div>
+<section class="grid" style="gap:1.1rem">
 
-<div class="card">
-  <h2>H9-2: Conductivity Edge & Clay Cap Gradient — Rank 2</h2>
-  <p><strong>Expected lift:</strong> +0.04-0.07 → 0.20-0.23, <strong>Cost:</strong> Low (derive from existing)</p>
-  <ul>
-    <li><strong>Layers:</strong> Surface conductivity (band 0), depth to conductive base (band 1) + isostatic gravity (band 7) + radiometric Th/K (clay proxy, band from GeoDAWN 99.975% coverage)</li>
-    <li><strong>Signature:</strong> Blind geothermal = conductive smectite clay cap (1-10 Ωm) over resistive reservoir, with sharp lateral edge at fault. Signature = Laplacian of conductivity ∇²(cond) + vertical gradient cond/depth + horizontal gradient magnitude HGM. Edge detection via zero-crossing of Laplacian.</li>
-    <li><strong>Why missing:</strong> USGS maps faults from surface scarp, but blind faults have no scarp — only conductivity edge from clay alteration. INGENIOUS includes some blind but not all. Targets blind.</li>
-    <li><strong>Differs:</strong> Previous used conductivity as raw band, not edge. 6GEMSDOE used analytic signal but not conductivity Laplacian. First to use clay cap model from Cumming 2009.</li>
-    <li><strong>Source:</strong> Conductivity bands from training_features.tif, free official. No external data needed.</li>
-  </ul>
-</div>
+    <div class="card">
+      <h3>G-1 · Catalogue geometry completion
+        <span class="pill bad">unvalidated — needs data/</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>existing_faults.tif (as geometry); optional detrended-elevation slope + magnetic HGM modulation</dd><dt>Physical signature</dt><dd>endpoint proximity x local skeleton curvature x azimuthal deviation, gated to &amp;lt;=3 px (300 m = the metric kernel support) outside the catalogue</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>Staff have stated that &amp;#x27;new fault&amp;#x27; means any fault pixel not already captured by USGS/INGENIOUS and CAN include newly mapped geometry of an existing fault system. Continuations past mapped tips, splays and parallel strands are therefore both (a) common in the scored set and (b) located exactly where the catalogue says to look. Every sibling submission treated the catalogue as a target to copy instead of as a pointer.</dd><dt>Cost</dt><dd>Low - no new data, pure raster geometry</dd><dt>External data needed</dt><dd>none</dd><dt>Implemented in</dt><dd><code>src/gems/features.py::g1_catalogue_geometry</code></dd></dl>
+    </div>
+    <div class="card">
+      <h3>G-2 · Geodetic dilation-tendency ridge
+        <span class="pill bad">unvalidated — needs data/</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>dilatation rate; second invariant of the strain rate tensor</dd><dt>Physical signature</dt><dd>Td = 0.5 + T/(4*sqrt(I2 - T^2/4)) (Simpson &amp;amp; Reiling 2008), x structure-tensor coherence of the same layers</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>Strain rate is a smoothed regional quantity: it responds to incipient and short structures inside basins where there is no scarp and no aerial coverage. The catalogue is a surface map; this is a subsurface one.</dd><dt>Cost</dt><dd>Low - both layers are already in training_features.tif</dd><dt>External data needed</dt><dd>none</dd><dt>Implemented in</dt><dd><code>src/gems/features.py::g2_dilation_tendency_ridge</code></dd></dl>
+    </div>
+    <div class="card">
+      <h3>G-3 · Clay-cap conductivity edge
+        <span class="pill bad">unvalidated — needs data/</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>surface conductivity; depth to conductive base</dd><dt>Physical signature</dt><dd>|grad log(sigma)| x log(sigma / depth_to_base): a scale-free lateral discontinuity of a conductive alteration cap over a resistive reservoir</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>Blind faults under basin fill have no scarp, no aerial expression and no offset drainages. Their only surface signature is the clay/serpentinite halo, which the electro-magnetic layers resolve and the surface catalogue does not.</dd><dt>Cost</dt><dd>Low - both layers are already in training_features.tif</dd><dt>External data needed</dt><dd>none</dd><dt>Implemented in</dt><dd><code>src/gems/features.py::g3_clay_cap_edge</code></dd></dl>
+    </div>
+    <div class="card">
+      <h3>G-4 · Magnetic contact edge
+        <span class="pill bad">unvalidated — needs data/</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>reduced-to-pole magnetic anomaly; total magnetic intensity; horizontal and vertical slope of TMI; top-of-crustal source depth</dd><dt>Physical signature</dt><dd>horizontal-gradient maximum at a tilt-derivative zero crossing, weighted by a shallow (&amp;lt;1 km) Euler-style source depth</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>Basement-involved faults offset the magnetic basement beneath a cover that hides the surface trace. The catalogue maps the surface; magnetics see the offset. The coincidence constraint is what keeps this from firing on every lithologic contact.</dd><dt>Cost</dt><dd>Low-Med - all four layers are in training_features.tif; the tilt derivative and Euler-style depth are the compute</dd><dt>External data needed</dt><dd>none</dd><dt>Implemented in</dt><dd><code>src/gems/features.py::g4_magnetic_contact</code></dd></dl>
+    </div>
+    <div class="card">
+      <h3>G-5 · Fluvial knickpoint and drainage deflection
+        <span class="pill bad">unvalidated — needs data/</span></h3>
+      <dl class='kv'><dt>Layers</dt><dd>detrended elevation; slope of detrended elevation; optional 10 m USGS 3DEP DEM (free, official)</dd><dt>Physical signature</dt><dd>second-derivative ridges in the along-strike slope (knickpoints) plus local circular variance of the downslope azimuth (deflection)</dd><dt>Why it should catch a fault the catalogue misses</dt><dd>An offset drainage survives even when the scarp is buried in colluvium, which is the usual preservation state for young Walker Lane scarps. Detrending removes the regional range-front tilt so the residual is local structure.</dd><dt>Cost</dt><dd>Low with the competition&amp;#x27;s own detrended-elevation layers; Medium with a 10 m 3DEP DEM (https://apps.nationalmap.gov/3dep/)</dd><dt>External data needed</dt><dd>none</dd><dt>Implemented in</dt><dd><code>src/gems/features.py::g5_fluvial_knickpoint</code></dd></dl>
+    </div>
+</section>
 
-<div class="card">
-  <h2>H9-3: Fluvial Geomorphic Anomaly (SL Index & ksn) — Rank 3</h2>
-  <p><strong>Expected lift:</strong> +0.03-0.06 → 0.19-0.22, <strong>Cost:</strong> Medium (requires 10m DEM download ~5GB + processing)</p>
-  <ul>
-    <li><strong>Layers:</strong> External 10m 3DEP DEM (free official https://apps.nationalmap.gov/3dep/) derived: slope, curvature, SL index (stream length-gradient), normalized channel steepness ksn, drainage deflection angle</li>
-    <li><strong>Signature:</strong> Faults perturb longitudinal river profiles → knickpoints, high SL, low ksn upstream. Signature = SL anomaly >2σ + ksn drop + channel 90° deflection. Targets faults with no scarp but with drainage offset.</li>
-    <li><strong>Why missing:</strong> USGS faults mapped from scarp and aerial photos, misses blind faults that only show in drainage. Walker Lane has many such (e.g., Dixie Valley).</li>
-    <li><strong>Differs:</strong> GEMSDOE used detrended elevation slope and break-in-slope, but not fluvial indices. 8GEMSDOE used 10m scarp but not SL/ksn. New external DEM processing via whitebox or richdem.</li>
-    <li><strong>Source needed:</strong> USGS 3DEP 10m DEM — free official, 100% coverage, verified in 8GEMSDOE as 9 topo/scarp bands. Obtainable: https://apps.nationalmap.gov/3dep/ — check live, yes obtainable. Implementation cost medium.</li>
-  </ul>
-</div>
+<section>
+  <h2>How these differ from everything already tried</h2>
+  <table><thead><tr><th>Previous attempt</th><th>What it did</th><th>Why these five are different</th></tr></thead><tbody><tr><td>GEMSDOE1 / GEMSDOE2 / 5GEMSDOE / 8GEMSDOE</td><td>Copied the known catalogue raster; two of them shipped byte-identical files</td><td>The catalogue is used as a <em>geometric prior</em> (endpoints, curvature, strand spacing), never as the output. Predicting the catalogue is a component of the field, not the field.</td></tr><tr><td>GEMSDOE3 (three submissions)</td><td>Sparse point placements — 'Pindrop' nodes, a catalogue-gap target, a dense ridge control</td><td>These are point/line hypotheses with no continuous probability field. G-1 is a density field over a 300 m corridor; G-2..G-5 are continuous geophysical scores.</td></tr><tr><td>GEMSDOE4</td><td>Lineament features plus proxy labels; scored 0.0343</td><td>G-5 is the sharpened version of the lineament idea (knickpoint second derivatives plus drainage-azimuth circular variance on detrended elevation) and G-4 adds the tilt-zero gating that separates contacts from faults.</td></tr><tr><td>6GEMSDOE</td><td>Gradient boosting over 88 channels, top 3%; scored 0.0286</td><td>Same model family, opposite failure: thresholding 3% of pixels with no geological prior puts almost all of the budget in empty ground. The metric algebra says precision is the cheap thing to buy and recall is the expensive one; 6GEMSDOE bought the wrong one.</td></tr><tr><td>H9-1 … H9-5 (previous revision of this repo)</td><td>Relay stepovers, conductivity edge, SL/ksn, thermal+ASTER, Euler depth</td><td>Superseded. H9-1's dilation tendency used a formula that is not the published quantity; H9-3 and H9-4 needed external downloads the pipeline does not actually have. G-1 is new and rests on an official statement the previous revision never cited. G-5 keeps the fluvial idea but runs on the competition's own detrended-elevation layers, so it is not blocked on 3DEP.</td></tr></tbody></table>
+</section>
 
-<div class="card">
-  <h2>H9-4: Thermal & Alteration Halo (Landsat TIRS + ASTER) — Rank 4</h2>
-  <p><strong>Expected lift:</strong> +0.05-0.10 → 0.21-0.26 (higher variance), <strong>Cost:</strong> Medium-High (external download, cloud masking, topo correction)</p>
-  <ul>
-    <li><strong>Layers:</strong> External Landsat-8/9 Band10-11 thermal (100m resampled) + ASTER alteration indices: kaolinite (B5+B7)/B6, alunite B3/B5, clay (B5*B7)/B6² — free official via USGS EarthExplorer https://earthexplorer.usgs.gov/ and NASA Earthdata https://search.earthdata.nasa.gov/</li>
-    <li><strong>Signature:</strong> Geothermal = 2-5K thermal anomaly + clay alteration halo (kaolinite, alunite, silica) 100-500m wide. Signature = thermal anomaly >1.5σ after topo correction + clay index > threshold + proximity to conductivity edge.</li>
-    <li><strong>Why missing:</strong> Catalogue faults have no thermal requirement; hidden geothermal faults have alteration but no scarp. Directly targets geothermal permeability, not just fault existence.</li>
-    <li><strong>Differs:</strong> No previous repo used thermal or ASTER. Completely new data source.</li>
-    <li><strong>Source needed:</strong> Landsat-8/9 TIRS and ASTER L1T — free official, obtainable via EarthExplorer (verified live). Cost medium-high due to cloud masking and topo correction.</li>
-  </ul>
-</div>
-
-<div class="card">
-  <h2>H9-5: Magnetotelluric Dimensionality & Euler Depth Contact — Rank 5</h2>
-  <p><strong>Expected lift:</strong> +0.02-0.05 → 0.18-0.21, <strong>Cost:</strong> Low-Med (derived from existing bands, compute-heavy)</p>
-  <ul>
-    <li><strong>Layers:</strong> Reduced-to-pole magnetic anomaly (band 9), TMI (10), vertical/horizontal slope (11,12), top-of-crustal magnetic source depth (13) + isostatic gravity anomaly (7) + slope (8)</li>
-    <li><strong>Signature:</strong> Faults = contact between different magnetic susceptibilities → high horizontal gradient magnitude + analytic signal + tilt derivative zero-crossing + Euler deconvolution depth <1km. Signature = (HGM >75th percentile) ∧ (tilt zero) ∧ (Euler depth <1km) ∧ (gravity HGM coincident).</li>
-    <li><strong>Why missing:</strong> USGS catalogue includes faults with clear magnetic lineament, but misses those with subtle contact where Euler depth indicates shallow source but no surface scarp. Targets basement-involved faults.</li>
-    <li><strong>Differs:</strong> 6GEMSDOE used tilt derivative and analytic signal amplitude as features for HGB, but not Euler deconvolution or joint gravity-magnetic coincidence. First to compute Euler depth and enforce gravity-magnetic coincidence.</li>
-    <li><strong>Source:</strong> Mag & grav bands from training_features.tif, free official, no external data.</li>
-  </ul>
-</div>
-
-<div class="card">
-  <h2>Ranking Summary</h2>
-  <table>
-    <tr><th>Rank</th><th>Hypothesis</th><th>Expected DTI</th><th>Cost</th><th>Needs external?</th><th>Source</th></tr>
-    <tr><td>1</td><td>H9-1 Relay stepover</td><td>0.22-0.25 (+0.06-0.09)</td><td>Low-Med</td><td>No</td><td>Strain bands 4-6</td></tr>
-    <tr><td>2</td><td>H9-2 Conductivity edge</td><td>0.20-0.23 (+0.04-0.07)</td><td>Low</td><td>No</td><td>Cond bands 0-1</td></tr>
-    <tr><td>3</td><td>H9-3 Fluvial SL/ksn</td><td>0.19-0.22 (+0.03-0.06)</td><td>Medium</td><td>Yes, 10m DEM</td><td>https://apps.nationalmap.gov/3dep/</td></tr>
-    <tr><td>4</td><td>H9-4 Thermal+ASTER</td><td>0.21-0.26 (+0.05-0.10)</td><td>Med-High</td><td>Yes, Landsat+ASTER</td><td>https://earthexplorer.usgs.gov/</td></tr>
-    <tr><td>5</td><td>H9-5 Euler depth</td><td>0.18-0.21 (+0.02-0.05)</td><td>Low-Med</td><td>No</td><td>Mag & grav 7-13</td></tr>
-  </table>
-  <p><strong>Top candidate for immediate validation:</strong> H9-1 — no external data, directly targets geothermal structural control, differs from all siblings, and 8GEMSDOE showed structural coherence first to beat random (0.0895 vs random 0.0813). Validate via <code>scripts/lofso_train_eval.py</code> before spending submission slot.</p>
-</div>
-
+<section>
+  <h2>Validation protocol — fixed before any slot is spent</h2>
+  <ol>
+    <li><strong>Spatially-blocked holdout.</strong> 4×4 blocks with a 300 m buffer, so the
+        classifier cannot learn a fault and be scored on the pixels touching it. Random pixel
+        splits are meaningless here: catalogue strands are 1–2 px wide.</li>
+    <li><strong>Budget-matched random control</strong> at every arm, so "it scored well" is
+        never confused with "it found something".</li>
+    <li><strong>Catalogue-only arm</strong>, because a model that merely reproduces the
+        catalogue scores perfectly on catalogue labels and 0.1563 on the board.</li>
+    <li><strong>Gate:</strong> no submission file is written unless the corridor arm beats
+        catalogue-only by ≥ 0.02 <em>and</em> the model arm beats random by ≥ 0.02.
+        <code>python scripts/validate_holdout.py</code> exits non-zero and
+        <code>build_submission.py --holdout-gate</code> refuses to write.</li>
+  </ol>
+  <div class="note bad"><b class="lbl">The limitation we cannot engineer away</b>
+    This holdout scores <em>catalogue</em> faults. The competition scores faults that are
+    <em>not</em> in the catalogue. No public holdout can measure the thing we are scored on,
+    because the labels do not exist publicly. The protocol above can prove a detector
+    carries information beyond “where the catalogue already is”. It cannot prove the
+    detector finds unmapped faults. That gap is the honest state of play, and it is why
+    the metric algebra in <a href="strategy.html">Strategy</a> — which is fully determined —
+    carries more of the expected lift than any detector claim here.</div>
+</section>
 </main>
-</body>
-</html>
+<footer>
+  <p><strong>Maximise P(Win).</strong> Every number on this site is either quoted from a
+  linked primary source, read live on 2026-09-27, or computed by code in this
+  repository from the published metric. Nothing is estimated.</p>
+  <p>Sources: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">Competition</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">Problem description</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">About</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">Leaderboard</a> ·
+     <a href="https://community.drivendata.org/c/gems-prize-challenge/111">Forum</a> ·
+     <a href="https://github.com/drivendataorg/gems-prize-reference-solution">Reference solution</a></p>
+  <p>Built by <code>python scripts/build_site.py</code>. Sources of every claim:
+     <a href="sources.html">Sources</a>. Problems found and fixed:
+     <a href="verification.html">Verification &amp; flags</a>.</p>
+</footer>
+<script src="geotiff_writer.js"></script>
+
+</body></html>

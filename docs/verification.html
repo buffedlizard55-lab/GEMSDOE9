@@ -1,114 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Verification — GEMSDOE9</title>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verification &amp; flags — GEMSDOE9</title>
+<meta name="description" content="GEMSDOE9 — DOE GEMS Prize entry. Verified competition intel, the metric algebra behind the 0.1563 plateau, and a one-click valid GeoTIFF.">
 <style>
-  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;}
-  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;}
-  header{background:#1c1917;color:white;padding:1.5rem;}
-  main{max-width:900px;margin:0 auto;padding:1.5rem;}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
-  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
-  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
-  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
-  code{background:#f5f5f4;padding:0.15rem 0.35rem;border-radius:4px;}
-  .ok{color:#166534;background:#dcfce7;padding:0.15rem 0.5rem;border-radius:999px;font-size:0.75rem;}
-  .bad{color:#991b1b;background:#fee2e2;padding:0.15rem 0.5rem;border-radius:999px;font-size:0.75rem;}
+:root{
+  --bg:#fbfaf9; --panel:#ffffff; --ink:#1c1917; --muted:#6b6560; --line:#e7e5e4;
+  --brand:#b91c1c; --brand2:#c2410c; --ok:#15803d; --okbg:#dcfce7; --warn:#92400e;
+  --warnbg:#fef3c7; --bad:#991b1b; --badbg:#fee2e2; --info:#1e40af; --infobg:#dbeafe;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.62;-webkit-font-smoothing:antialiased}
+a{color:#b91c1c}
+code,kbd{font-family:var(--mono);font-size:.88em;background:#f5f5f4;padding:.12rem .35rem;border-radius:4px}
+pre{background:#1c1917;color:#e7e5e4;padding:1rem;border-radius:10px;overflow:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;color:inherit;padding:0}
+header.top{background:linear-gradient(135deg,#1c1917 0%,#44403c 55%,#7c2d12 100%);color:#fff;padding:2.2rem 1.4rem 1.6rem}
+header.top h1{margin:0 0 .35rem;font-size:1.9rem;letter-spacing:-.025em}
+header.top p{margin:0;max-width:78ch;color:#e7e5e4}
+.badges{margin-top:.9rem;display:flex;gap:.45rem;flex-wrap:wrap}
+.badge{font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:999px;background:rgba(255,255,255,.14);color:#fff}
+.badge.ok{background:#15803d}.badge.warn{background:#b45309}.badge.bad{background:#b91c1c}
+nav.tabs{position:sticky;top:0;z-index:20;background:rgba(251,250,249,.94);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:.55rem 1.4rem;display:flex;gap:.3rem;flex-wrap:wrap}
+nav.tabs a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:.32rem .6rem;border-radius:7px}
+nav.tabs a:hover{background:#fff;color:var(--ink)}
+nav.tabs a.on{background:var(--ink);color:#fff;font-weight:600}
+main{max-width:1140px;margin:0 auto;padding:1.6rem 1.4rem 4rem}
+section{margin-bottom:2.2rem}
+h2{font-size:1.3rem;letter-spacing:-.015em;margin:0 0 .7rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+h3{font-size:1.05rem;margin:1.5rem 0 .5rem}
+h4{font-size:.95rem;margin:1.1rem 0 .35rem;color:#44403c}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1.15rem 1.25rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.grid{display:grid;gap:1.2rem;grid-template-columns:1fr}
+@media(min-width:900px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:repeat(3,1fr)}}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:.6rem 0}
+th,td{text-align:left;padding:.5rem .55rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:650;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+td.num,th.num{text-align:right;font-family:var(--mono);white-space:nowrap}
+.note{border-left:3px solid var(--info);background:var(--infobg);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin:.9rem 0}
+.note.warn{border-color:#b45309;background:var(--warnbg)}
+.note.bad{border-color:var(--bad);background:var(--badbg)}
+.note.ok{border-color:var(--ok);background:var(--okbg)}
+.note b.lbl{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.2rem}
+.btn{display:inline-block;padding:.8rem 1.3rem;border-radius:9px;font-weight:650;text-decoration:none;
+  border:1px solid transparent;cursor:pointer;font-size:.95rem;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.btn-secondary{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn-row{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0}
+.pill{display:inline-block;padding:.1rem .45rem;border-radius:999px;font-size:.72rem;font-weight:700}
+.pill.ok{background:var(--okbg);color:var(--ok)}
+.pill.warn{background:var(--warnbg);color:var(--warn)}
+.pill.bad{background:var(--badbg);color:var(--bad)}
+.pill.info{background:var(--infobg);color:var(--info)}
+.kv{display:grid;grid-template-columns:minmax(140px,auto) 1fr;gap:.35rem 1rem;font-size:.9rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--mono);font-size:.84rem;word-break:break-all}
+details{border:1px solid var(--line);border-radius:9px;padding:.6rem .85rem;margin:.6rem 0;background:#fff}
+summary{cursor:pointer;font-weight:600;font-size:.92rem}
+.hero{background:linear-gradient(135deg,#fff7ed,#fef2f2);border:2px solid #fdba74}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.log{background:#1c1917;color:#e7e5e4;padding:.9rem;border-radius:9px;font-family:var(--mono);
+  font-size:.78rem;white-space:pre-wrap;max-height:340px;overflow:auto}
+footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.8rem 1.4rem;color:var(--muted);font-size:.85rem}
+.src{font-size:.8rem;color:var(--muted);margin-top:.35rem}
+.tag-new{background:#15803d;color:#fff;border-radius:4px;padding:0 .3rem;font-size:.7rem;font-weight:700}
 </style>
-</head>
-<body>
-<header>
-  <h1>Verification — No Hallucinations</h1>
-  <p>Every claim measured, every source linked, every number from JSON evidence.</p>
+</head><body>
+<header class="top">
+  <h1>GEMSDOE9 — Geothermal Fault Discovery Beyond the Catalogue</h1>
+  <p>DOE GEMS Prize entry. Faults in the GeoDAWN region (northwestern Nevada, UTM 11N
+     EPSG:32611, 100 m) that are <em>not</em> in the USGS/INGENIOUS catalogue.</p>
+  <div class="badges"><span class='badge '>Checks run</span><span class='badge ok'>82/82 checks pass</span><span class='badge warn'>7 problems found</span></div>
 </header>
+<nav class="tabs"><a href='index.html'>Overview</a><a href='executive_summary.html'>How to submit</a><a href='strategy.html'>Strategy &amp; metric</a><a href='hypotheses.html'>Hypotheses G-1..G-5</a><a href='intel.html'>Official intel</a><a href='data.html'>Data &amp; access</a><a href='verification.html' class='on'>Verification &amp; flags</a><a href='leaderboard.html'>Leaderboard</a><a href='research.html'>Research notes</a><a href='sources.html'>Sources</a></nav>
 <main>
-<nav>
-  <a href="index.html">Overview</a>
-  <a href="intel.html">Official Intel</a>
-  <a href="verification.html"><strong>Verification</strong></a>
-  <a href="sources.html">Sources</a>
-  <a href="data.html">Data</a>
-</nav>
+<section>
+  <div class="card hero">
+    <h2 style="border:0;padding:0;margin-bottom:.5rem">Verification, and what is still broken</h2>
+    <p>Two lists: the checks that run on every build, and the problems found in this
+       repository that a reviewer should know about. The second list is longer than the
+       first because it should be.</p>
+  </div>
+</section>
 
-<div class="card">
-  <h2>Rules Quotes — Verified</h2>
-  <p>From <code>scripts/verify_rules_quotes.py</code> checking 29 verbatim sentences against <a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">Official Rules PDF</a> SHA256 50d854b1e0239fe6…</p>
-  <table>
-    <tr><th>Rule ID</th><th>Sentence</th><th>Found</th></tr>
-    <tr><td>phase1_target</td><td>In Phase 1, submissions will be evaluated against a privately withheld subset of the original new fault dataset compiled by expert reviewers.</td><td><span class="ok">✔</span></td></tr>
-    <tr><td>experts_revise</td><td>After Phase 1, expert reviewers will use submitted predictions to revise the new fault dataset.</td><td><span class="ok">✔</span></td></tr>
-    <tr><td>phase2_eligibility</td><td>All Phase 1 competitors will be eligible to compete in Phase 2 and will be automatically submitted for consideration.</td><td><span class="ok">✔</span></td></tr>
-    <tr><td>phase2_target</td><td>Submissions will be reevaluated against the full, revised new fault dataset using the same distance-weighted Tversky index.</td><td><span class="ok">✔</span></td></tr>
-    <tr><td>labels_source</td><td>The labels for this prize come from the USGS Quaternary Fault and Fold Database and from a set of newly identified faults labeled by geology experts at the National Laboratory of the Rockies (NLR) and USGS.</td><td><span class="ok">✔</span></td></tr>
-    <tr><td>ranking_basis</td><td>Second-round prize rankings will be determined by running the selected final submissions against the complete updated test set created by expert review.</td><td><span class="ok">✔</span></td></tr>
-  </table>
-  <p>GEMSDOE1 reported all 29 quoted sentences matched on 2026-09-21T12:53:40Z; the six key sentences above are the ones tracked by <code>scripts/verify_rules_quotes.py</code> in this repo and re-check automatically once <code>data/GEMS_96647.pdf</code> is placed.</p>
-</div>
+<section class="card">
+  <h2>Reproduce every number on this site</h2>
+  <pre><code>bash scripts/run_all_checks.sh</code></pre>
+  <p>Runs, in order: the 82/82 passing test suite, the strategy experiment, the submission
+     validator, and the site build. Nothing on this site is typed by hand — it is rendered
+     by <code>scripts/build_site.py</code> from <code>scripts/site_data.py</code> (verified
+     claims + source URLs) and from the JSON artifacts the scripts emit.</p>
+</section>
 
-<div class="card">
-  <h2>Format Gates — Measured 2026-09-26</h2>
-  <p>From <code>python scripts/validate_submission.py docs/downloads/gemsdoe9_submission.tif --max-compat</code></p>
-  <pre><code>PASS file-exists                    674937 bytes
-PASS single-band                    band count = 1
-PASS dtype-float32                  dtype = float32
-PASS crs-epsg32611                  CRS = EPSG:32611 (epsg 32611)
-PASS resolution-100m                resolution = (100.0, 100.0)
-PASS shape                          shape = (3730, 3292), expected (3730, 3292)
-PASS geotransform                   transform = (100.0, 0.0, 243350.0, 0.0, -100.0, 4508550.0)
-PASS nodata-nan                     declared nodata = None (max-compat allowed)
-PASS values-in-0-1                  finite range = [0.0, 1.0]
-PASS no-inf                         inf pixels = 0
-PASS template-verified              official sample not present, skipped (need data/)
-PASS NAN-INSIDE-FOOTPRINT           0 NaN total, 0 inside guaranteed because all finite (max-compat) — no range error possible
-PASS footprint-matches-official     official footprint not present, cannot check
+<section>
+  <h2>The checks</h2>
+  <table><thead><tr><th>Gate</th><th>What it proves</th><th>Where</th></tr></thead><tbody><tr><td><code>GDAL-READABLE</code></td><td>rasterio decodes every strip — this is the check whose absence caused the original rejection</td><td><code>tests G4</code></td></tr><tr><td><code>PLATFORM-RANGE</code></td><td>0 NaN, 0 Inf, all 12,279,160 values in [0, 1]</td><td><code>tests G2</code></td></tr><tr><td><code>EQ-1 == EQ-2</code></td><td>the closed form of the metric agrees with the exact implementation</td><td><code>tests B1, A7</code></td></tr><tr><td><code>attractor</code></td><td>0.1563 ⇔ ρ = 0.1291 at φ = 0</td><td><code>tests B2–B4</code></td></tr><tr><td><code>free-core lever</code></td><td>a masked pixel earns TP credit and costs zero FP</td><td><code>tests A10, A11, C2</code></td></tr><tr><td><code>closed form vs measurement</code></td><td>EQ-2 predicts the measured DTI of a catalogue copy to ~1e-11</td><td><code>validate_holdout.py --strategy</code></td></tr><tr><td><code>dilation tendency limits</code></td><td>Td = 0.5 in pure shear, 1.0 in pure uniaxial extension, 0.75 for (3, −1), scale-invariant</td><td><code>tests D1–D7</code></td></tr><tr><td><code>browser writer round-trip</code></td><td>write → parse IFD → decode → compare, exact, on 5 grid shapes × 2 compression modes</td><td><code>tests E1–E6</code></td></tr><tr><td><code>not-a-known-duplicate</code></td><td>the SHA256 is not one of the seven that already spent a submission slot</td><td><code>tests G6</code></td></tr></tbody></table>
+</section>
 
-File statistics
-total pixels: 12279160
-finite: 12279160 nan: 0 inf: 0
-finite min 0.0 max 1.0 positive 343816
+<section>
+  <h2>Problems found, fixed, and flagged</h2>
+  <p>Each was found by actually running the thing rather than reading it. The two HIGH
+     items are the reason a download from the previous version of this site was rejected at
+     the upload form.</p>
+</section>
+<section class="grid" style="gap:1.1rem">
 
-All 13 checks PASS</code></pre>
-</div>
+    <div class="card" id="irregularity-tiff">
+      <h3>1. The previous site shipped GeoTIFFs that GDAL could not read
+        <span class="pill bad">HIGH</span></h3>
+      <p class="small muted">Found 2026-09-27, this session</p>
+      <p>docs/geotiff_writer.js allocated the StripOffsets (tag 273) and StripByteCounts (tag 279) arrays as &#x27;inline&#x27; 4-byte IFD values before their data existed, so only the first 4 bytes of each array ever reached the file. Strips 2..N pointed at offset 0. Reproduced: a 49,117,032-byte file from the site&#x27;s default &#x27;Build submission.tif&#x27; button, which rasterio/GDAL refused to open with &#x27;TIFFReadEncodedStrip() failed&#x27;. The DrivenData form reported that as a VALUE error -- &#x27;Predicted values must be in range [0, 1]&#x27; -- which is why the earlier diagnosis blamed NaN. There was no NaN problem to find. The writer is rewritten, round-trip tested against an independent parser, and gated by tests/test_validation.py E1-E6.</p>
+    </div>
+    <div class="card" id="irregularity-duplicate-artifacts">
+      <h3>2. The previous site shipped two byte-identical .tif files under different names
+        <span class="pill bad">HIGH</span></h3>
+      <p class="small muted">Found 2026-09-27, this session</p>
+      <p>docs/downloads/gemsdoe9_submission.tif and docs/downloads/gems9-20260926T234507Z-8ecbdc71.tif were both 674,937 bytes with SHA256 8ecbdc712da4b83e.... This is the exact failure the team asked to stop: two files, one pixel field, indistinguishable scores. Both have been removed; scripts/build_submission.py now deletes previous artifacts before writing and refuses to publish any file whose SHA256 is on the spent-slot list.</p>
+    </div>
+    <div class="card" id="irregularity-placeholder-labelled-as-science">
+      <h3>3. The browser &#x27;H9-1 relay-stepover&#x27; field was a procedural pattern, not a model
+        <span class="pill bad">HIGH</span></h3>
+      <p class="small muted">Found 2026-09-27, this session</p>
+      <p>generateH91Field() in the old geotiff_writer.js built a fixed-seed field from two crossing sinusoids plus an xorshift noise term. No GeoDAWN data, no catalogue, no model. The site nevertheless labelled the resulting file &#x27;H9-1 relay-stepover + dilation + intersection&#x27; and the note pasted into DrivenData repeated it. The artifact is gone. The replacement is named PLACEHOLDER, its note says &#x27;no model, no GeoDAWN data&#x27;, and nothing in this repo presents an unvalidated field as a geological result.</p>
+    </div>
+    <div class="card" id="irregularity-dilation-tendency">
+      <h3>4. The previous dilation tendency was not the published quantity
+        <span class="pill warn">MEDIUM</span></h3>
+      <p class="small muted">Found 2026-09-27, this session</p>
+      <p>src/gems/features.py computed 0.5*(1 + dilatation/(shear + |second_invariant|)). The dilation tendency of Simpson &amp; Reiling (2008) is Td = (e1 - e_n)/(e1 - e3), which is 0.5 in pure simple shear and 1 in pure uniaxial extension, and is invariant under a uniform scaling of the strain rate. The old formula has none of those properties. Replaced with the closed form Td = 0.5 + T/(4*sqrt(I2 - T^2/4)) and pinned by four limit tests.</p>
+    </div>
+    <div class="card" id="irregularity-raster">
+      <h3>5. Claims about the competition rasters that this repo cannot currently support
+        <span class="pill warn">MEDIUM</span></h3>
+      <p class="small muted">Found 2026-09-27, this session</p>
+      <p>The previous revision asserted, as verified, that training_features.tif is 399.5 MB / 19 bands / SHA256 4371c82e..., that existing_faults.tif has 60,988 pixels, and that example_submission.tif is &#x27;bit-identical to the label raster&#x27;. None of that is checkable from this repository, and the last one contradicts the problem description, which says the sample submission &#x27;predicts total fault absence&#x27;. These numbers are removed from the site. The band count is read from the file&#x27;s own tags at load time instead (pipeline.band_index_by_tag / CompetitionData.band_names).</p>
+    </div>
+    <div class="card" id="irregularity-band-order">
+      <h3>6. Band ordering was never verified
+        <span class="pill warn">MEDIUM</span></h3>
+      <p class="small muted">Found 2026-09-27, this session</p>
+      <p>The previous features.py hard-coded band indices 0..18 and labelled them &#x27;PROVISIONAL&#x27;. A provisional index that is wrong is a silent wrong answer. All band access now goes through CompetitionData.band(*substrings), which resolves by the GeoTIFF&#x27;s own description tags and raises a KeyError listing the available names when a lookup misses.</p>
+    </div>
+    <div class="card" id="irregularity-no-requirements">
+      <h3>7. No project Python environment was declared
+        <span class="pill info">LOW</span></h3>
+      <p class="small muted">Found 2026-09-27, this session</p>
+      <p>src/gems/features.py and src/gems/metric.py imported scipy at module scope with no requirements file, so `python tests/test_validation.py` failed on a clean checkout. requirements.txt now pins the five dependencies, and run_all_checks.sh verifies the imports before running anything.</p>
+    </div>
+</section>
 
-<div class="card">
-  <h2>Irregularities Flagged for Review</h2>
+<section class="card">
+  <h2>Known gaps</h2>
   <ul>
-    <li><strong>example_submission.tif is NOT total fault absence</strong> — bit-identical to label raster (60,988 positive pixels in both). Problem page describes it as predicting total absence. Flagged in GEMSDOE1 Data page, re-verified here.</li>
-    <li><strong>Feature stack has 19 bands, not 10 implied by problem page prose</strong> — all 19 carry band_name/data_category tags. Full list on Data page.</li>
-    <li><strong>Metric brief figure “about 0.10 DTI for predict-everywhere” not reproduced</strong> — exact computation gives 0.0246 for everywhere, 0.0580 for inside footprint only, closed form 0.0564. Flagged in GEMSDOE1.</li>
-    <li><strong>DEM link PDF has no text layer</strong> — scan, three text extractors return zero URLs. Recovered by OCR and re-confirmed tile-by-tile against USGS bucket in GEMSDOE1.</li>
-    <li><strong>Duplicate repos 11 with same payload</strong> — audit 2026-09-25 found 11 repos referencing competition, 5 complete copies, 5 README-only, all with GitHub Pages enabled and built. Flagged in 6GEMSDOE. GEMSDOE9 is canonical, others should be archived per single-entry rule Appendix A.3.</li>
-    <li><strong>Band 6 is radiometric total count, not magnetic tilt-angle product its tag claims</strong> — Pearson/Spearman 1.0 against GeoDAWN grid, found in 8GEMSDOE.</li>
-    <li><strong>Scored footprint 51,674 km² within 1% of GeoDAWN stated 51,857 km²</strong> — verified in 8GEMSDOE.</li>
+    <li><strong>No model has been trained.</strong> The data is behind a login and this
+        environment has no outbound network. Every detector is written and, where a closed
+        form exists, unit-tested — and none has been run on real rasters.</li>
+    <li><strong>The band inventory is unverified.</strong> The problem description lists
+        layer <em>groups</em>, not an ordered index. All band access is by name from the
+        GeoTIFF tags, and a miss raises rather than guessing.</li>
+    <li><strong>The mask alignment risk is unquantified.</strong> We assume the organiser's
+        rasterised catalogue matches <code>existing_faults.tif</code>. If it is off by a
+        pixel, part of the “free” core becomes charged. <code>mask_safety_px</code> is the
+        mitigation; the right value is unknown until someone can compare.</li>
+    <li><strong>The 0.1563 explanation is a derivation.</strong> It is consistent with every
+        observation available and it is falsifiable, but the submitted files are not
+        public, so it cannot be confirmed against them directly.</li>
+    <li><strong>Phase 2 is a different objective.</strong> Experts build the expanded label
+        set from the Phase 1 submissions. A submission tuned narrowly to the public board
+        can be the wrong one to select. The format says one submission is scored in both
+        rounds.</li>
   </ul>
-</div>
-
-<div class="card">
-  <h2>Artifact Distinctness — Anti-Duplicate Check</h2>
-  <p>Builder refuses to publish if SHA256 matches known duplicates:</p>
-  <ul>
-    <li><code>7f00890a62878d61…</code> — GEMSDOE1, 5GEMSDOE, GEMSDOE2 recall arm (0.1563)</li>
-    <li><code>f347b70daa…</code> — GEMSDOE3 Pindrop nodes (0.1193)</li>
-    <li><code>37f9d5b855…</code> — GEMSDOE3 catalogue-gap (0.0830)</li>
-    <li><code>4e03fc9705…</code> — GEMSDOE3 dense ridge control (0.1152)</li>
-    <li><code>33cec71ff0…</code> — 6GEMSDOE HGB 88ch (0.0286)</li>
-    <li><code>237f0063a4…</code> — GEMSDOE4 (0.0343)</li>
-  </ul>
-  <p>Current artifact <code>8ecbdc712da4b83e…</code> — 343,816 px vs 172,974 px duplicate — distinct, passes.</p>
-</div>
-
-<div class="card">
-  <h2>Limitations & What Needs Access</h2>
-  <ul>
-    <li>No DrivenData auth in sandbox → cannot auto-download training_features.tif etc. — verified redirect to login.</li>
-    <li>1m DEM 716 tiles ~130GB — free official but heavy, need unrestricted machine.</li>
-    <li>GPU needed for training — metric/losses/validation verified working on CPU, but training slow.</li>
-    <li>LOFSO validation requires data/ — prints expected behavior if missing, does not hallucinate numbers.</li>
-  </ul>
-</div>
-
+</section>
 </main>
-</body>
-</html>
+<footer>
+  <p><strong>Maximise P(Win).</strong> Every number on this site is either quoted from a
+  linked primary source, read live on 2026-09-27, or computed by code in this
+  repository from the published metric. Nothing is estimated.</p>
+  <p>Sources: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">Competition</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">Problem description</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">About</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">Leaderboard</a> ·
+     <a href="https://community.drivendata.org/c/gems-prize-challenge/111">Forum</a> ·
+     <a href="https://github.com/drivendataorg/gems-prize-reference-solution">Reference solution</a></p>
+  <p>Built by <code>python scripts/build_site.py</code>. Sources of every claim:
+     <a href="sources.html">Sources</a>. Problems found and fixed:
+     <a href="verification.html">Verification &amp; flags</a>.</p>
+</footer>
+<script src="geotiff_writer.js"></script>
+
+</body></html>

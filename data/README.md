@@ -1,44 +1,85 @@
-# Data — How to Obtain
+# data/ — how to obtain the competition rasters
 
-**Blocker:** No DrivenData auth in sandbox → cannot auto-download training_features.tif, labels.tif, sample_submission.tif, 1m_DEM_links.csv from https://www.drivendata.org/competitions/306/competition-doe-gems/data/ (verified redirect to login).
+**Status: blocked, and we are not going around it.** The DrivenData data tab requires an
+account, and this environment additionally denies outbound HTTPS from the shell
+(`curl` exit 35), so no URL resolves — official or mirrored. No credentials will be
+requested, stored, or worked around.
 
-**Workaround:** Run `bash scripts/download_competition_data.sh` on any unrestricted machine with DrivenData account, then `python scripts/prepare_data.py`.
+## What is needed
 
-## Official Files (from data tab, login required)
+| File | Required | What it is | Used for |
+|---|---|---|---|
+| `training_features.tif` | **yes** | Multi-band predictor stack. EPSG:32611, 100 m, 3292 × 3730. | All five detectors |
+| `existing_faults.tif` | **yes** | The known USGS/INGENIOUS faults, rasterised. | Training labels, the free submission core, the evaluation mask |
+| `example_submission.tif` | no | The organiser's template. | Grid cross-check only |
+| `1m_DEM_links.csv` | no | URLs for 1 m DEM tiles. | Optional input to detector G-5 |
+| `GEMS_96647.pdf` | no | The rules PDF. | Nothing is attributed to it here. |
 
-| File | Size | SHA256 prefix | Description | Source |
-|---|---|---|---|---|
-| `training_features.tif` | 399.5 MB | `4371c82e3b8339b8…` | 19 bands, EPSG:32611, 100 m, 3292×3730 | https://www.drivendata.org/competitions/306/competition-doe-gems/data/ |
-| `existing_faults.tif` | 415.8 KB | `7ba308ccdc4418b3…` | Fault labels raster, 60,988 px | same |
-| `example_submission.tif` | 1.5 MB | `2176d08e485aa2cd…` | Template, same as labels (irregularity flagged) | same |
-| `1m_DEM_links.csv` | ~50 KB | — | 716 URLs for 1 m DEM tiles | same |
-| `GEMS_96647.pdf` | 444.5 KB | `50d854b1e0239fe6…` | Official rules | https://docs.nlr.gov/docs/fy26osti/96647.pdf |
+Source of truth (requires a DrivenData account):
+<https://www.drivendata.org/competitions/306/competition-doe-gems/data/>
 
-## Dropbox Mirrors (from prompt, may be transient)
+The problem description lists the **layer groups** in `training_features.tif`:
 
-- https://www.dropbox.com/scl/fi/aemhtutjgcp6tr3tint94/GEMS_96647.pdf?rlkey=rek210cj2smnmzb8n0sla1vmd&st=wz4kofki&dl=0
-- https://www.dropbox.com/scl/fi/6rgvnuady818ol8yqgis4/example_submission.tif?rlkey=kbykilvau066xuogoosbf4cq8&st=8junzdyw&dl=0
-- https://www.dropbox.com/scl/fi/t7fyt03qdh9egyme0itwo/existing_faults.tif?rlkey=yiao96uluqdkipf0h5vju71jf&st=rnino7ya&dl=0
-- https://www.dropbox.com/scl/fi/3vz9o0wwavi26xaeoxlwr/gems-geodawn-numerical-features.tif?rlkey=je8d8fepqfbst9lnwsq9rkplu&st=zj1lag1r&dl=0
-- https://www.dropbox.com/scl/fi/ig0mban712ns1atphgphe/Digital-elevation-model-links-JSON.pdf?rlkey=zm77f1vbtt2if8hlruymptnu3&st=srhhir10&dl=0
+- surface conductivity and depth to conductive base surface
+- detrended elevation and the slope of detrended elevation
+- dilatation rate, shear strain rate, and the second invariant of the strain rate tensor
+- isostatic gravity anomaly and the slope of the isostatic gravity anomaly
+- magnetics: reduced-to-pole magnetic anomaly, total magnetic intensity, the vertical and
+  horizontal slope of total magnetic intensity, and the top-of-crustal magnetic source depth
+  estimate
+- density of earthquakes
 
-## External Free Official Sources for New Hypotheses
+It does **not** give an ordered index. The exact band count and names are read from the
+file's own per-band `description` / `data_category` tags — the same source the official
+[reference solution](https://github.com/drivendataorg/gems-prize-reference-solution) reads —
+by `scripts/prepare_data.py`.
 
-| Source | URL | What we use | Coverage | Verified |
-|---|---|---|---|---|
-| USGS GeoDAWN magnetic & radiometric | https://doi.org/10.5066/P93LGLVQ | 7 radiometric bands K, Th, U, TC, U/K, Th/K, U/Th | 99.975% of footprint | Yes, via 8GEMSDOE |
-| USGS 3DEP 10 m DEM (1/3 arcsec) | https://apps.nationalmap.gov/3dep/ | 9 topo/scarp bands, SL, ksn | 100% | Yes |
-| USGS 3DEP 1 m DEM tiles | https://prd-tnm.s3.amazonaws.com/?list-type=2&prefix=StagedProducts/Elevation/1m/ | High-res scarp, 716 tiles ~130 GB | 100% but heavy | One tile verified live 185,344,605 B |
-| Landsat-8/9 TIRS | https://earthexplorer.usgs.gov/ | Thermal anomaly Band 10-11 | 100% | Official |
-| ASTER L1T | https://search.earthdata.nasa.gov/ | Clay alteration kaolinite, alunite | 100% | Official |
-| INGENIOUS Great Basin | https://doi.org/10.15121/1881483 | Training labels | — | Official |
-| USGS Quaternary Faults | https://www.usgs.gov/programs/earthquake-hazards/faults | Training labels | — | Official |
-| GDR | https://gdr.openei.org/submissions/1391 | Competition data archive | — | Official |
+## How to fill it
 
-## After Download
+```bash
+git clone https://github.com/buffedlizard55-lab/GEMSDOE9.git && cd GEMSDOE9
+python3 -m pip install -r requirements.txt
 
+# sign in at the data tab in a browser, download, and move the files into ./data/
+bash scripts/download_competition_data.sh     # reports what is present and what is missing
+python scripts/prepare_data.py                # verify + dump the band inventory
 ```
-bash scripts/download_competition_data.sh
-python scripts/prepare_data.py
-# → data/processed/footprint_mask.npz with 5,167,373 px footprint
+
+`prepare_data.py` writes `data/processed/band_inventory.json`, which is what
+`src/gems/pipeline.py` reads. It also:
+
+- checks the grid of every raster against EPSG:32611, 100 m, 3292 × 3730
+  and transform (100, 0, 243350, 0, −100, 4508550)
+- reports the catalogue pixel count and density
+- **checks the organiser's template against the problem description**, which says it
+  "predicts total fault absence", and flags it loudly if it is not that
+
+## After the data is in place
+
+```bash
+python scripts/validate_holdout.py            # spatially-blocked holdout, prints the gate
+python scripts/build_submission.py --holdout-gate
 ```
+
+The second command refuses to write a model submission unless the corridor arm beats the
+catalogue-only baseline by ≥ 0.02 **and** the model arm beats a budget-matched random
+control by ≥ 0.02, averaged over folds. That is the price of a submission slot.
+
+## Not a data source
+
+The Dropbox links in the project brief are **not** treated as one. They are unreachable from
+this environment, and they are not linked from any DrivenData or DOE page, so their
+provenance is unestablished. See `scripts/site_data.py::ACCESS`.
+
+## Free, official external data (optional, none of it on the critical path)
+
+| Source | URL | Licence | Blocks anything? |
+|---|---|---|---|
+| USGS 3DEP 10 m DEM | <https://apps.nationalmap.gov/3dep/> | Public domain | No — G-5 falls back to the competition's own detrended-elevation layers |
+| USGS GeoDAWN (ScienceBase) | <https://www.sciencebase.gov/catalog/item/657e1d85d34e23d3533209f7> | Public domain | No — the competition already ships derived GeoDAWN products |
+| USGS Quaternary Fault and Fold Database | <https://www.usgs.gov/programs/earthquake-hazards/faults> | Public domain | No — already in the labels |
+| Landsat-8/9 TIRS, ASTER L1T | <https://earthexplorer.usgs.gov/>, <https://search.earthdata.nasa.gov/> | Public domain | No — dropped from the candidate set; the previous revision's H9-4 depended on them and is not carried forward |
+
+The competition permits external data provided the participant holds a licence that allows
+use in the challenge and sharing with the sponsor for evaluation. All of the above are public
+domain. The constraint is engineering time and download volume, not licensing.

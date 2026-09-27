@@ -1,317 +1,579 @@
 # GEMSDOE9 — Geothermal Fault Discovery Beyond the Catalogue
 
-**Core Values — Read Every Session**
+**Core Values — read every session, before deciding anything**
 
-> **Maximize P(Win)** — “Maximize the Probability of Winning”: our decision making framework. In every decision, we weigh tradeoffs, assess risk, and choose the path that maximizes the probability that Arena succeeds. We set aside our emotions and make tough decisions in order to maximize P(Win). “Maximize P(Win)” frees us from constraints and clarifies that we must put Arena first.
-
-> **Own the Outcome** — We own results end to end — not just our individual slice of the work. When problems arise and we have the means to act, we do so without waiting for permission or assignment. We treat failure and success as signals and use them to improve. At Arena, we stay accountable to the final outcome.
-
-**Project Prompt (Original User Request, Preserved Verbatim for Context)**
-
-> Review the repo. 
-> Here are the results from our groups submissions, separated by ....:
-> GEMSDOE1 https://buffedlizard55-lab.github.io/GEMSDOE/docs/index.html GEMSDOE SCORE: 0.1563
-> https://buffedlizard55-lab.github.io/6GEMSDOE/ 6GEMSDOE SCORE: 0.0286
-> GEMSDOE3 https://buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html GEMSDOE3 SCORE: 0.1193
-> 1 · SUBMIT FIRST f347b70daa Pindrop nodes
-> GEMSDOE2 https://buffedlizard55-lab.github.io/GEMSDOE2/docs/index.html GEMSDOE2 SCORE: 0.1560
-> GEMSDOE3 SCORE: 0.0830 2 · SUBMIT SECOND 37f9d5b855 Pindrop catalogue-gap target SECOND SYSTEM
-> https://buffedlizard55-lab.github.io/GEMSDOE4/ GEMSDOE 4 SCORE: 0.0343
-> GEMSDOE3 SCORE: 0.1152 3 · CONTROL · UPLOAD LAST 4e03fc9705 Pindrop dense ridge control
-> https://buffedlizard55-lab.github.io/5GEMSDOE/docs/index.html 5GEMSDOE SCORE: 0.1563
-> https://buffedlizard55-lab.github.io/8GEMSDOE/ 8GEMSDOE SCORE: 0.1563
-> The leaderboard: https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/
-> We need to figure out why we keep scoring 0.1563, are we copying the same work over and over again? we need to come up with different ideas, and not just the same idea tried a different way.
-> Need to figure out why 5GEMSDOE and GEMSDOE1 have the same score. We should not be generating the same score submissions, they should all be unique.
-> 0.3049 is the highest score right now so we need to design a new strategy, research, testing, analyzing, and generating submission system than the current website. It should be unique, take unique approaches to generating a submission that can score higher than .3049.
-> Put this prompt into the repo readme and read it everytime we work on the project as a starting point to make sure we are building what we are aiming for and have a strong base to continue building and improving on making something useful for everyday use. It should solve the problem of having to manually check everything ourselves and having an up to date current feed.
-> Review the repo.
-> [Core Values and Own the Outcome as focal point]
-> Work line by line verifying from official verified trusted sources, provide links for manual review. There should be no manual input, work on your own to complete tasks. Flag any irregularities for review. No hallucinations.
-> The goal of this project is to get a full list that follow our requirements. No hallucinations. Verify line by line.
-> The goal of this project is to place top of the leaderboard in this competition. Competition: https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/
-> We need to create a project that can compete and place top of the leaderboard. We need to understand the problem, collect all the data and organize it into a clean easily auditable table with official verified links for manual verification.
-> Guidelines: https://www.drivendata.org/competitions/306/competition-doe-gems/
-> Get familiar with the problem through the overview and problem description, https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/. You might also want to reference additional resources available on the about page, https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/.
-> Download the data from the data, https://www.drivendata.org/competitions/306/competition-doe-gems/data/, tab.
-> Create and train your own model. This reference solution, https://github.com/drivendataorg/gems-prize-reference-solution implements a simple approach.
-> Use your model to generate predictions that match the submission format.
-> Tell me what are you limitations and what you need access to during this project. We will need to find free publicly available sources and data from official and verified sources if we are to use 3rd party or external data.
-> this pdf outlines how submissions must be entered into the competition. https://docs.nlr.gov/docs/fy26osti/96647.pdf
-> You must be able to do your own research, deep research, scientific literature research and organize the knowledge so that we can critically think through the problem and generate a solution through scientific and free publicly available information. this must be done autonomously and must be constantly reviewed and improved upon. Provide suggestions and improvements and implement them.
-> No DrivenData auth → cannot auto-download training_features.tif, labels.tif, sample_submission.tif, 1m_DEM_links.csv from https://www.drivendata.org/competitions/306/competition-doe-gems/data/ (verified redirect to login)
-> See below for links from the above site. See attached files for links from the above site.
-> https://gdr.openei.org/submissions/1391
-> Download competition data from https://www.drivendata.org/competitions/306/competition-doe-gems/data/ (requires login) to data/
-> See links below for competition data:
-> https://www.dropbox.com/scl/fi/aemhtutjgcp6tr3tint94/GEMS_96647.pdf?rlkey=rek210cj2smnmzb8n0sla1vmd&st=wz4kofki&dl=0
-> https://www.dropbox.com/scl/fi/6rgvnuady818ol8yqgis4/example_submission.tif?rlkey=kbykilvau066xuogoosbf4cq8&st=8junzdyw&dl=0
-> https://www.dropbox.com/scl/fi/t7fyt03qdh9egyme0itwo/existing_faults.tif?rlkey=yiao96uluqdkipf0h5vju71jf&st=rnino7ya&dl=0
-> https://www.dropbox.com/scl/fi/3vz9o0wwavi26xaeoxlwr/gems-geodawn-numerical-features.tif?rlkey=je8d8fepqfbst9lnwsq9rkplu&st=zj1lag1r&dl=0
-> https://www.dropbox.com/scl/fi/ig0mban712ns1atphgphe/Digital-elevation-model-links-JSON.pdf?rlkey=zm77f1vbtt2if8hlruymptnu3&st=srhhir10&dl=0
-> Work line by line verifying from official verified trusted sources, provide links for manual review. There should be no manual input, work on your own to complete tasks. Flag any irregularities for review. No hallucinations.
-> Site creation: Create a github page for this repo that has clean ui, user friendly, simple and easy to use. It should be organized and clean. It should include all relevant information in an easy to read format with official verified links as sources for review. Work line by line verify everything no hallucinations.
-> The single remaining blocker to training is data placement: run bash scripts/download_competition_data.sh on any unrestricted machine into data/, then python scripts/prepare_data.py — after that the full train→inference→validate pipeline is ready to run (GPU needed for training; metric/losses/validation all verified working here on CPU).
-> The site should be able to generate a TIF file that is required for submission. It should be as easy as download to click a File to submit into the competition. This needs to be in the executive summary or the very beginning of the site. it should be obvious when you visit the site.
-> I tried to submit the document that i downloaded from the site but it returned this error on the submission form: "Predicted values must be in range [0, 1]"
-> Also we need to give it a unique name and A short comment to help you or your team tell submissions apart later e.g. clustering with k=25
-> Here is the submission page when i click submit file: New submission File to submit No file chosen You can submit a single-band GeoTIFF (.tif) file, or a .zip file containing a single GeoTIFF, with your predictions. It must match the submission format's CRS, shape, and geotransform. You may wish to review the competition rules first. Note (optional) A short comment to help you or your team tell submissions apart later e.g. clustering with k=25
-> Create a executive summary subpage that explains exactly how to make a submission into the contest.
-> Work on the next steps from the previous sessions first.
-> [Repeated core values and verification requirements]
+> **Maximize P(Win)** — "Maximize the Probability of Winning": our decision making framework.
+> In every decision, we weigh tradeoffs, assess risk, and choose the path that maximizes the
+> probability that Arena succeeds. We set aside our emotions and make tough decisions in order
+> to maximize P(Win). "Maximize P(Win)" frees us from constraints and clarifies that we must
+> put Arena first.
+>
+> **Own the Outcome** — We own results end to end — not just our individual slice of the work.
+> When problems arise and we have the means to act, we do so without waiting for permission or
+> assignment. We treat failure and success as signals and use them to improve. We stay
+> accountable to the final outcome.
 
 ---
 
-## Why 0.1563 Keeps Repeating — Root Cause Audit (2026-09-26)
+## Read this first — the state of the project, honestly
 
-| Repository | Score | Artifact SHA256 | Payload | Verdict |
+| | |
+|---|---|
+| **Can I submit today?** | **Yes.** `docs/downloads/` holds one valid GeoTIFF that passes all 14 format gates. The download button is the first thing on the site. |
+| **Is it a prediction?** | **No.** It is a format-check placeholder. The competition rasters are behind a DrivenData login and this environment has no outbound network, so **no model has been trained**. |
+| **How close is a real model?** | The pipeline is written end to end and gated: `python scripts/build_submission.py --holdout-gate` refuses to write a model submission unless it beats a budget-matched random control **and** a catalogue-only baseline on a spatially-blocked holdout. |
+| **What *is* proven?** | The metric algebra, the submission shape, and the fact that the previous version of this site was shipping unreadable files. All three are reproduced by `bash scripts/run_all_checks.sh`. |
+| **Single biggest lever** | 0.1563 is a catalogue copy. 0.3049 needs **2.01×** the recall. See [Why 0.1563](#why-01563-keeps-repeating). |
+
+---
+
+## What changed this session, and why
+
+### Audit pass: four silent bugs, all in code that decides what gets submitted
+
+The last revision shipped a "corridor lift of +0.1379, positive on 5/5 phantoms". That
+number was wrong, and finding out why turned up three more defects behind it.
+
+1. **The blocked holdout counted ground truth it was not allowed to see.**
+   `sweep_corridor_halo(..., extra_ignore=...)` masked false positives outside the scored
+   block but still summed true positives over the **whole** raster. Every out-of-block hit
+   was credited for free. On a 2×2-block phantom that turned a 3 px halo from a −0.015
+   loss into a **+0.24 gain** and made the corridor arm look like a winner. Fixed, and
+   pinned from both sides by tests I2 and I3.
+
+2. **`build_corridor` wrote paid pixels to the wrong array positions.**
+   The top-k was computed as indices into the *band score vector* and then used directly as
+   flat indices into the *grid*. Every paid pixel landed in the raster's top-left corner
+   instead of along the fault. Caught by the new tie-heavy budget test (H3).
+
+3. **`build_corridor` selected paid pixels with `score >= threshold`.**
+   A tie-heavy or sparse score field keeps every pixel tied at the threshold: a request for
+   50 paid pixels produced **498**. Replaced with a deterministic flat-index top-k.
+
+4. **G-5 allocated 3.98 GB.** `sliding_window_view` on a 9×9 window over the 3292×3730
+   grid. Replaced with two `uniform_filter` passes on the cos/sin of the azimuth; the new
+   test J2 asserts that bytes-per-pixel does not grow with the grid, which is the property
+   that actually matters.
+
+The experiment that exposed all of this was rebuilt from scratch: the selection-free arms
+are now scored on the whole phantom (nothing is tuned, so nothing can leak), and only the
+part that *selects* is blocked and cross-fitted. The previous "withdrawn" note in the
+strategy section below records the old result; the current one is in the table above it.
+
+### Earlier pass: seven more, three serious enough to waste a submission slot
+
+1. **The site's browser writer produced GeoTIFFs that GDAL could not open.**
+   `docs/geotiff_writer.js` allocated the `StripOffsets` (tag 273) and `StripByteCounts`
+   (tag 279) arrays as inline 4-byte IFD values *before their data existed*, so only the
+   first 4 bytes of each array reached the file and strips 2..N pointed at offset 0.
+   Reproduced: a 49,117,032-byte file from the default button, which rasterio refused with
+   `TIFFReadEncodedStrip() failed`. **That is the real cause of the
+   "Predicted values must be in range [0, 1]" rejection** — the platform reported an
+   unreadable file using its value-range error, and the previous diagnosis blamed NaN. There
+   was no NaN problem to find.
+   *Fixed:* the writer is rewritten and round-trip tested — write, parse the IFD back, decode
+   every strip, compare all 12,279,160 values to the input — before the download is offered.
+   Also, only the **all-finite** variant is ever published now: NaN is not in [0, 1], so a
+   0.0 outside the footprint is the reading that cannot fail a range check.
+
+2. **`docs/downloads/` shipped two byte-identical `.tif` files under different names.**
+   This is exactly the failure the team asked to stop. Both are removed.
+   `build_submission.py` now deletes previous artifacts before writing, names files by content
+   hash, and refuses to publish anything whose SHA256 is on the spent-slot list.
+
+3. **The browser's "H9-1 relay-stepover" field was two crossing sinusoids and an xorshift.**
+   No GeoDAWN data, no catalogue, no model — yet the site labelled the file
+   "H9-1 relay-stepover + dilation + intersection" and the note pasted into DrivenData
+   repeated it. Removed. The replacement is named `PLACEHOLDER`, its note says
+   "no model, no GeoDAWN data", and nothing in this repo presents an unvalidated field as a
+   geological result.
+
+4. **The dilation tendency was not the published quantity.** The old
+   `0.5*(1 + dilatation/(shear + |second_invariant|))` is not Simpson & Reiling (2008); it
+   does not have the right limits and does not survive a rescaling of strain rate. Replaced
+   with the closed form and pinned by four limit tests.
+
+5. **Band indices were hard-coded and labelled "PROVISIONAL".** A wrong provisional index is
+   a silent wrong answer. All band access now resolves by the GeoTIFF's own per-band
+   description tags — the same source the official reference solution reads — and a miss
+   raises with the list of available names.
+
+6. **Claims about the rasters that cannot be supported from this repo** (file sizes, a band
+   count, SHA256s, and "the template is bit-identical to the label raster") were removed
+   rather than softened. The last one contradicts the problem description, which says the
+   template "predicts total fault absence".
+
+7. **No `requirements.txt`**, so `import scipy` failed on a clean checkout. Added.
+
+Full detail, with the evidence, on [`docs/verification.html`](docs/verification.html) and in
+`scripts/site_data.py::IRREGULARITIES`.
+
+---
+
+## Why 0.1563 keeps repeating
+
+It is an **attractor of the metric**, not a coincidence of tuning.
+
+The published metric has TP_w and FN_w as *maxima of the same product*, so `FN_w = N − TP_w`
+exactly, and with α = 0.2, β = 0.8:
+
+```
+DTI = T / (0.2·T + 0.2·F + 0.8·N) = ρ / (0.2·ρ + 0.2·φ + 0.8)
+```
+
+where ρ = T/N is distance-weighted recall and φ = F/N is false-positive mass per
+ground-truth pixel. Two ratios, and nothing else matters.
+
+Staff have stated that known-catalogue pixels are **masked out of the penalty terms**
+([thread 11516](https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516)),
+so a submission that paints the catalogue has φ = 0. Solving for ρ:
+
+| Score | ρ at φ = 0 | Reading |
+|---|---|---|
+| **0.1563** | **0.1291** | a catalogue copy |
+| 0.2993 | 0.2547 | a real detector |
+| **0.3049** | **0.2598** | leader of the board — **2.01× the 0.1563 recall** |
+
+That is why three unrelated accounts sit on exactly 0.1563 with two submissions each. Copy
+the catalogue and you get 0.1563; copy it slightly differently and you still get 0.1563.
+
+Two consequences that inverts the strategy the group has been running:
+
+**Recall is worth about 4/ρ times more than precision.** Differentiating the closed form:
+
+```
+value of 1 unit of TP_w  ∝  (0.2·F + 0.8·N)
+cost  of 1 unit of FP_w  ∝  (0.2·T)
+exchange rate = 4/ρ + φ
+```
+
+At the 0.1563 attractor, one extra unit of recall is worth **31 units** of false-positive
+mass. Every instinct that says "be conservative, be sparse" points the wrong way here.
+
+**The catalogue is free.** Masking zeroes a pixel's contribution to **F** only — the maxima
+in TP_w run over *all* pixels, masked or not. A prediction placed exactly on a known fault
+costs nothing and still collects credit for every withheld fault within 300 m of it. And
+staff have defined the target class
+([thread 11536](https://community.drivendata.org/t/where-do-you-draw-the-line/11536),
+2026-09-22, **not cited anywhere in the previous revision**):
+
+> "For the purposes of this competition, 'new fault' means 'any fault pixel not already
+> captured by USGS/INGENIOUS' and can include newly mapped geometry of an existing fault
+> system."
+
+Splays, parallel strands, continuations past mapped tips. By construction they sit next to
+and collinear with faults the catalogue already has. So the shape that maximises P(Win) is
+neither "predict faults" nor "predict new faults":
+
+```
+p = 1 on every catalogue pixel                  free  (masked → no FP cost)
+p = 1 on a thin, evidence-gated halo around it  paid  (this is where new geometry is)
+p = 0 everywhere else
+```
+
+3 px of halo is 300 m — exactly the metric's support radius. Beyond that the halo reaches
+faults it cannot earn credit for and is pure cost.
+
+**Measured** (`python scripts/validate_holdout.py --strategy`, 5 independent synthetic
+phantoms whose withheld faults follow the staff definition, scored with the real DTI and the
+real masking rule, configuration chosen on training blocks and scored on the held-out block):
+
+| Submission shape | DTI | vs free core |
+|---|---|---|
+| known catalogue, nothing else (φ = 0 exactly) | 0.2544 | — |
+| + a blind 3 px halo, detector ignored | 0.2935 | +0.0391 |
+| + a detector-gated halo, chance detector (AUC ≈ 0.50) | 0.3519 | +0.0975 |
+| + a detector-gated halo, useful detector (AUC ≈ 0.74) | 0.4312 | +0.1769 |
+
+**Read the two gaps separately.** Core → blind halo is `+0.0391` and belongs to the halo's
+geometry, not to any detector. Chance detector → useful detector, inside the *same* corridor,
+is `+0.0793` — the only part of this table attributable to detection at all.
+
+A second, selection-free sweep ranks the **whole raster** instead of a band. It loses to the
+free core in 17 of 20 cells, at every budget from 0.1% to 10% of the grid and at every
+detector quality. Proximity to a mapped fault is what the 300 m kernel rewards; spreading the
+same pixel count uniformly over the region does not.
+
+*This prices the arithmetic of the submission shape. It says nothing about Nevada geology and
+is not evidence that any detector works.*
+
+> **Withdrawn.** An earlier revision of this experiment reported a corridor lift of `+0.1379`
+> positive on 5/5 phantoms. It was produced by a leaky protocol (ground truth outside the
+> scored block was still counted in the true-positive term), by a selection-noise problem
+> (the best of a 24-point grid on pooled training blocks), and by a budget bug in
+> `build_corridor` that selected paid pixels with `score >= threshold` — so a request for
+> 50 paid pixels produced 498. Every one of those is now a regression test in
+> `tests/test_validation.py` (sections H, I and J). The number above replaces it.
+
+---
+
+## The five detectors
+
+Ranked by expected value under the metric algebra, not by novelty. Each is an explicit,
+auditable function in [`src/gems/features.py`](src/gems/features.py).
+
+| # | Detector | Layers | Signature | Cost |
 |---|---|---|---|---|
-| GEMSDOE1 | 0.1563 | `7f00890a62878d61…` | `docs/submission_field.bin` 532,072 B, 259,495 runs | Original |
-| GEMSDOE2 recall arm | 0.1560 (≈0.1563) | same `7f00890a…` | same binary | **Duplicate** |
-| 5GEMSDOE | 0.1563 | `7f00890a…` | same binary `b966d47c7c02b1c2…` | **Bit-identical duplicate** |
-| 8GEMSDOE Hedge-v2 | 0.1563 (floor, not yet uploaded) | `7f00890a…` + catalogue union | same base + 54,533 px catalogue | **Superset with proven floor** |
-| 6GEMSDOE | 0.0286 | `33cec71ff0…` | HGB 88 channels top-3% | Distinct, but catalogue-memorising signature |
-| GEMSDOE3 Pindrop nodes | 0.1193 / 0.0830 / 0.1152 (three submissions) | `f347b70daa…`, `37f9d5b855…`, `4e03fc9705…` | Sparse placement experiment | Distinct, placement-aware |
-| GEMSDOE4 | 0.0343 | `237f0063a4…` | lineament + proxy labels | Distinct |
+| **G-1** | Catalogue geometry completion | `existing_faults.tif` as *geometry* | endpoint proximity × skeleton curvature × azimuthal deviation, gated to ≤3 px outside the catalogue | Low |
+| **G-2** | Geodetic dilation-tendency ridge | dilatation rate, second invariant of strain rate | `Td = 0.5 + T/(4·√(I2 − T²/4))` (Simpson & Reiling 2008) × structure-tensor coherence | Low |
+| **G-3** | Clay-cap conductivity edge | surface conductivity, depth to conductive base | \|∇ log σ\| × log(σ/depth) — a scale-free lateral discontinuity of an alteration cap | Low |
+| **G-4** | Magnetic contact edge | RTP anomaly, TMI, H/V slope, top-of-crust source depth | HGM maximum at a tilt-derivative zero crossing, weighted by shallow Euler-style depth | Low-med |
+| **G-5** | Fluvial knickpoint / drainage deflection | detrended elevation, slope of detrended elevation; optional 10 m 3DEP | second-derivative ridges in along-strike slope + circular variance of downslope azimuth | Low (competition layers) |
 
-**Finding:** 5GEMSDOE and GEMSDOE1 are byte-identical. Both ship `submission_field.bin` SHA256 `b966d47c7c02b1c2…` → decoded to `submission.tif` SHA256 `7f00890a62878d61…` with 172,974 px at 1.0, 4,994,399 at 0.0, 7,111,787 NaN. The file was copied across repos without changing the pixel field, so the leaderboard returned the same DTI.
+Full rationale, why each should catch a fault the catalogue misses, and how each differs
+from every prior submission: [`docs/hypotheses.html`](docs/hypotheses.html).
 
-**GEMSDOE9 Fix:** Every artifact in this repo is built from scratch with a unique UTC instant, SHA8, and pixel budget. The builder asserts `SHA256 != 7f00890a…` and `!= f347b70daa…` etc., refusing to publish a duplicate. The submission note includes the SHA8 and strategy, guaranteeing uniqueness.
-
----
-
-## Competition Summary (Verified Line by Line)
-
-**Source:** Problem description https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/ and Official Rules PDF https://docs.nlr.gov/docs/fy26osti/96647.pdf SHA256 `50d854b1e0239fe6…` (verified via `scripts/verify_rules_quotes.py`).
-
-- **Task:** Predict per-pixel probability of geological fault presence across GeoDAWN region (northwestern Nevada, UTM 11N EPSG:32611, 100 m). Faults are structural markers of hidden geothermal systems.
-- **Training labels:** USGS Quaternary Fault and Fold Database + INGENIOUS Great Basin Regional Dataset Compilation https://doi.org/10.15121/1881483 — *incomplete*.
-- **Test labels (scored):** Privately withheld new faults mapped by NLR/USGS experts *absent* from USGS catalogue. Both Phase 1 and Phase 2 score *new* faults only. Phase 1 = private subset, Phase 2 = expanded set after expert review of all submissions.
-- **Metric:** Distance-weighted Tversky index, α=0.2 (FP), β=0.8 (FN), triangular kernel R=300 m (3 px). `DTI = TP_w / (TP_w + α FP_w + β FN_w + ε)`. [Source: Problem description § Performance metric, re-verified 2026-09-27; official worked example TP_w=3.00, FP_w=1.89, FN_w=2.00 → 0.60].
-- **Submission format:** Single-band GeoTIFF, float32 in [0,1], 3292×3730 px, EPSG:32611, geotransform `[100,0,243350,0,-100,4508550]`, NaN outside footprint (or 0.0 for max-compatibility), nodata=nan.
-- **Current top:** 0.3049 by DARD (leaderboard re-verified live 2026-09-27, https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/).
-- **Reference solution:** https://github.com/drivendataorg/gems-prize-reference-solution — UNet Monte Carlo CV, Tversky loss α=0.2/β=0.8, band names read from GeoTIFF band tags (notebook blob `d45bf7bdb1d3…` fetched via GitHub API 2026-09-27).
-
-## Official Intel — Staff Clarifications (Verified 2026-09-27, full page: docs/intel.html)
-
-1. **Catalogue masking:** "Pixels corresponding to known USGS/INGENIOUS faults are masked / excluded from evaluation, so they do not count towards penalty terms." Same in the final round. — DrivenData staff, 2026-09-16, https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516
-2. **Phase 2 feedback loop:** "the largest prize pool (Phase 2) will use a test set that is updated by expert review of all Phase 1 submissions, so your fault predictions have an impact on final evaluation even if they are not the most performant in Phase 1." — DrivenData staff, 2026-09-23, https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527
-3. **Submission cadence:** 3 scored submissions per rolling 7-day window. — DrivenData staff, 2026-09-17, https://community.drivendata.org/t/weekly-submissions/11524
-4. **0.1563 is a catalogue attractor:** three separate accounts (extradr19, SDCF9, smashi34 — ownership not verifiable publicly) sit at exactly 0.1563 with only 2 submissions each, matching our group's duplicate score. Catalogue-derived submissions saturate there because catalogue pixels are masked and only haloes within 300 m of withheld faults earn partial credit.
+**None of the five is validated.** They are written, and unit-tested where a closed form
+exists, and they have not seen a real raster. See *Limitations*.
 
 ---
 
-## Executive Summary — How to Submit (Obvious at Top of Site)
+## The submission — click, then submit
 
-**The file to submit is built in your browser. One click.**
+**1 · Get the file.** The download button is the first thing on the site. Or press
+*Build in this browser*, which produces the identical pixel field with a fresh name and hash
+— assembled locally, nothing uploaded.
 
-1. Open https://buffedlizard55-lab.github.io/GEMSDOE9/ (this repo's Pages site).
-2. At the very top, click **Build submission.tif** — the page ships the pixel field as RLE, decodes it, writes GeoTIFF locally with `docs/geotiff_writer.js`, re-reads its own bytes, and offers download only when self-check passes. Nothing is uploaded.
-3. The file appears as `gems9-<UTC>-<sha8>.tif` — unique name per build. Suggested Note is shown beside it, e.g. `GEMSDOE9 H9-v1 relay-stepover + dilation + conductivity edge | top2.8% | <sha8>`.
-4. Open https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/ → New submission → Choose file → Paste Note → Submit.
-5. If you previously saw **"Predicted values must be in range [0, 1]"**: that error means NaN was inside the scored footprint (5,167,373 px). Our builder asserts 0 NaN inside, all finite in [0,1], and provides a max-compatibility fallback with 0 outside and no nodata tag, which cannot trigger that validator. See `docs/how_to_submit.html#rejection`.
+**2 · Make the name unique.** Use `gemsdoe9-<what>-<sha8>.tif`. The hash identifies the exact
+bytes, so two weeks from now you can still tell your submissions apart.
+
+**3 · Upload.**
+[drivendata.org → Submissions → New submission](https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/).
+Single-band `.tif` (or a `.zip` containing one), matching CRS, shape and geotransform.
+
+**4 · Note.** The *Note (optional)* box exists so you can tell your own submissions apart
+later. Ours embeds the SHA8:
+
+```
+GEMSDOE9 FORMAT-CHECK placeholder (no model, no GeoDAWN data) | band-pattern 2.8% | 2314b599
+```
+
+**5 · Verify it yourself** before and after downloading:
+
+```bash
+python scripts/validate_submission.py docs/downloads/*.tif
+```
+
+Every line must read `PASS`. The gates are `GDAL-READABLE`, `PLATFORM-RANGE`
+(0 NaN, 0 Inf, all 12,279,160 values in [0, 1]), `no-nodata-tag`, the four grid checks,
+`density-sane`, and `not-a-known-duplicate`.
+
+Full walkthrough, including every rejection message and what causes it:
+[`docs/executive_summary.html`](docs/executive_summary.html).
 
 ---
 
-## Repository Layout
+## The single remaining blocker
+
+**The data.** Everything downstream of `data/` is written, reviewed and unit-tested but has
+never been executed.
+
+```bash
+# on a machine with a DrivenData account and working internet
+git clone https://github.com/buffedlizard55-lab/GEMSDOE9.git && cd GEMSDOE9
+python3 -m pip install -r requirements.txt
+
+# download from https://www.drivendata.org/competitions/306/competition-doe-gems/data/ into data/:
+#   training_features.tif  existing_faults.tif  example_submission.tif  1m_DEM_links.csv
+bash scripts/download_competition_data.sh     # checks what is there
+python scripts/prepare_data.py                # verify + dump the authoritative band inventory
+
+# then, and only then
+python scripts/validate_holdout.py            # spatially-blocked holdout, prints the gate
+python scripts/build_submission.py --holdout-gate
+```
+
+**We are not going to ask for credentials, and there is no workaround.** The data tab needs
+an account, and this environment denies outbound HTTPS from the shell entirely (`curl` exit
+35), so no URL resolves — official or mirrored. The Dropbox links in the project brief are
+unreachable *and* their provenance is unestablished: they are not linked from any DrivenData
+or DOE page. They are not treated as a data source.
+
+---
+
+## Repository layout
 
 ```
 GEMSDOE9/
-├── docs/                      # GitHub Pages site (clean UI, no install needed to download)
-│   ├── index.html             # Top: build button, audit of 0.1563 duplicates, leaderboard
-│   ├── intel.html             # Official staff clarifications + 2026-09-27 leaderboard snapshot
-│   ├── executive_summary.html # Step-by-step submission, format gates, error resolution
-│   ├── how_to_submit.html     # Click-by-click guide with screenshots description
-│   ├── research.html          # Scientific discovery of geothermal vents, verified sources
-│   ├── data.html              # Data sources table, line-by-line verification, SHA256
-│   ├── hypotheses.html        # 5 new hypotheses H9-1..H9-5, ranking, novelty vs siblings
-│   ├── strategy.html          # Metric math, why 0.1563, how to beat 0.3049
-│   ├── metric.html            # DTI derivation, degenerate baselines
-│   ├── results.html           # Results ledger, team submissions audit
-│   ├── sources.html           # All official verified links with status
-│   ├── verification.html      # Verification scripts, irregularities flagged
-│   ├── leaderboard.html       # Leaderboard snapshot, analysis
-│   ├── geotiff_writer.js      # Browser GeoTIFF writer (no server)
-│   └── downloads/             # Pre-built valid submission.tif + zip + manifest
-├── scripts/
-│   ├── download_competition_data.sh  # Requires DrivenData login, places files in data/
-│   ├── prepare_data.py               # Verifies SHA, dumps authoritative band tags, builds footprint mask
-│   ├── validate_submission.py        # 13-format-gate validator (hard gate)
-│   ├── build_submission.py           # Builds submission from model or heuristic
-│   ├── build_site.py                 # Builds docs/ from JSON evidence
-│   ├── verify_rules_quotes.py        # Checks verbatim sentences vs PDF
-│   ├── lofso_train_eval.py           # Blocked holdout CV; --synthetic runs the full
-│   │                                 # machinery (metric+masking+protocol) without data
-│   └── run_all_checks.sh             # One-command audit: tests, gates, holdout, site
+├── docs/                         GitHub Pages site (10 pages, generated)
+│   ├── index.html                landing: the download, the 0.1563 answer, the honest status
+│   ├── executive_summary.html    step-by-step how to submit, every rejection explained
+│   ├── strategy.html             metric algebra, the attractor, the corridor, the experiment
+│   ├── hypotheses.html           G-1..G-5 with layers, signature, rationale, cost
+│   ├── intel.html                staff statements quoted verbatim + their thread URLs
+│   ├── data.html                 access status, what is blocked, what is needed
+│   ├── verification.html         the checks, and the seven problems found
+│   ├── leaderboard.html          live snapshot read 2026-09-27
+│   ├── research.html             the science, DOI-linked
+│   ├── sources.html              every source with its verification status
+│   ├── geotiff_writer.js         browser GeoTIFF + ZIP writer, round-trip self-checking
+│   ├── downloads/                the one valid artifact + manifest.json
+│   └── strategy_experiment.json  the multi-seed result, regenerated by the checks
 ├── src/gems/
-│   ├── metric.py              # DTI implementation, matches official
-│   ├── features.py            # New features: dilation tendency, stepover, conductivity edge, SL index
-│   └── io.py                  # GeoTIFF IO, footprint handling
-├── data/
-│   ├── README.md              # How to obtain data, blocker explained
-│   └── bridge/                # (git-ignored) placeholder for real rasters after download
-├── tests/
-│   └── test_validation.py     # Unit tests for metric and validation
-└── README.md                  # This file
+│   ├── metric.py                 exact DTI, fast + naive, with the official fp_ignore_mask
+│   ├── strategy.py               EQ-1/2/3, the attractor, binarise, build_corridor, sweeps
+│   ├── pipeline.py               data loading, band-by-name, folds, model, holdout, final field
+│   ├── features.py               one detector per hypothesis
+│   └── io.py                     rasterio helpers
+├── scripts/
+│   ├── build_submission.py       the artifact, the unique name, the note, the gates
+│   ├── validate_submission.py    14 hard gates; exit 1 means do not upload
+│   ├── validate_holdout.py       blocked holdout gate  +  --strategy metric-shape experiment
+│   ├── prepare_data.py           band inventory + grid cross-checks
+│   ├── build_site.py             renders docs/ from site_data.py + live artifacts
+│   ├── site_data.py              every claim the site may make, with its source URL
+│   ├── verify_rules_quotes.py    source reachability + the quotes actually used
+│   ├── download_competition_data.sh
+│   └── run_all_checks.sh         one command, the whole audit
+├── tests/test_validation.py      82 checks
+├── requirements.txt
+└── data/README.md
 ```
 
 ---
 
-## Limitations & What We Need Access To
-
-- **No DrivenData auth in sandbox** → cannot auto-download `training_features.tif` (399.5 MB, 19 bands, SHA256 `4371c82e3b8339b8…`), `existing_faults.tif` (415.8 KB, SHA256 `7ba308ccdc4418b3…`), `example_submission.tif` (1.5 MB, SHA256 `2176d08e485aa2cd…`), `1m_DEM_links.csv` (716 URLs). Verified redirect to login on 2026-09-26 via `fetch_page` returning login wall. **Workaround:** Run `bash scripts/download_competition_data.sh` on any unrestricted machine with DrivenData account, then `python scripts/prepare_data.py`. After that full pipeline is ready.
-- **1 m DEM tiles:** 716 URLs in PDF scan (no text layer, OCR required). One tile verified live via anonymous S3 listing (185,344,605 bytes, 2026-02-14) ⇒ ~130 GB total. Free official source: USGS 3DEP via `https://prd-tnm.s3.amazonaws.com/?list-type=2&prefix=StagedProducts/Elevation/1m/` — obtainable but heavy. For GEMSDOE9 we use 10 m 3DEP seamless DEM (1/3 arcsec, ~10 m) via https://apps.nationalmap.gov/services/ — free, official, 100% coverage, 9 bands derived, validated in 8GEMSDOE.
-- **External free official sources used for new hypotheses:**
-  - USGS GeoDAWN magnetic & radiometric: DOI 10.5066/P93LGLVQ https://doi.org/10.5066/P93LGLVQ — 7 radiometric bands K, Th, U, TC, U/K, Th/K, U/Th — verified 99.975% coverage.
-  - USGS 3DEP 10 m DEM: https://apps.nationalmap.gov/3dep/ — for scarp, curvature, SL index.
-  - Landsat-8/9 TIRS thermal: https://earthexplorer.usgs.gov/ — for thermal anomaly proxy (H9-4).
-  - ASTER L1T: https://search.earthdata.nasa.gov/ — for clay alteration (kaolinite, alunite).
-  - UNAVCO GNSS strain: https://www.unavco.org/data/gps-gnss/ — for dilation tendency validation.
-
----
-
-## Candidate Geological Hypotheses — 5 New, Ranked (Not Tried in This Repo Before)
-
-**Validation protocol:** Spatially-blocked, buffered folds (4×4 blocks, 300 m buffer), Leave-One-Fault-System-Out (LOFSO) — whole fault systems held out, not random pixels — exact DTI kernel, budget-matched random control. No submission slot spent until top candidate beats current holdout best (0.1563 floor) on clean protocol via `scripts/lofso_train_eval.py`.
-
-### H9-1: Relay Stepover & Intersection Density (Top Candidate)
-- **Layers:** Dilatation rate, shear strain rate, second invariant (bands 3-5) + detrended elevation slope + isostatic gravity slope + derived fault azimuth from structure-tensor coherence (new).
-- **Physical signature:** Extensional relay stepovers (left-stepping in right-lateral Walker Lane) and fault intersections create dilational jogs where permeability spikes 10-100×. Signature = high dilation tendency (computed from strain eigenvectors) × intersection density (Hough line intersections per km²) × curvature inflection. Target 2-5 km stepovers.
-- **Why catches missing faults:** USGS catalogue maps through-going traces, but misses short linking faults inside stepovers that have subtle topographic expression but strong strain signal. Geothermal upflow at Steamboat, Brady, etc. is at stepovers, not mid-segment.
-- **How differs:** GEMSDOE4 used lineament features but not explicit stepover detection; 6GEMSDOE used 88 channels but no dilation tendency or intersection density; 8GEMSDOE used scarp + radiometric but not strain-derived dilation. This is first to compute `Td = (σ1 - σn)/(σ1-σ3)` from strain rate tensor and cross with Hough intersections.
-- **Expected DTI lift:** +0.06-0.09 over 0.1563 baseline (based on 8GEMSDOE's +0.008 lift from structural coherence alone, plus verified literature: stepovers/relay ramps are the single most favorable setting for Great Basin geothermal, hosting ~32% of 250+ catalogued fields, with terminations ~25% and intersections ~22% — Faulds, Hinz & Kreemer, GDR submission 383, https://gdr.openei.org/submissions/383 ; DOE project DE-EE0002748, https://gbcge.org/recent-projects/characterizing-structural-controls/). H9-1 targets all three interaction settings. **Rank 1, Low-Med cost** (no new external data, only derived features from existing 19 bands).
-
-### H9-2: Conductivity Edge & Clay Cap Gradient
-- **Layers:** Surface conductivity, depth to conductive base (bands 1-2) + isostatic gravity + radiometric Th/K (clay proxy).
-- **Physical signature:** Blind geothermal = conductive smectite clay cap (1-10 Ωm) over resistive reservoir, with sharp lateral edge at fault. Signature = Laplacian of conductivity (∇²) + vertical gradient (conductivity / depth_to_base) + horizontal gradient magnitude. Edge detection via zero-crossing of Laplacian.
-- **Why missing:** USGS maps faults from surface scarp, but blind faults have no scarp — only conductivity edge from clay alteration. INGENIOUS catalogue includes some blind but not all. This targets blind.
-- **Differs:** Previous used conductivity as raw band, not edge. 6GEMSDOE used analytic signal but not conductivity Laplacian. First to use clay cap model from Cumming 2009.
-- **Expected lift:** +0.04-0.07, **Rank 2, Low cost**.
-
-### H9-3: Fluvial Geomorphic Anomaly (SL Index & ksn)
-- **Layers:** 10 m 3DEP DEM (external, free official) derived: slope, curvature, SL index (stream length-gradient), normalized channel steepness ksn, drainage deflection angle.
-- **Physical signature:** Faults perturb longitudinal river profiles → knickpoints, high SL, low ksn upstream. Signature = SL anomaly >2σ + ksn drop + channel 90° deflection. Targets faults with no scarp but with drainage offset.
-- **Why missing:** USGS faults mapped from scarp and aerial photos, misses blind faults that only show in drainage. Walker Lane has many such (e.g., Dixie Valley).
-- **Differs:** GEMSDOE used detrended elevation slope and break-in-slope, but not fluvial indices. 8GEMSDOE used 10 m scarp but not SL/ksn. New external DEM processing.
-- **Expected lift:** +0.03-0.06, **Rank 3, Medium cost** (requires 10 m DEM download, ~5 GB, and whitebox/ richdem processing).
-
-### H9-4: Thermal & Alteration Halo (Landsat TIRS + ASTER)
-- **Layers:** External: Landsat-8/9 Band 10-11 thermal (100 m resampled), ASTER alteration indices: kaolinite (B5+B7)/B6, alunite B3/B5, clay (B5*B7)/B6² — free official via USGS EarthExplorer.
-- **Physical signature:** Geothermal = 2-5 K thermal anomaly + clay alteration halo (kaolinite, alunite, silica) 100-500 m wide. Signature = thermal anomaly >1.5σ after topo correction + clay index > threshold + proximity to conductivity edge.
-- **Why missing:** Catalogue faults have no thermal requirement; hidden geothermal faults have alteration but no scarp. This directly targets geothermal permeability, not just fault existence.
-- **Differs:** No previous repo used thermal or ASTER. Completely new data source.
-- **Expected lift:** +0.05-0.10 if thermal data clean, but risk of false positives from solar heating. **Rank 4, Medium-High cost** (requires external download, cloud masking, topo correction).
-
-### H9-5: Magnetotelluric Dimensionality & Euler Depth Contact
-- **Layers:** Reduced-to-pole magnetic anomaly, TMI, vertical/horizontal slope, top-of-crustal magnetic source depth (bands 8-12) + isostatic gravity anomaly + slope.
-- **Physical signature:** Faults = contact between different magnetic susceptibilities → high horizontal gradient magnitude + analytic signal + tilt derivative zero-crossing + Euler deconvolution depth <1 km. Signature = (HGM > 75th percentile) ∧ (tilt zero) ∧ (Euler depth <1 km) ∧ (gravity HGM coincident).
-- **Why missing:** USGS catalogue includes faults with clear magnetic lineament, but misses those with subtle contact where Euler depth indicates shallow source but no surface scarp. Targets basement-involved faults.
-- **Differs:** 6GEMSDOE used tilt derivative and analytic signal amplitude as features for HGB, but not Euler deconvolution or joint gravity-magnetic coincidence. First to compute Euler depth and enforce gravity-magnetic coincidence.
-- **Expected lift:** +0.02-0.05, **Rank 5, Low-Med cost** (derived from existing bands, but Euler is compute-heavy).
-
-**Ranking Summary:**
-
-| Rank | Hypothesis | Expected DTI lift over 0.1563 | Cost | Needs new external data? | Source |
-|---|---|---|---|---|---|
-| 1 | H9-1 Relay stepover + dilation tendency + intersection density | +0.06-0.09 → 0.22-0.25 | Low-Med (derive from existing) | No | Strain rate bands + new derived |
-| 2 | H9-2 Conductivity edge & clay cap | +0.04-0.07 → 0.20-0.23 | Low | No | Conductivity bands 1-2 |
-| 3 | H9-3 Fluvial SL & ksn from 10 m DEM | +0.03-0.06 → 0.19-0.22 | Medium | Yes, 10 m 3DEP free official | https://apps.nationalmap.gov/3dep/ |
-| 4 | H9-4 Thermal + ASTER alteration | +0.05-0.10 → 0.21-0.26 (higher variance) | Medium-High | Yes, Landsat + ASTER free official | https://earthexplorer.usgs.gov/ |
-| 5 | H9-5 Euler depth + gravity-magnetic contact | +0.02-0.05 → 0.18-0.21 | Low-Med | No | Mag & grav bands 8-12 |
-
-**Top candidate for immediate validation:** H9-1 — no external data needed, directly targets geothermal structural control, differs from all siblings, and 8GEMSDOE's measurement showed structural coherence was first to beat random on unseen traces (0.0895 vs random 0.0813 on Fold0). We will validate H9-1 via `scripts/lofso_train_eval.py` before spending a submission slot.
-
----
-
-## Verification — No Hallucinations, Line by Line
-
-Every claim in `docs/` is rendered from JSON measured by scripts, with SHA256 and source URL. See `docs/sources.html` for full table (84 URLs checked live in 8GEMSDOE, we re-check).
-
-- Competition files: `training_features.tif` 19 bands (not 10), size 399.5 MB, SHA256 `4371c82e…` — verified in GEMSDOE1.
-- `example_submission.tif` is NOT total absence — it is bit-identical to label raster (60,988 px) — flagged as irregularity, see `docs/data.html`.
-- Metric: DTI α=0.2 β=0.8 R=300 m triangular — verified against problem description and PDF.
-- Leaderboard top 0.3049 by DARD — snapshot 2026-09-26 via https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/.
-- GeoDAWN DOI: 10.5066/P93LGLVQ — https://doi.org/10.5066/P93LGLVQ — official USGS.
-- INGENIOUS DOI: 10.15121/1881483 — https://doi.org/10.15121/1881483 — GDR.
-- Rules PDF SHA256 `50d854b1e0239fe6…` — https://docs.nlr.gov/docs/fy26osti/96647.pdf.
-
----
-
-## How to Run (When Data Present)
+## How to run
 
 ```bash
-# 1. Download data (requires DrivenData login on unrestricted machine)
-bash scripts/download_competition_data.sh
-
-# 2. Verify and prepare
-python scripts/prepare_data.py
-
-# 3. Validate any submission
-python scripts/validate_submission.py docs/downloads/gemsdoe9_submission.tif
-
-# 4. Train (GPU recommended) — H9-1 top candidate
-python scripts/lofso_train_eval.py --hypothesis H9-1 --folds 4 --buffer 3
-
-# 5. Build submission
-python scripts/build_submission.py --strategy H9-1-relay --topk 0.028 --out docs/downloads/gemsdoe9_submission.tif
-
-# 6. Build site
-python scripts/build_site.py
+bash scripts/run_all_checks.sh      # everything: deps, tests, experiment, artifact, site
 ```
 
----
+Individually:
 
-## License & Attribution
+```bash
+python tests/test_validation.py                              # 82 checks
+python scripts/validate_holdout.py --strategy                # metric-shape experiment
+python scripts/build_submission.py                           # rebuild the artifact
+python scripts/validate_submission.py docs/downloads/*.tif  # 14 gates
+python scripts/build_site.py                                 # re-render docs/
+python scripts/build_site.py --check                         # fail if docs/ is stale
+```
 
-This project is for the DOE GEMS Prize Challenge. Data sources are cited with official DOIs and URLs. No hallucinations — every number is measured.
-
----
-
-## Suggestions for Next Session
-
-Completed this session (2026-09-27):
-- Live leaderboard re-verified (top DARD 0.3049; 0.1563 confirmed as a cross-team catalogue attractor).
-- Official staff clarifications captured with verbatim quotes (docs/intel.html): catalogue masking, Phase 2 feedback loop, rolling 7-day 3-submission window.
-- Fast exact DTI implementation + `fp_ignore_mask` (official masking) with cross-checked tests (14/14 PASS).
-- `scripts/lofso_train_eval.py --synthetic` — full blocked-holdout machinery validated on CPU (H9-1 arm beats budget-matched random and catalogue-halo controls; geology validation still requires real rasters).
-- Corrected the unsupported "70% stepover" claim to the verified GDR-383 breakdown (~32% stepovers, 25% terminations, 22% intersections).
-- `scripts/prepare_data.py` now dumps the authoritative GeoTIFF band tags (same method as the official reference solution).
-- Bugs fixed: tests now run without PYTHONPATH; build_submission.py argv bug; deprecated utcnow; speculative band map marked provisional.
-
-Next session priorities:
-1. **Place the data** (the single remaining training blocker): run `bash scripts/download_competition_data.sh` on an unrestricted machine with a DrivenData account, then `python scripts/prepare_data.py` — this also verifies the provisional band indexing in `src/gems/features.py` against the band tags.
-2. Run the real-data branch of `lofso_train_eval.py` (GPU preferred) for H9-1; only spend a weekly slot if it beats both the random control and the catalogue baseline.
-3. Obtain 1 m/10 m 3DEP DEM tiles (official About page confirms GeoDAWN-coordinated lidar) to implement H9-3 — free official, but heavy (~130 GB for 1 m; use 10 m seamless first).
-4. Implement Euler deconvolution for H9-5.
-5. Build the union submission: catalogue trace (free under masking) + H9-1 picks, budget 2-3%.
-6. Archive duplicate sibling repos to comply with the single-entry rule (Rules Appendix A.3).
+Nothing needs a GPU or the network.
 
 ---
 
-## Official Links for Manual Review
+## Competition facts, verified line by line
 
-- Competition: https://www.drivendata.org/competitions/306/competition-doe-gems/
-- Problem description: https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/
-- About: https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/
-- Data tab (login required): https://www.drivendata.org/competitions/306/competition-doe-gems/data/
-- Leaderboard (re-verified live 2026-09-27): https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/
-- Forum — scoring/masking clarification (staff): https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516
-- Forum — test-fault sources & Phase 2 feedback (staff): https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527
-- Forum — weekly submission window (staff): https://community.drivendata.org/t/weekly-submissions/11524
-- Structural controls of Great Basin geothermal (Faulds, Hinz & Kreemer): https://gdr.openei.org/submissions/383
-- GBCGE structural-controls project (DE-EE0002748): https://gbcge.org/recent-projects/characterizing-structural-controls/
-- Faulds et al. 2012 GeoNZ paper (open PDF): https://gdr.openei.org/files/383/Faulds%20et%20al%202012%20GeoNZ%20Paper.pdf
-- Mattéo et al. 2021 (cited by the competition About page): https://doi.org/10.1029/2020JB021269
-- Hermant et al. 2025 (cited by the competition About page): https://pangea.stanford.edu/ERE/db/GeoConf/papers/SGW/2025/Hermant.pdf
-- Rules PDF: https://docs.nlr.gov/docs/fy26osti/96647.pdf
-- GDR: https://gdr.openei.org/submissions/1391
-- Reference solution: https://github.com/drivendataorg/gems-prize-reference-solution
-- GeoDAWN DOI: https://doi.org/10.5066/P93LGLVQ
-- INGENIOUS DOI: https://doi.org/10.15121/1881483
-- USGS 3DEP: https://apps.nationalmap.gov/3dep/
-- USGS EarthExplorer (Landsat, ASTER): https://earthexplorer.usgs.gov/
-- Example submission (Dropbox mirror): https://www.dropbox.com/scl/fi/6rgvnuady818ol8yqgis4/example_submission.tif?rlkey=kbykilvau066xuogoosbf4cq8&st=8junzdyw&dl=0
-- Existing faults (Dropbox): https://www.dropbox.com/scl/fi/t7fyt03qdh9egyme0itwo/existing_faults.tif?rlkey=yiao96uluqdkipf0h5vju71jf&st=rnino7ya&dl=0
-- Features (Dropbox): https://www.dropbox.com/scl/fi/3vz9o0wwavi26xaeoxlwr/gems-geodawn-numerical-features.tif?rlkey=je8d8fepqfbst9lnwsq9rkplu&st=zj1lag1r&dl=0
-- DEM links PDF (Dropbox): https://www.dropbox.com/scl/fi/ig0mban712ns1atphgphe/Digital-elevation-model-links-JSON.pdf?rlkey=zm77f1vbtt2if8hlruymptnu3&st=srhhir10&dl=0
-- GEMS PDF (Dropbox): https://www.dropbox.com/scl/fi/aemhtutjgcp6tr3tint94/GEMS_96647.pdf?rlkey=rek210cj2smnmzb8n0sla1vmd&st=wz4kofki&dl=0
+Every one of these was read from the linked page on 2026-09-27. The site quotes them
+verbatim with the URL next to each quote.
+
+- **Task** — [problem description](https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/):
+  predict the presence of geological faults indicative of geothermal resources across the
+  GeoDAWN region. The public USGS fault set "is not complete and may even contain some
+  inaccurate data"; the test set is faults experts identified that are **not** in it.
+- **Metric** — distance-weighted Tversky index, `k(d) = max(1 − d/R, 0)`, R = 300 m (3 px at
+  100 m), α = 0.2 (false positives), β = 0.8 (false negatives). Official worked example:
+  TP_w = 3.00, FP_w = 1.89, FN_w = 2.00 → 0.60.
+- **Format** — single band, `float32`, values in [0, 1], EPSG:32611, 100 m, same bounds as
+  the training data, 3292 × 3730 px, geotransform (100, 0, 243350, 0, −100, 4508550).
+- **Rounds** — Initial: $50,000, a fixed private test set. Final: $250,000
+  ($100K/$70K/$40K/$25K/$15K), rescored against an expanded label set that experts build
+  partly *from the Phase 1 submissions*. One submission is scored in both rounds.
+- **Cadence** — three scored submissions per
+  [rolling 7-day window](https://community.drivendata.org/t/weekly-submissions/11524).
+- **Leaderboard** — [read live 2026-09-27](https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/):
+  DARD 0.3049 (10 submissions), alexoktaba 0.2993, HardcoreTechGod 0.2854, mzoorob 0.2843,
+  joeyfezster 0.2806. Ranks 24 and 25 sit on an identical 0.1563 with two submissions each.
+- **External data** — allowed, provided the participant holds a licence permitting use in the
+  challenge and sharing with the sponsor.
+
+The group's own submissions — GEMSDOE1 0.1563, GEMSDOE2 0.1560, 5GEMSDOE 0.1563,
+8GEMSDOE 0.1563, GEMSDOE3 0.1193 / 0.0830 / 0.1152, GEMSDOE4 0.0343, 6GEMSDOE 0.0286 — are
+tabulated on the site. Their artifact hashes could not be checked from this environment, so
+**no claim is made here about which files were byte-identical**; only about what the scores
+are and what the closed form predicts they mean.
+
+---
+
+## Limitations, and what to do next
+
+**Limitations, stated plainly**
+
+1. **No model has been trained.** The data needs a login and this environment has no
+   outbound network. Every detector is written and, where a closed form exists, unit-tested —
+   and none has seen a real raster.
+2. **The band inventory is unverified.** The problem description lists layer *groups*, not an
+   ordered index. All band access is by name from the GeoTIFF tags and a miss raises.
+3. **The 0.1563 explanation is a derivation, not a measurement.** It is consistent with every
+   observation available and it is falsifiable, but the submitted files are not public.
+4. **The mask-alignment risk is unquantified.** The scorer masks the organiser's rasterised
+   catalogue; we are given `existing_faults.tif`. A one-pixel disagreement makes a
+   supposedly-free pixel cost 1.0 of FP mass. `mask_safety_px` is the mitigation; the right
+   value is unknown until someone can compare.
+5. **The blocked holdout scores the wrong thing.** It scores *catalogue* faults; the
+   competition scores faults that are *not* in the catalogue. No public holdout can measure
+   that, because those labels do not exist publicly. The protocol can prove a detector
+   carries information beyond "where the catalogue already is" — nothing more.
+6. **The Rules PDF is not quoted.** `docs.nlr.gov` is unreachable from the shell, so the
+   previous revision's claimed SHA256 and four quoted sentences could not be checked. They
+   have been removed; the PDF is linked for review and nothing is attributed to it.
+
+**Next session, in priority order**
+
+1. **Place the data.** One command unlocks everything: download into `data/`, run
+   `prepare_data.py`, confirm the band inventory, then `validate_holdout.py`. Everything
+   downstream is already written.
+2. **Run the real holdout for G-1 first.** It costs nothing but CPU and is the detector the
+   official intel points at. Report the four arms; if `corridor` does not beat
+   `catalogue-only`, the hypothesis is dead and no slot is spent.
+3. **Calibrate the corridor on training folds only.** Sweep halo ∈ {0…6} px and paid budget
+   ∈ {0.2 %…16 %}. The synthetic sweep has an interior optimum near 1 %; confirm or refute
+   it on real data.
+4. **Set `mask_safety_px`.** Compare the organiser's template against `existing_faults.tif`
+   to bound the alignment error, then pick the safety dilation from that bound.
+5. **Then G-2 and G-3**, which need no external data and target blind faults — a class the
+   catalogue provably under-samples.
+6. **Only then** consider G-4, and G-5 with a 10 m 3DEP DEM.
+7. **Phase 2 is a different objective.** Experts build the expanded label set from the Phase 1
+   submissions. A high-recall submission that is a superset of the Phase 1 truth converts
+   into Phase 2 label additions. Do not over-tune to the public board, and do not submit the
+   same file twice under different names.
+
+---
+
+## Project prompt (original request, preserved verbatim)
+
+<details>
+<summary>Expand</summary>
+
+Review the repo. Here are the results from our groups submissions, separated by ....:
+
+GEMSDOE1 — https://buffedlizard55-lab.github.io/GEMSDOE/docs/index.html — GEMSDOE SCORE: 0.1563
+
+https://buffedlizard55-lab.github.io/6GEMSDOE/ — 6GEMSDOE SCORE: 0.0286
+
+GEMSDOE3 — https://buffedlizard55-lab.github.io/GEMSDOE3/docs/index.html — 0.1193
+1 · SUBMIT FIRST — f347b70daa — Pindrop nodes
+
+GEMSDOE2 — https://buffedlizard55-lab.github.io/GEMSDOE2/docs/index.html — 0.1560
+
+GEMSDOE3 — 0.0830 — 2 · SUBMIT SECOND — 37f9d5b855 — Pindrop catalogue-gap target SECOND SYSTEM
+
+GEMSDOE4 — https://buffedlizard55-lab.github.io/GEMSDOE4/ — GEMSDOE 4 SCORE: 0.0343
+
+GEMSDOE3 — 0.1152 — 3 · CONTROL · UPLOAD LAST — 4e03fc9705 — Pindrop dense ridge control
+
+5GEMSDOE — https://buffedlizard55-lab.github.io/5GEMSDOE/docs/index.html — 5GEMSDOE SCORE: 0.1563
+
+8GEMSDOE — https://buffedlizard55-lab.github.io/8GEMSDOE/ — 8GEMSDOE SCORE: 0.1563
+
+The leaderboard: https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/
+
+We need to figure out why we keep scoring 0.1563, are we copying the same work over and over
+again? We need to come up with different ideas, and not just the same idea tried a different
+way. Need to figure out why 5GEMSDOE and GEMSDOE1 have the same score. We should not be
+generating the same score submissions, they should all be unique. 0.3049 is the highest score
+right now so we need to design a new strategy, research, testing, analyzing, and generating
+submission system than the current website. It should be unique, take unique approaches to
+generating a submission that can score higher than .3049. Put this prompt into the repo readme
+and read it everytime we work on the project as a starting point to make sure we are building
+what we are aiming for and have a strong base to continue building and improving on making
+something useful for everyday use. It should solve the problem of having to manually check
+everything ourselves and having an up to date current feed.
+
+Review the repo. [Core Values and Own the Outcome as a focal point.]
+
+Work line by line verifying from official verified trusted sources, provide links for manual
+review. There should be no manual input, work on your own to complete tasks. Flag any
+irregularities for review. No hallucinations. Verify no hallucinations.
+
+The goal of this project is to place top of the leaderboard in this competition. The following
+is the competition: https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/
+
+We need to create a project that can compete and place top of the leaderboard. We need to
+understand the problem, collect all the data and organize it into a clean easily auditable
+table with official verified links for manual verification.
+
+Get familiar with the problem through the overview and problem description.
+https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/ You might also want
+to reference additional resources available on the about page,
+https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/
+
+Download the data from the data tab,
+https://www.drivendata.org/competitions/306/competition-doe-gems/data/
+
+Create and train your own model. This reference solution,
+https://github.com/drivendataorg/gems-prize-reference-solution implements a simple approach.
+
+Use your model to generate predictions that match the submission format.
+
+Tell me what are you limitations and what you need access to during this project. We will need
+to find free publicly available sources and data from official and verified sources if we are
+to use 3rd party or external data.
+
+This pdf outlines how submissions must be entered into the competition.
+https://docs.nlr.gov/docs/fy26osti/96647.pdf
+
+You must be able to do your own research, deep research, scientific literature research and
+organize the knowledge so that we can critically think through the problem and generate a
+solution through scientific and free publicly available information. This must be done
+autonomously and must be constantly reviewed and improved upon. Provide suggestions and
+improvements and implement them.
+
+No DrivenData auth → cannot auto-download training_features.tif, labels.tif,
+sample_submission.tif, 1m_DEM_links.csv from
+https://www.drivendata.org/competitions/306/competition-doe-gems/data/ (verified redirect to
+login).
+
+See below for links from the above site: https://gdr.openei.org/submissions/1391
+
+Download competition data from
+https://www.drivendata.org/competitions/306/competition-doe-gems/data/ (requires login) to
+data/
+
+See links below for competition data:
+https://www.dropbox.com/scl/fi/aemhtutjgcp6tr3tint94/GEMS_96647.pdf?rlkey=rek210cj2smnmzb8n0sla1vmd&st=wz4kofki&dl=0
+https://www.dropbox.com/scl/fi/6rgvnuady818ol8yqgis4/example_submission.tif?rlkey=kbykilvau066xuogoosbf4cq8&st=8junzdyw&dl=0
+https://www.dropbox.com/scl/fi/t7fyt03qdh9egyme0itwo/existing_faults.tif?rlkey=yiao96uluqdkipf0h5vju71jf&st=rnino7ya&dl=0
+https://www.dropbox.com/scl/fi/3vz9o0wwavi26xaeoxlwr/gems-geodawn-numerical-features.tif?rlkey=je8d8fepqfbst9lnwsq9rkplu&st=zj1lag1r&dl=0
+https://www.dropbox.com/scl/fi/ig0mban712ns1atphgphe/Digital-elevation-model-links-JSON.pdf?rlkey=zm77f1vbtt2if8hlruymptnu3&st=srhhir10&dl=0
+
+Site creation: Create a github page for this repo that has clean ui, user friendly, simple and
+easy to use. It should be organized and clean. It should include all relevant information in
+an easy to read format with official verified links as sources for review. Work line by line
+verify everything no hallucinations.
+
+The single remaining blocker to training is data placement: run
+`bash scripts/download_competition_data.sh` on any unrestricted machine into `data/`, then
+`python scripts/prepare_data.py` — after that the full train→inference→validate pipeline is
+ready to run (GPU needed for training; metric/losses/validation all verified working here on
+CPU).
+
+The site should be able to generate a TIF file that is required for submission. It should be as
+easy as download to click a File to submit into the competition. This needs to be in the
+executive summary or the very beginning of the site. It should be obvious when you visit the
+site.
+
+I tried to submit the document that I downloaded from the site but it returned this error on
+the submission form: "Predicted values must be in range [0, 1]"
+
+Also we need to give it a unique name and A short comment to help you or your team tell
+submissions apart later e.g. clustering with k=25
+
+Here is the submission page when I click submit file. New submission. File to submit. No file
+chosen. You can submit a single-band GeoTIFF (.tif) file, or a .zip file containing a single
+GeoTIFF, with your predictions. It must match the submission format's CRS, shape, and
+geotransform. You may wish to review the competition rules first. Note (optional). A short
+comment to help you or your team tell submissions apart later e.g. clustering with k=25
+
+Create a executive summary subpage that explains exactly how to make a submission into the
+contest.
+
+Work on the next steps from the previous sessions first.
+
+Go ahead and create a pull request and then merge the pull request onto the main. Make
+suggestions for what work still needs to be done and any limitations that is in the way of a
+successful project. It should be worked on in this next session or the next session. Work line
+by line verify everything no hallucinations.
+
+</details>
+
+---
+
+## License & attribution
+
+DOE GEMS Prize Challenge entry. All data sources are cited with official DOIs and URLs in
+`scripts/site_data.py` and on [`docs/sources.html`](docs/sources.html). Every number on the
+site is either quoted from a linked primary source, read live on 2026-09-27, or computed by
+code in this repository from the published metric.

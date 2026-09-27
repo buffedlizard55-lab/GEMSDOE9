@@ -1,0 +1,335 @@
+{
+  "total": 82,
+  "passed": 82,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "A1 official worked example algebra -> 0.60",
+      "ok": true
+    },
+    {
+      "name": "A2 perfect single-pixel prediction scores 1.0",
+      "ok": true
+    },
+    {
+      "name": "A3 FN_w = N - TP_w exactly",
+      "ok": true
+    },
+    {
+      "name": "A4 no ground truth -> DTI 0",
+      "ok": true
+    },
+    {
+      "name": "A5 no ground truth -> FP_w = total mass",
+      "ok": true
+    },
+    {
+      "name": "A6 all-zero prediction -> DTI 0",
+      "ok": true
+    },
+    {
+      "name": "A7 fast == naive implementation",
+      "ok": true
+    },
+    {
+      "name": "A8 triangular kernel 1,2/3,1/3,0,0",
+      "ok": true
+    },
+    {
+      "name": "A9 masking removes FP on masked pixels",
+      "ok": true
+    },
+    {
+      "name": "A10 masked pixel earns TP_w credit (free core lever)",
+      "ok": true
+    },
+    {
+      "name": "A11 free-core credit vanishes beyond the 3 px kernel",
+      "ok": true
+    },
+    {
+      "name": "B1 EQ-1 == EQ-2 at a grid point",
+      "ok": true
+    },
+    {
+      "name": "B2 0.1563 implies rho=0.1291 at zero FP",
+      "ok": true
+    },
+    {
+      "name": "B3 that rho reproduces 0.1563",
+      "ok": true
+    },
+    {
+      "name": "B4 0.3049 implies rho=0.2598 at zero FP",
+      "ok": true
+    },
+    {
+      "name": "B5 0.3049 needs ~2x the 0.1563 recall",
+      "ok": true
+    },
+    {
+      "name": "B6 exchange rate 4/rho at low phi",
+      "ok": true
+    },
+    {
+      "name": "B7 DTI monotone increasing in rho",
+      "ok": true
+    },
+    {
+      "name": "B8 DTI monotone decreasing in phi",
+      "ok": true
+    },
+    {
+      "name": "B9 max_phi_for_score inverts required_recall",
+      "ok": true
+    },
+    {
+      "name": "C1 core-only puts everything on the catalogue",
+      "ok": true
+    },
+    {
+      "name": "C2 core-only accrues zero FP on the catalogue",
+      "ok": true
+    },
+    {
+      "name": "C3 core-only still earns TP on a nearby GT pixel",
+      "ok": true
+    },
+    {
+      "name": "C4 halo_px=3 adds paid pixels",
+      "ok": true
+    },
+    {
+      "name": "C5 halo raises FP (it is not free)",
+      "ok": true
+    },
+    {
+      "name": "C6 paid budget is respected",
+      "ok": true
+    },
+    {
+      "name": "C7 core=False never paints a catalogue pixel",
+      "ok": true
+    },
+    {
+      "name": "C8 binarise hits the budget exactly",
+      "ok": true
+    },
+    {
+      "name": "C9 binarise keeps the highest scores",
+      "ok": true
+    },
+    {
+      "name": "D1 pure simple shear -> Td = 0.5",
+      "ok": true
+    },
+    {
+      "name": "D2 uniaxial extension -> Td = 1.0",
+      "ok": true
+    },
+    {
+      "name": "D3 oblique extension (3,-1) -> Td = 0.75",
+      "ok": true
+    },
+    {
+      "name": "D4 uniaxial contraction -> Td = 0.0",
+      "ok": true
+    },
+    {
+      "name": "D5 Td is scale-invariant in strain rate",
+      "ok": true
+    },
+    {
+      "name": "D6 output clipped into [0,1]",
+      "ok": true
+    },
+    {
+      "name": "D7 NaN input yields a finite field",
+      "ok": true
+    },
+    {
+      "name": "E0 node writer self-check passes",
+      "ok": true
+    },
+    {
+      "name": "E1 writer refuses NaN",
+      "ok": true
+    },
+    {
+      "name": "E2 writer refuses values outside [0,1]",
+      "ok": true
+    },
+    {
+      "name": "E3 GDAL reads rt_3292x3730_128_0.tif",
+      "ok": true
+    },
+    {
+      "name": "E3 GDAL reads rt_3292x3730_128_1.tif",
+      "ok": true
+    },
+    {
+      "name": "E3 GDAL reads rt_37x53_1_1.tif",
+      "ok": true
+    },
+    {
+      "name": "E3 GDAL reads rt_64x40_40_1.tif",
+      "ok": true
+    },
+    {
+      "name": "E3 GDAL reads rt_64x40_8_1.tif",
+      "ok": true
+    },
+    {
+      "name": "E4 full-size file has the exact competition grid",
+      "ok": true
+    },
+    {
+      "name": "E5 browser and CLI placeholder fields are bit-identical",
+      "ok": true
+    },
+    {
+      "name": "E6 placeholder positive count matches fraction",
+      "ok": true
+    },
+    {
+      "name": "F1 fold count",
+      "ok": true
+    },
+    {
+      "name": "F2 train and val never overlap",
+      "ok": true
+    },
+    {
+      "name": "F3 buffer removes a ring around the val block",
+      "ok": true
+    },
+    {
+      "name": "F4 folds tile the whole raster",
+      "ok": true
+    },
+    {
+      "name": "G0 exactly one artifact in docs/downloads",
+      "ok": true
+    },
+    {
+      "name": "G1 shipped artifact passes every gate",
+      "ok": true
+    },
+    {
+      "name": "G2 validator rejects a NaN file",
+      "ok": true
+    },
+    {
+      "name": "G3 validator reports 1.0 range on a good file",
+      "ok": true
+    },
+    {
+      "name": "G4 validator rejects an unreadable file",
+      "ok": true
+    },
+    {
+      "name": "G5 spent-slot hash list is populated",
+      "ok": true
+    },
+    {
+      "name": "G6 shipped artifact is not on the spent-slot list",
+      "ok": true
+    },
+    {
+      "name": "H0 the tie-heavy field really is tie-heavy and inside the band",
+      "ok": true
+    },
+    {
+      "name": "H1 budget 0 is honoured exactly on a tie-heavy field",
+      "ok": true
+    },
+    {
+      "name": "H1 budget 1 is honoured exactly on a tie-heavy field",
+      "ok": true
+    },
+    {
+      "name": "H1 budget 7 is honoured exactly on a tie-heavy field",
+      "ok": true
+    },
+    {
+      "name": "H1 budget 50 is honoured exactly on a tie-heavy field",
+      "ok": true
+    },
+    {
+      "name": "H1 budget 399 is honoured exactly on a tie-heavy field",
+      "ok": true
+    },
+    {
+      "name": "H1 budget 400 is honoured exactly on a tie-heavy field",
+      "ok": true
+    },
+    {
+      "name": "H1 budget 401 is honoured exactly on a tie-heavy field",
+      "ok": true
+    },
+    {
+      "name": "H1 budget 5000 is honoured exactly on a tie-heavy field",
+      "ok": true
+    },
+    {
+      "name": "H2 tie-heavy top-k is deterministic",
+      "ok": true
+    },
+    {
+      "name": "H3 selected pixels are the top-k of the BAND, not of the grid",
+      "ok": true
+    },
+    {
+      "name": "H4 sparse field never overshoots the budget",
+      "ok": true
+    },
+    {
+      "name": "H5 core=False still never paints a catalogue pixel",
+      "ok": true
+    },
+    {
+      "name": "H6 mask_safety_px keeps the budget exact",
+      "ok": true
+    },
+    {
+      "name": "I1 the free catalogue core accrues exactly zero FP",
+      "ok": true
+    },
+    {
+      "name": "I2 a region-scoped sweep agrees with a direct region evaluation",
+      "ok": true
+    },
+    {
+      "name": "I3 leaving gt unscoped is measurably different (the leak is real)",
+      "ok": true
+    },
+    {
+      "name": "I4 the guard returns a row for every grid point",
+      "ok": true
+    },
+    {
+      "name": "I5 the guard falls back to the free core when nothing clears it",
+      "ok": true
+    },
+    {
+      "name": "I6 a one-point grid always returns that point",
+      "ok": true
+    },
+    {
+      "name": "J1 G-5 returns a finite field of the right shape",
+      "ok": true
+    },
+    {
+      "name": "J2 G-5 memory per pixel does not grow with the grid",
+      "ok": true
+    },
+    {
+      "name": "J3 G-5 is not the 324 bytes-per-pixel sliding-window version",
+      "ok": true
+    },
+    {
+      "name": "J4 the measured figure extrapolates to a workable real-grid peak",
+      "ok": true
+    }
+  ]
+}

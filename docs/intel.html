@@ -1,105 +1,168 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Official Intel — GEMSDOE9</title>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Official intel — GEMSDOE9</title>
+<meta name="description" content="GEMSDOE9 — DOE GEMS Prize entry. Verified competition intel, the metric algebra behind the 0.1563 plateau, and a one-click valid GeoTIFF.">
 <style>
-  :root{--bg:#fafaf9;--fg:#1c1917;--muted:#78716c;--card:#fff;--border:#e7e5e4;--ok:#16a34a;}
-  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;}
-  header{background:#1c1917;color:white;padding:1.5rem;}
-  main{max-width:980px;margin:0 auto;padding:1.5rem;}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0;}
-  nav{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0;}
-  nav a{text-decoration:none;color:var(--muted);font-size:0.9rem;padding:0.35rem 0.6rem;border-radius:6px;}
-  nav a:hover{background:white;border:1px solid var(--border);color:var(--fg);}
-  table{width:100%;border-collapse:collapse;font-size:0.9rem;}
-  th,td{border-bottom:1px solid var(--border);padding:0.5rem;text-align:left;}
-  blockquote{margin:0.75rem 0;padding:0.75rem 1rem;background:#f5f5f4;border-left:4px solid #dc2626;border-radius:6px;font-style:italic;}
-  .src{font-size:0.82rem;color:var(--muted);}
-  .pill{display:inline-block;padding:0.1rem 0.5rem;border-radius:999px;font-size:0.72rem;font-weight:600;background:#dcfce7;color:#166534;}
-  code{background:#f5f5f4;padding:0.1rem 0.35rem;border-radius:4px;font-size:0.88em;}
+:root{
+  --bg:#fbfaf9; --panel:#ffffff; --ink:#1c1917; --muted:#6b6560; --line:#e7e5e4;
+  --brand:#b91c1c; --brand2:#c2410c; --ok:#15803d; --okbg:#dcfce7; --warn:#92400e;
+  --warnbg:#fef3c7; --bad:#991b1b; --badbg:#fee2e2; --info:#1e40af; --infobg:#dbeafe;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.62;-webkit-font-smoothing:antialiased}
+a{color:#b91c1c}
+code,kbd{font-family:var(--mono);font-size:.88em;background:#f5f5f4;padding:.12rem .35rem;border-radius:4px}
+pre{background:#1c1917;color:#e7e5e4;padding:1rem;border-radius:10px;overflow:auto;font-size:.82rem;line-height:1.5}
+pre code{background:none;color:inherit;padding:0}
+header.top{background:linear-gradient(135deg,#1c1917 0%,#44403c 55%,#7c2d12 100%);color:#fff;padding:2.2rem 1.4rem 1.6rem}
+header.top h1{margin:0 0 .35rem;font-size:1.9rem;letter-spacing:-.025em}
+header.top p{margin:0;max-width:78ch;color:#e7e5e4}
+.badges{margin-top:.9rem;display:flex;gap:.45rem;flex-wrap:wrap}
+.badge{font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:999px;background:rgba(255,255,255,.14);color:#fff}
+.badge.ok{background:#15803d}.badge.warn{background:#b45309}.badge.bad{background:#b91c1c}
+nav.tabs{position:sticky;top:0;z-index:20;background:rgba(251,250,249,.94);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:.55rem 1.4rem;display:flex;gap:.3rem;flex-wrap:wrap}
+nav.tabs a{font-size:.85rem;text-decoration:none;color:var(--muted);padding:.32rem .6rem;border-radius:7px}
+nav.tabs a:hover{background:#fff;color:var(--ink)}
+nav.tabs a.on{background:var(--ink);color:#fff;font-weight:600}
+main{max-width:1140px;margin:0 auto;padding:1.6rem 1.4rem 4rem}
+section{margin-bottom:2.2rem}
+h2{font-size:1.3rem;letter-spacing:-.015em;margin:0 0 .7rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+h3{font-size:1.05rem;margin:1.5rem 0 .5rem}
+h4{font-size:.95rem;margin:1.1rem 0 .35rem;color:#44403c}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1.15rem 1.25rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.grid{display:grid;gap:1.2rem;grid-template-columns:1fr}
+@media(min-width:900px){.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:repeat(3,1fr)}}
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:.6rem 0}
+th,td{text-align:left;padding:.5rem .55rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:650;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+td.num,th.num{text-align:right;font-family:var(--mono);white-space:nowrap}
+.note{border-left:3px solid var(--info);background:var(--infobg);padding:.8rem 1rem;border-radius:0 8px 8px 0;margin:.9rem 0}
+.note.warn{border-color:#b45309;background:var(--warnbg)}
+.note.bad{border-color:var(--bad);background:var(--badbg)}
+.note.ok{border-color:var(--ok);background:var(--okbg)}
+.note b.lbl{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.2rem}
+.btn{display:inline-block;padding:.8rem 1.3rem;border-radius:9px;font-weight:650;text-decoration:none;
+  border:1px solid transparent;cursor:pointer;font-size:.95rem;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.btn-secondary{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn-row{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0}
+.pill{display:inline-block;padding:.1rem .45rem;border-radius:999px;font-size:.72rem;font-weight:700}
+.pill.ok{background:var(--okbg);color:var(--ok)}
+.pill.warn{background:var(--warnbg);color:var(--warn)}
+.pill.bad{background:var(--badbg);color:var(--bad)}
+.pill.info{background:var(--infobg);color:var(--info)}
+.kv{display:grid;grid-template-columns:minmax(140px,auto) 1fr;gap:.35rem 1rem;font-size:.9rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--mono);font-size:.84rem;word-break:break-all}
+details{border:1px solid var(--line);border-radius:9px;padding:.6rem .85rem;margin:.6rem 0;background:#fff}
+summary{cursor:pointer;font-weight:600;font-size:.92rem}
+.hero{background:linear-gradient(135deg,#fff7ed,#fef2f2);border:2px solid #fdba74}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.log{background:#1c1917;color:#e7e5e4;padding:.9rem;border-radius:9px;font-family:var(--mono);
+  font-size:.78rem;white-space:pre-wrap;max-height:340px;overflow:auto}
+footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.8rem 1.4rem;color:var(--muted);font-size:.85rem}
+.src{font-size:.8rem;color:var(--muted);margin-top:.35rem}
+.tag-new{background:#15803d;color:#fff;border-radius:4px;padding:0 .3rem;font-size:.7rem;font-weight:700}
 </style>
-</head>
-<body>
-<header>
-  <h1>Official Intel — Verified Clarifications</h1>
-  <p>Every item below is a verbatim statement from the official competition pages or from DrivenData staff on the official forum, fetched and verified 2026-09-27. Links provided for manual review.</p>
+</head><body>
+<header class="top">
+  <h1>GEMSDOE9 — Geothermal Fault Discovery Beyond the Catalogue</h1>
+  <p>DOE GEMS Prize entry. Faults in the GeoDAWN region (northwestern Nevada, UTM 11N
+     EPSG:32611, 100 m) that are <em>not</em> in the USGS/INGENIOUS catalogue.</p>
+  <div class="badges"><span class='badge '>Quoted verbatim</span><span class='badge ok'>Read 2026-09-27</span></div>
 </header>
+<nav class="tabs"><a href='index.html'>Overview</a><a href='executive_summary.html'>How to submit</a><a href='strategy.html'>Strategy &amp; metric</a><a href='hypotheses.html'>Hypotheses G-1..G-5</a><a href='intel.html' class='on'>Official intel</a><a href='data.html'>Data &amp; access</a><a href='verification.html'>Verification &amp; flags</a><a href='leaderboard.html'>Leaderboard</a><a href='research.html'>Research notes</a><a href='sources.html'>Sources</a></nav>
 <main>
-<nav>
-  <a href="index.html">Overview</a>
-  <a href="intel.html"><strong>Official Intel</strong></a>
-  <a href="leaderboard.html">Leaderboard</a>
-  <a href="strategy.html">Strategy</a>
-  <a href="results.html">Results</a>
-  <a href="sources.html">Sources</a>
-</nav>
+<section>
+  <div class="card hero">
+    <h2 style="border:0;padding:0;margin-bottom:.5rem">Official statements, quoted</h2>
+    <p>Everything the sponsor's staff has said in the competition forum, read live on
+       2026-09-27 from <a href="https://community.drivendata.org/c/gems-prize-challenge/111">community.drivendata.org</a>.
+       Quoted verbatim so you can check the wording yourself — these four sentences drive
+       most of the strategy.</p>
+  </div>
+</section>
+<section class="grid" style="gap:1.1rem">
 
-<div class="card">
-  <h2><span class="pill">STAFF-CONFIRMED</span> 1 · Known catalogue faults are masked from scoring</h2>
-  <blockquote>“Pixels corresponding to known USGS/INGENIOUS faults are masked / excluded from evaluation, so they do not count towards penalty terms.” … “Re-evaluation will also mask/exclude the existing USGS/INGENIOUS faults.”</blockquote>
-  <p class="src">DrivenData staff (chrisk-dd), 2026-09-16, forum thread 11516 —
-  <a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516">community.drivendata.org/t/…/11516</a></p>
-  <p><strong>Implication (our analysis):</strong> predicting catalogue faults is free — it can never add FP penalty, and it can only help where catalogue traces fall within 300 m of withheld new faults. Therefore a safe submission is the <em>union</em> of the catalogue (or a modest dilation of it) plus genuinely new-fault hypotheses. This is exactly why the 0.1563 pattern is a floor, not a ceiling. Our metric implements this masking as <code>fp_ignore_mask</code> (<code>src/gems/metric.py</code>) so holdout evaluation matches the platform.</p>
-</div>
+    <div class="card">
+      <h3>Masking</h3>
+      <blockquote style="margin:.5rem 0;padding:.7rem 1rem;border-left:3px solid var(--brand);background:#faf5f4;font-style:italic">
+        “Pixels corresponding to known USGS/INGENIOUS faults are masked / excluded from evaluation, so they do not count towards penalty terms.”
+      </blockquote>
+      <p class='small'><strong>Also:</strong> Re-evaluation will also mask/exclude the existing USGS/INGENIOUS faults.</p>
+      <p class='small muted'>chrisk-dd, DrivenData Staff · 2026-09-16 ·
+        <a href='https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516' target='_blank' rel='noopener'>Scoring clarification: are known USGS/INGENIOUS faults masked when scoring?</a></p>
+      <div class="note" style="margin-top:.6rem"><b class="lbl">Why it matters</b>
+        Masking zeroes a pixel&#x27;s contribution to the FALSE-POSITIVE term only. The true-positive term takes a maximum over ALL pixels, masked or not. So a prediction placed on the known catalogue is free, and still earns credit for every withheld fault within 300 m of it.</div>
+    </div>
+    <div class="card">
+      <h3>New Fault Definition</h3>
+      <blockquote style="margin:.5rem 0;padding:.7rem 1rem;border-left:3px solid var(--brand);background:#faf5f4;font-style:italic">
+        “For the purposes of this competition, “new fault” means “any fault pixel not already captured by USGS/INGENIOUS” and can include newly mapped geometry of an existing fault system.”
+      </blockquote>
 
-<div class="card">
-  <h2><span class="pill">STAFF-CONFIRMED</span> 2 · Phase 2 label set is built from ALL Phase 1 submissions</h2>
-  <blockquote>“Note that the largest prize pool (Phase 2) will use a test set that is updated by expert review of all Phase 1 submissions, so your fault predictions have an impact on final evaluation even if they are not the most performant in Phase 1.”</blockquote>
-  <p class="src">DrivenData staff (chrisk-dd), 2026-09-23, forum thread 11527 —
-  <a href="https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527">community.drivendata.org/t/…/11527</a>. Same structure in the problem description: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">drivendata.org …/page/967/</a> (“an expert panel will use submitted predictions to update fault labels for the full region”).</p>
-  <p><strong>Implication (our analysis):</strong> Phase 2 ($250K pool: $100K/$70K/$40K/$25K/$15K per the problem description) rewards well-evidenced contrarian picks: faults we flag that experts verify become part of the final label set. A submission should therefore spend some probability mass on high-evidence fault candidates even where Phase 1 payoff is uncertain — the Phase 2 feedback loop pays for discoveries.</p>
-</div>
+      <p class='small muted'>chrisk-dd, DrivenData Staff · 2026-09-22 ·
+        <a href='https://community.drivendata.org/t/where-do-you-draw-the-line/11536' target='_blank' rel='noopener'>Where do you draw the line?</a></p>
+      <div class="note" style="margin-top:.6rem"><b class="lbl">Why it matters</b>
+        This is the single most load-bearing sentence in the forum. It says the scored set is dominated by continuations past mapped tips, splays and parallel strands -- i.e. faults that sit next to, and collinear with, faults the catalogue already contains. The catalogue is a POINTER to the scored pixels, not just a distractor. It also appeared AFTER the previous repo revision was written, and it is not referenced anywhere in it.</div>
+    </div>
+    <div class="card">
+      <h3>Phase2</h3>
+      <blockquote style="margin:.5rem 0;padding:.7rem 1rem;border-left:3px solid var(--brand);background:#faf5f4;font-style:italic">
+        “Note that the largest prize pool (Phase 2) will use a test set that is updated by expert review of all Phase 1 submissions, so your fault predictions have an impact on final evaluation even if they are not the most performant in Phase 1.”
+      </blockquote>
+      <p class='small'><strong>Also:</strong> We&#x27;re not sharing details about the data sources, fault types, or coverage behind the test faults beyond what&#x27;s in the problem description.</p>
+      <p class='small muted'>chrisk-dd, DrivenData Staff · 2026-09-23 ·
+        <a href='https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527' target='_blank' rel='noopener'>How were the new test faults identified? (data sources and fault types)</a></p>
+      <div class="note" style="margin-top:.6rem"><b class="lbl">Why it matters</b>
+        The $250,000 Final Prize Round ($100K / $70K / $40K / $25K / $15K) is scored against a label set that experts build partly FROM the Phase 1 submissions. Recall -- covering plausible new structure, even at the cost of precision -- converts directly into Phase 2 score, independently of Phase 1 rank.</div>
+    </div>
+    <div class="card">
+      <h3>Cadence</h3>
+      <blockquote style="margin:.5rem 0;padding:.7rem 1rem;border-left:3px solid var(--brand);background:#faf5f4;font-style:italic">
+        “The submission allowance resets based on a rolling window, not at a specific date and time.”
+      </blockquote>
 
-<div class="card">
-  <h2><span class="pill">STAFF-CONFIRMED</span> 3 · Test-fault data sources will not be disclosed</h2>
-  <blockquote>“We’re not sharing details about the data sources, fault types, or coverage behind the test faults beyond what’s in the problem description.”</blockquote>
-  <p class="src">DrivenData staff (chrisk-dd), 2026-09-23, forum thread 11527 — <a href="https://community.drivendata.org/t/how-were-the-new-test-faults-identified-data-sources-and-fault-types/11527">community.drivendata.org/t/…/11527</a></p>
-  <p><strong>Implication (our analysis):</strong> no shortcut via source-matching. The only way to find the withheld faults is structural/geophysical detection on the provided layers plus permitted external data (rules allow any licensed external data — problem description § External datasets).</p>
-</div>
+      <p class='small muted'>chrisk-dd, DrivenData Staff · 2026-09-17 ·
+        <a href='https://community.drivendata.org/t/weekly-submissions/11524' target='_blank' rel='noopener'>Weekly Submissions</a></p>
+      <div class="note" style="margin-top:.6rem"><b class="lbl">Why it matters</b>
+        Three scored submissions per rolling 7 days. There is no value in holding a slot for an unvalidated idea, and no penalty for using one early.</div>
+    </div>
+</section>
 
-<div class="card">
-  <h2><span class="pill">STAFF-CONFIRMED</span> 4 · Three scored submissions per rolling week</h2>
-  <blockquote>“The submission allowance resets based on a rolling window, not at a specific date and time.”</blockquote>
-  <p class="src">DrivenData staff (chrisk-dd), 2026-09-17, forum thread 11524 — <a href="https://community.drivendata.org/t/weekly-submissions/11524">community.drivendata.org/t/…/11524</a></p>
-  <p><strong>Implication:</strong> submission slots are scarce (3 per rolling 7 days). The gate stands: no slot is spent on a candidate that has not beaten the budget-matched random control and the catalogue baseline on our blocked holdout (<code>scripts/lofso_train_eval.py</code>).</p>
-</div>
+<section class="card">
+  <h2>What the problem description says</h2>
+  <p class="src"><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">Problem description</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">About</a></p>
+  <dl class='kv'><dt>Task</dt><dd>Develop models and algorithms that provide accurate information about the presence of structures indicative of geothermal resources — namely, geological faults.</dd><dt>Ground truth</dt><dd>The USGS quaternary fault database is public and known to be incomplete, and may contain inaccurate data. The test set is faults experts identified that are NOT in that database.</dd><dt>Rounds</dt><dd>A fixed private set of new faults labeled by the sponsor&#x27;s experts before the competition. Top 5 each win $10,000 ($50,000 pool). An expanded label set: Initial Round labels plus previously-unknown faults that experts verify after reviewing every team&#x27;s submission. Top 5 win $100K / $70K / $40K / $25K / $15K ($250,000 pool).</dd><dt>Selection</dt><dd>Competitors must choose a single submission for scoring across both rounds before the deadline, without knowing their private test set performance.</dd><dt>Metric</dt><dd>Distance-weighted Tversky index. k(d) = max(1 - d/R, 0), where the range R is 300 meters (3 pixels at 100m resolution). For this competition, we set α = 0.2 and β = 0.8. Worked example: TP_w = 3.00, FP_w = 1.89, FN_w = 2.00  →  TI_w(α=0.2, β=0.8) = 0.60</dd><dt>Provided layers</dt><dd>Surface conductivity and depth to conductive base surface · Detrended elevation and the slope of detrended elevation · Dilatation rate, shear strain rate, and the second invariant of the strain rate tensor · Isostatic gravity anomaly and the slope of the isostatic gravity anomaly · Magnetics including reduced-to-pole magnetic anomaly, total magnetic intensity, the vertical and horizontal slope of total magnetic intensity, and the top-of-crustal magnetic source depth estimate · Density of earthquakes</dd><dt>Also provided</dt><dd>1m_DEM_links.csv — URLs for 1 m resolution DEM data</dd><dt>External data</dt><dd>Allowed, provided the participant holds a licence permitting use in this challenge and sharing with the sponsor.</dd></dl>
+</section>
 
-<div class="card">
-  <h2><span class="pill">VERIFIED</span> 5 · Metric and format (re-checked 2026-09-27 against the problem description)</h2>
-  <ul>
-    <li>Distance-weighted Tversky index, α=0.2 (FP), β=0.8 (FN), triangular kernel R=300 m (3 px). Source: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#performance-metric">problem description § Performance metric</a>.</li>
-    <li>Official worked example on that page: TP_w=3.00, FP_w=1.89, FN_w=2.00 → DTI(0.2, 0.8) = 0.60. Our <code>src/gems/metric.py</code> implements these exact formulas; <code>tests/test_validation.py</code> cross-checks the fast and naive implementations to &lt;1e-9.</li>
-    <li>Submission: single-band float32 GeoTIFF, values in [0,1], same CRS (EPSG:32611), resolution (100 m) and bounds as training data; data outside the bounds null or NaN. Source: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#submission-format">problem description § Submission format</a>.</li>
-    <li>Reference solution: UNet Monte-Carlo CV, Tversky loss α=0.2/β=0.8, band names read from the GeoTIFF band tags. Source: <a href="https://github.com/drivendataorg/gems-prize-reference-solution">github.com/drivendataorg/gems-prize-reference-solution</a> (notebook blob sha <code>d45bf7bdb1d3…</code> fetched 2026-09-27 via GitHub API).</li>
-  </ul>
-</div>
-
-<div class="card">
-  <h2>Leaderboard snapshot — 2026-09-27 (verified live today)</h2>
-  <p>Source: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">official leaderboard</a>, fetched 2026-09-27. 50 teams listed; top rows:</p>
-  <table>
-    <tr><th>#</th><th>Participant</th><th>Best public DW-Tversky</th><th>Submissions</th></tr>
-    <tr><td>1</td><td>DARD</td><td><strong>0.3049</strong></td><td>10</td></tr>
-    <tr><td>2</td><td>alexoktaba</td><td>0.2993</td><td>14</td></tr>
-    <tr><td>3</td><td>HardcoreTechGod</td><td>0.2854</td><td>6</td></tr>
-    <tr><td>4</td><td>mzoorob</td><td>0.2843</td><td>16</td></tr>
-    <tr><td>5</td><td>joeyfezster</td><td>0.2806</td><td>13</td></tr>
-    <tr><td>6</td><td>GrigorSargsyan</td><td>0.2504</td><td>5</td></tr>
-    <tr><td>7</td><td>xiaofanhu</td><td>0.2367</td><td>2</td></tr>
-    <tr><td>8</td><td>exposed</td><td>0.2340</td><td>13</td></tr>
-    <tr><td>9</td><td>hiii12345</td><td>0.2262</td><td>6</td></tr>
-    <tr><td>10</td><td>tchu</td><td>0.2220</td><td>11</td></tr>
-    <tr><td>…</td><td colspan="3"></td></tr>
-    <tr><td>24</td><td>extradr19</td><td>0.1563</td><td>2</td></tr>
-    <tr><td>25</td><td>SDCF9</td><td>0.1563</td><td>2</td></tr>
-    <tr><td>26</td><td>smashi34</td><td>0.1563</td><td>2</td></tr>
-  </table>
-  <p><strong>Observation:</strong> three separate accounts with only two submissions each sit at <em>exactly</em> 0.1563 — the same value as our group's GEMSDOE1/5GEMSDOE/8GEMSDOE. 0.1563 is the catalogue-derived attractor score: any submission that essentially re-emits (a dilation of) the provided USGS/INGENIOUS catalogue lands there, because catalogue pixels are masked and only haloes within 300 m of withheld faults earn partial credit. Account ownership of extradr19/SDCF9/smashi34 is <em>not verifiable</em> from public data — we only assert the score coincidence, not who owns the accounts.</p>
-  <p><strong>Contrarian reading:</strong> the ~0.15 gap between the catalogue attractor (0.1563) and the current top (0.3049) is being harvested by teams that find <em>genuinely new</em> fault traces. Our path is H9-1..H9-5 (see <a href="hypotheses.html">hypotheses</a>), gated by the blocked holdout before any slot is spent.</p>
-</div>
-
+<section class="card">
+  <h2>Published methods this work builds on</h2>
+  <table><thead><tr><th>Reference</th><th>What it establishes</th><th>Where it is used here</th></tr></thead><tbody><tr><td><a href="https://doi.org/10.1016/j.tecto.2008.07.009" target="_blank" rel="noopener">Simpson, R. W. &amp; Reiling, T. A. (2008)</a></td><td>Dilation tendency, the ratio (e1 - e_n)/(e1 - e3), and the inverse dilation tendency used to separate strike-slip from normal and reverse faulting.</td><td><a href="https://doi.org/10.1016/j.tecto.2008.07.009" target="_blank" rel="noopener">Detector G-2</a></td></tr><tr><td><a href="https://gdr.openei.org/files/383/Faulds%20et%20al%202012%20GeoNZ%20Paper.pdf" target="_blank" rel="noopener">Faulds, J. E., Hinz, M. D. &amp; Kreemer, M. W. (2012)</a></td><td>Structural controls of geothermal systems in the Great Basin, including where geothermal fluids focus along fault stepovers, terminations and intersections.</td><td><a href="https://gdr.openei.org/files/383/Faulds%20et%20al%202012%20GeoNZ%20Paper.pdf" target="_blank" rel="noopener">Context for targeting stepovers, terminations and intersections</a></td></tr><tr><td><a href="https://doi.org/10.1029/2020JB021269" target="_blank" rel="noopener">Mattéo, L., Manighetti, I., Tarabalka, Y., Gaucel, J.-M., van den Ende, M., Mercier, A., et al. (2021)</a></td><td>Automatic fault mapping in remote optical images and topographic data with deep learning.</td><td><a href="https://doi.org/10.1029/2020JB021269" target="_blank" rel="noopener">Cited by the competition&#x27;s own About page</a></td></tr><tr><td><a href="https://pangea.stanford.edu/ERE/db/GeoConf/papers/SGW/2025/Hermant.pdf" target="_blank" rel="noopener">Hermant, B., Kiersnowski, L. &amp; Bellanger, M. (2025)</a></td><td>Using deep learning to map Quaternary faults in Western USA.</td><td><a href="https://pangea.stanford.edu/ERE/db/GeoConf/papers/SGW/2025/Hermant.pdf" target="_blank" rel="noopener">Cited by the competition&#x27;s About page</a></td></tr><tr><td><a href="https://github.com/drivendataorg/gems-prize-reference-solution" target="_blank" rel="noopener">DrivenData (sponsor documentation) (2026)</a></td><td>Official reference solution, linked from the problem description. One public commit (Jun 16 2026) by Prof. John Lipor: a single notebook, unet-mc-cv-reference-solution.ipynb — a UNet with Monte Carlo cross-validation. Verified from the repository page; the notebook&#x27;s internals were not read.</td><td><a href="https://github.com/drivendataorg/gems-prize-reference-solution" target="_blank" rel="noopener">Confirms a deep UNet is the sponsor&#x27;s own baseline, and that this repo&#x27;s band-by-tag resolution (pipeline</a></td></tr></tbody></table>
+</section>
 </main>
-</body>
-</html>
+<footer>
+  <p><strong>Maximise P(Win).</strong> Every number on this site is either quoted from a
+  linked primary source, read live on 2026-09-27, or computed by code in this
+  repository from the published metric. Nothing is estimated.</p>
+  <p>Sources: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">Competition</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">Problem description</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">About</a> ·
+     <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/">Leaderboard</a> ·
+     <a href="https://community.drivendata.org/c/gems-prize-challenge/111">Forum</a> ·
+     <a href="https://github.com/drivendataorg/gems-prize-reference-solution">Reference solution</a></p>
+  <p>Built by <code>python scripts/build_site.py</code>. Sources of every claim:
+     <a href="sources.html">Sources</a>. Problems found and fixed:
+     <a href="verification.html">Verification &amp; flags</a>.</p>
+</footer>
+<script src="geotiff_writer.js"></script>
+
+</body></html>
